@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Address Book</title>
+		<link href="./css/bootstrap.min.css" rel="stylesheet">
+		<link href="./css/styles.css" rel="stylesheet">
+		<script src="./js/fontawesome.js"></script>
+    </head>
+
+    <body>
+        <div class="w-100">
+            <header class="header d-flex align-items-center justify-content-between px-5">
+                <a class="d-flex align-items-center text-decoration-none" href="#">
+                    <img class="logo" src="./assets/images/logo.png" alt="Logo Image">
+                    <div class="text-white">ADDRESS BOOK</div>
+                </a>
+                <nav class="d-flex align-items-center gap-4">
+                    <a class="text-white text-decoration-none" href="#">
+                        <i class="fa-solid fa-user"></i>
+                        Sign Up
+                    </a>
+                    <a class="text-white text-decoration-none" href="#">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        Login
+                    </a>
+                </nav>
+            </header>
+
+            <div class="login_section mx-auto w-50">
+                <div class="login_section_left">
+
+                </div>
+
+                <div class="login_section_left">
+                    <form class="d-flex flex-column" id="loginForm" name="loginForm" method="post">
+                        <header>LOGIN</header>
+                        <label></label>
+                        <input type="text" id="userName" name="userName" autocomplete="username">
+                        <label></label>
+                        <input type="password" id="userPassword" name="userPassword">
+                        <button class="btn" type="submit" id="submitBtn" name="submitBtn" value="LOGIN">
+                    </form>
+                    <div>Or Sign In Using</div>
+                    <div>
+                        <button class="facebook_login_btn btn rounded rounded-circle">
+                            <i class="fa-brands fa-facebook-f text-white"></i>
+                        </button>
+                        <button class="google_login_btn btn rounded rounded-circle">
+                            <i class="fa-brands fa-google text-white"></i>
+                        </button>
+                    </div>
+                    <div>
+                        Don't have an account?
+                        <a class="text-decoration-none" href="#">Register Here</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+		<script src="./js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

@@ -1,0 +1,25 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    background-color: #337ab7;
+    height: 3em;
+}
+
+.logo {
+    width: 35px;
+}
+
+nav > a {
+    font-size: 0.8em;
+}
+
+.facebook_login_btn {
+    background-color: #3b5998;
+}
+
+.google_login_btn {
+    background-color: #ea4335;
+}
