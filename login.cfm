@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Log In - Address Book</title>
+		<link href="./css/bootstrap.min.css" rel="stylesheet">
+		<link href="./css/login.css" rel="stylesheet">
+		<script src="./js/fontawesome.js"></script>
+    </head>
+
+    <body>
+        <header class="header d-flex align-items-center justify-content-between fixed-top px-5">
+            <a class="d-flex align-items-center text-decoration-none" href="##">
+                <img class="logo" src="./assets/images/logo.png" alt="Logo Image">
+                <div class="text-white">ADDRESS BOOK</div>
+            </a>
+            <nav class="d-flex align-items-center gap-4">
+                <a class="text-white text-decoration-none" href="##">
+                    <i class="fa-solid fa-user"></i>
+                    Sign Up
+                </a>
+                <a class="text-white text-decoration-none" href="##">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    Login
+                </a>
+            </nav>
+        </header>
+
+        <div class="container d-flex justify-content-center align-items-center py-5 mt-5">
+            <div class="row shadow-lg border-0 rounded-4 w-50">
+                    <div class="leftSection col-md-4 d-flex align-items-center justify-content-center rounded-start-4">
+                        <img class="logoLarge" src="./assets/images/logo.png" alt="Address Book Logo">
+                    </div>
+                    <div class="rightSection bg-white col-md-8 p-4 rounded-end-4">
+                        <div class="text-center mb-4">
+                            <h3 class="fw-normal mt-3">LOGIN</h3>
+                        </div>
+                        <form id="loginForm" name="loginForm" method="post">
+                            <div class="mb-3">
+                                <input type="text" class="inputBox" id="username" name="username" placeholder="Username">
+                            </div>
+                            <div class="mb-3">
+                                <input type="password" class="inputBox" id="password" name="password" placeholder="Password">
+                            </div>
+                            <button type="submit" class="btn text-primary border-primary w-100 rounded-pill">LOGIN</button>
+                            <div class="text-center my-3">Or Sign In Using</div>
+                            <div class="d-flex justify-content-center gap-3">
+                                <button type="button" class="btn btn-primary rounded-circle">
+                                    <i class="fab fa-facebook-f"></i>
+                                </button>
+                                <button type="button" class="btn btn-danger rounded-circle">
+                                    <i class="fab fa-google"></i>
+                                </button>
+                            </div>
+                        </form>
+                        <div class="text-center mt-3">
+                            Don't have an account? <a class="text-decoration-none" href="signup.cfm">Register Here</a>
+                        </div>
+                    </div>
+            </div>
+        </div>
+		<script src="./js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

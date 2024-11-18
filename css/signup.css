@@ -1,0 +1,41 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #d8e5f1;
+}
+
+.header {
+    background-color: #337ab7;
+    height: 3em;
+}
+
+.logo {
+    width: 35px;
+}
+
+h3 {
+    color: #3f80bd;
+}
+
+nav > a {
+    font-size: 0.8em;
+}
+
+.inputBox {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #d1d1d1;
+    outline: none;
+    padding-left: 20px;
+}
+
+.leftSection {
+    background-color: #337ab7;
+}
+
+.logoLarge {
+    width: 70px;
+}
