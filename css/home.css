@@ -1,0 +1,17 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #d8e5f1;
+}
+
+.header {
+    background-color: #337ab7;
+    height: 3em;
+}
+
+.logo {
+    width: 35px;
+}
