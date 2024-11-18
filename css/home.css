@@ -15,3 +15,19 @@ body {
 .logo {
     width: 35px;
 }
+
+.toolbarIcon {
+	width: 27px;
+}
+
+.userProfileIcon {
+	width: 100px;
+}
+
+.contactImage {
+	width: 65px;
+}
+
+.actionBtn {
+	font-size: 13px;
+}
