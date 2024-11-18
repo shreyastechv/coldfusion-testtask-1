@@ -16,11 +16,11 @@
                 <div class="text-white">ADDRESS BOOK</div>
             </a>
             <nav class="d-flex align-items-center gap-4">
-                <a class="text-white text-decoration-none" href="##">
+                <a class="text-white text-decoration-none" href="signup.cfm">
                     <i class="fa-solid fa-user"></i>
                     Sign Up
                 </a>
-                <a class="text-white text-decoration-none" href="##">
+                <a class="text-white text-decoration-none" href="login.cfm">
                     <i class="fa-solid fa-right-to-bracket"></i>
                     Login
                 </a>
