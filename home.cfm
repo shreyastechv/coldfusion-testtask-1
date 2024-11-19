@@ -40,7 +40,7 @@
 			<div class="row p-3 d-flex flex-nowrap gap-2">
 				<div class="col-md-3 px-2 py-4 bg-white rounded-1 d-flex flex-column align-items-center gap-4">
 					<img class="userProfileIcon" src="./assets/images/user-profileicon.png" alt="User Profile Icon">
-					<h4>Merlin Richard</h4>
+					<h4>User Fullname</h4>
 					<button class="btn bg-primary text-white rounded-pill">CREATE CONTACT</button>
 				</div>
 				<div class="col-md-9 bg-white rounded-1 p-3">
