@@ -7,11 +7,12 @@
 		<link href="./css/bootstrap.min.css" rel="stylesheet">
 		<link href="./css/login.css" rel="stylesheet">
 		<script src="./js/fontawesome.js"></script>
+		<script src="./js/jquery-3.7.1.min.js"></script>
     </head>
 
     <body>
         <header class="header d-flex align-items-center justify-content-between fixed-top px-5">
-            <a class="d-flex align-items-center text-decoration-none" href="##">
+            <a class="d-flex align-items-center text-decoration-none" href="#">
                 <img class="logo" src="./assets/images/logo.png" alt="Logo Image">
                 <div class="text-white">ADDRESS BOOK</div>
             </a>
@@ -20,14 +21,15 @@
                     <i class="fa-solid fa-user"></i>
                     Sign Up
                 </a>
-                <a class="text-white text-decoration-none" href="login.cfm">
+                <a class="text-white text-decoration-none" href="#">
                     <i class="fa-solid fa-right-to-bracket"></i>
                     Login
                 </a>
             </nav>
         </header>
 
-        <div class="container d-flex justify-content-center align-items-center py-5 mt-5">
+        <div class="container d-flex flex-column justify-content-center align-items-center py-5 mt-5">
+            <div id="submitMsgSection" class="text-danger p-2"></div>
             <div class="row shadow-lg border-0 rounded-4 w-50">
                     <div class="leftSection col-md-4 d-flex align-items-center justify-content-center rounded-start-4">
                         <img class="logoLarge" src="./assets/images/logo.png" alt="Address Book Logo">
@@ -38,12 +40,12 @@
                         </div>
                         <form id="loginForm" name="loginForm" method="post">
                             <div class="mb-3">
-                                <input type="text" class="inputBox" id="username" name="username" placeholder="Username">
+                                <input type="text" class="inputBox" id="username" name="username" placeholder="Username" autocomplete="username">
                             </div>
                             <div class="mb-3">
                                 <input type="password" class="inputBox" id="password" name="password" placeholder="Password">
                             </div>
-                            <button type="submit" class="btn text-primary border-primary w-100 rounded-pill">LOGIN</button>
+                            <button type="submit" id="loginBtn" name="loginBtn" class="btn text-primary border-primary w-100 rounded-pill" disabled>LOGIN</button>
                             <div class="text-center my-3">Or Sign In Using</div>
                             <div class="d-flex justify-content-center gap-3">
                                 <button type="button" class="btn btn-primary rounded-circle">
@@ -61,5 +63,51 @@
             </div>
         </div>
 		<script src="./js/bootstrap.bundle.min.js"></script>
+        <script>
+            function toggleBtnState() {
+                const username = $("#username").val();
+                const loginBtn = $("#loginBtn");
+
+                if (username.trim() == "") {
+                    loginBtn.prop("disabled", true);
+                }
+                else {
+                    loginBtn.prop("disabled", false);
+                }
+            }
+
+            $("#username").change(toggleBtnState);
+
+            $("#loginForm").submit(function(event) {
+                event.preventDefault();
+                const email = $("#email").val();
+                const password =  $("#password").val();
+                const submitMsgSection = $("#submitMsgSection");
+                const thisForm = $(this)[0];
+                const formData = new FormData(thisForm);
+                $.ajax({
+                    type: "POST",
+                    url: "./components/addressbook.cfc?method=logIn",
+                    data: formData,
+                    enctype: 'multipart/form-data',
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        const responseJSON = JSON.parse(response);
+                        if (responseJSON.statusCode === 0) {
+                            thisForm.reset();
+                            window.location.href = "home.cfm";
+                        }
+                        else {
+                            submitMsgSection.text(responseJSON.message);
+                        }
+
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        submitMsgSection.text("We encountered an error! Error details are: " + thrownError);
+                    }
+                });
+            });
+        </script>
     </body>
 </html>

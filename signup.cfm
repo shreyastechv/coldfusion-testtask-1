@@ -7,21 +7,21 @@
 		<link href="./css/bootstrap.min.css" rel="stylesheet">
 		<link href="./css/signup.css" rel="stylesheet">
 		<script src="./js/fontawesome.js"></script>
-        <script src="../js/jquery-3.7.1.min.js"></script>
+        <script src="./js/jquery-3.7.1.min.js"></script>
     </head>
 
     <body>
         <header class="header d-flex align-items-center justify-content-between fixed-top px-5">
-            <a class="d-flex align-items-center text-decoration-none" href="##">
+            <a class="d-flex align-items-center text-decoration-none" href="#">
                 <img class="logo" src="./assets/images/logo.png" alt="Logo Image">
                 <div class="text-white">ADDRESS BOOK</div>
             </a>
             <nav class="d-flex align-items-center gap-4">
-                <a class="text-white text-decoration-none" href="signup.cfm">
+                <a class="text-white text-decoration-none" href="#">
                     <i class="fa-solid fa-user"></i>
                     Sign Up
                 </a>
-                <a class="text-white text-decoration-none" href="login.cfm">
+                <a class="text-white text-decoration-none" href="index.cfm">
                     <i class="fa-solid fa-right-to-bracket"></i>
                     Login
                 </a>
@@ -30,15 +30,15 @@
 
         <div class="container d-flex flex-column justify-content-center align-items-center py-5 mt-5">
             <div id="submitMsgSection" class="p-2"></div>
-            <div class="row shadow-lg border-0 rounded-4 w-50">
-                    <div class="leftSection col-md-4 d-flex align-items-center justify-content-center rounded-start-4">
+            <div class="row shadow-lg border-0 rounded-4 w-75">
+                    <div class="col-md-4 d-flex align-items-center justify-content-center rounded-start-4">
                         <img class="logoLarge" src="./assets/images/logo.png" alt="Address Book Logo">
                     </div>
                     <div class="rightSection bg-white col-md-8 p-4 rounded-end-4">
                         <div class="text-center mb-2">
                             <h3 class="fw-normal">SIGN UP</h3>
                         </div>
-                        <form id="loginForm" name="loginForm" method="post" enctype="multipart/form-data">
+                        <form id="signupForm" name="signupForm" method="post" enctype="multipart/form-data">
                             <div class="mb-3">
                                 <input type="text" class="inputBox" id="fullname" name="fullname" placeholder="Full Name">
                                 <div class="text-danger" id="fullnameError"></div>
@@ -67,16 +67,16 @@
                             <button type="submit" name="submitBtn" id="submitBtn" class="btn text-primary border-primary w-100 rounded-pill">REGISTER</button>
                         </form>
                         <div class="text-center mt-3">
-                            Already have an account? <a class="text-decoration-none" href="login.cfm">Login</a>
+                            Already have an account? <a class="text-decoration-none" href="index.cfm">Login</a>
                         </div>
                     </div>
             </div>
         </div>
 		<script src="./js/bootstrap.bundle.min.js"></script>
         <script>
-            const loginForm = $("#loginForm");
+            const signupForm = $("#signupForm");
 
-            loginForm.submit(function(event) {
+            signupForm.submit(function(event) {
                 event.preventDefault();
                 const fullname = $("#fullname").val();
                 const fullnameError = $("#fullnameError");
@@ -90,7 +90,6 @@
                 const confirmPasswordError = $("#confirmPasswordError");
                 const profilePicture = $("#profilePicture");
                 const profilePictureError = $("#profilePictureError");
-                const leftSection = $("#leftSection");
                 const submitMsgSection = $("#submitMsgSection");
                 let valid = true;
 
@@ -191,7 +190,6 @@
                 if (valid) {
                     const thisForm = $(this)[0];
                     const formData = new FormData(thisForm);
-                    // formData.append("profilePicture", $("#profilePicture")[0].files[0]);
                     $.ajax({
                         type: "POST",
                         url: "./components/addressbook.cfc?method=signUp",
@@ -200,19 +198,22 @@
                         processData: false,
                         contentType: false,
                         success: function(response) {
-                            console.log(JSON.parse(response));
-                            submitMsgSection.css("color", "green");
-                            submitMsgSection.html("Account created successfully. <a class='text-decoration-none text-primary' href='index.cfm'>Login</a> to continue.");
-                            thisForm.reset();
+                            const responseJSON = JSON.parse(response);
+                            if (responseJSON.statusCode === 0) {
+                                submitMsgSection.css("color", "green");
+                                submitMsgSection.html("Account created successfully. <a class='text-decoration-none text-primary' href='index.cfm'>Login</a> to continue.");
+                                thisForm.reset();
+                            }
+                            else {
+                                submitMsgSection.css("color", "red");
+                                submitMsgSection.text(responseJSON.message);
+                            }
                         },
                         error: function (xhr, ajaxOptions, thrownError) {
                             submitMsgSection.css("color", "red");
                             submitMsgSection.text("We encountered an error! Error details are: " + thrownError);
                         }
                     });
-                }
-                else {
-                    // event.preventDefault();
                 }
             });
         </script>
