@@ -25,14 +25,14 @@
 
 		<div class="container-fluid px-5 py-2 my-5">
 			<div class="px-3 py-2 mx-auto w-100 bg-white rounded-1 d-flex align-items-center justify-content-end">
-				<a href="#" onclick="createPdf()" class="mx-2">
+				<a href="##" onclick="createPdf()" class="mx-2">
 					<img class="toolbarIcon p-1" src="./assets/images/pdficon.png" alt="PDF Icon">
 				</a>
-				<a href="#" onclick="createExcel()" class="mx-2">
+				<a href="##" onclick="createExcel()" class="mx-2">
 					<img class="toolbarIcon" src="./assets/images/excelicon.png" alt="Excel Icon">
 				</a>
-				<a href="#" onclick="printPage()" class="mx-2">
-					<img class="toolbarIcon" src="./assets/images/printericon.png" alt="Printer Icon">
+				<a href="##" onclick="printPage()" class="mx-2">
+					<img class="toolbarIcon p-1" src="./assets/images/printericon.png" alt="Printer Icon">
 				</a>
 			</div>
 			<div class="row p-3 d-flex flex-nowrap gap-2">
@@ -69,11 +69,73 @@
 									<button class="actionBtn btn btn-outline-danger rounded-pill px-3">DELETE</button>
 								</td>
 								<td>
-									<button class="actionBtn btn btn-outline-info rounded-pill px-3">VIEW</button>
+									<button class="actionBtn btn btn-outline-info rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#viewContactModal">VIEW</button>
 								</td>
 							</tr>
 						</tbody>
 					</table>
+				</div>
+			</div>
+		</div>
+
+		<!--- View Contact Modal --->
+		<div class="modal fade" id="viewContactModal" tabindex="-1" aria-labelledby="viewContactModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content rounded-0 d-flex flex-row justify-content-around">
+					<div>
+						<div class="modal-header d-flex justify-content-around border-bottom-0">
+							<div class="contactModalHeader customDarkBlue px-5">
+								<h5>CONTACT DETAILS</h5>
+							</div>
+						</div>
+						<div class="modal-body">
+							<table class="table table-borderless align-middle">
+								<tbody>
+									<tr>
+										<td class="text-primary fw-semibold">Name</td>
+										<td class="text-primary fw-semibold">:</td>
+										<td>Miss. Anjana S</td>
+									</tr>
+									<tr>
+										<td class="text-primary fw-semibold">Gender</td>
+										<td class="text-primary fw-semibold">:</td>
+										<td>Female</td>
+									</tr>
+									<tr>
+										<td class="text-primary fw-semibold">Date Of Birth</td>
+										<td class="text-primary fw-semibold">:</td>
+										<td>12-05-2002</td>
+									</tr>
+									<tr>
+										<td class="text-primary fw-semibold">Address</td>
+										<td class="text-primary fw-semibold">:</td>
+										<td>sdfsad, sadasd, Thiruvananthapuram, Kerala, India</td>
+									</tr>
+									<tr>
+										<td class="text-primary fw-semibold">Pincode</td>
+										<td class="text-primary fw-semibold">:</td>
+										<td>567658</td>
+									</tr>
+									<tr>
+										<td class="text-primary fw-semibold">Email id</td>
+										<td class="text-primary fw-semibold">:</td>
+										<td>anjana@gmail.com</td>
+									</tr>
+									<tr>
+										<td class="text-primary fw-semibold">Phone</td>
+										<td class="text-primary fw-semibold">:</td>
+										<td>9876567487</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="modal-footer d-flex justify-content-around border-top-0">
+							<button type="button" class="btn text-white bg-customDarkBlue rounded-pill py-1 px-4" data-bs-dismiss="modal">CLOSE</button>
+						</div>
+					</div>
+					<div class="contactImageEnlarged d-flex align-items-center justify-content-end p-4">
+						<img src="./assets/profilePictures/image_2021_05_28T13_35_32_831Z.png" alt="Contact Image Enlarged">
+					</div>
 				</div>
 			</div>
 		</div>

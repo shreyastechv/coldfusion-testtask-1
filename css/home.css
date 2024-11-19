@@ -31,3 +31,27 @@ body {
 .actionBtn {
 	font-size: 13px;
 }
+
+.contactModalHeader {
+    background-color: #d9edf7;
+}
+
+.contactImageEnlarged {
+    background-color: #daeef7;
+}
+
+.contactImageEnlarged > img {
+    width: 100px;
+}
+
+.customDarkBlue {
+    color: #225b8d;
+}
+
+.bg-customDarkBlue {
+    background-color: #225b8d;
+}
+
+.bg-customDarkBlue:hover {
+    background-color: #153857;
+}
