@@ -134,7 +134,7 @@
 						</div>
 					</div>
 					<div class="contactImageEnlarged d-flex align-items-center justify-content-end p-4">
-						<img src="./assets/profilePictures/demo-profilepicture.jpg" alt="Contact Image Enlarged">
+						<img src="./assets/profilePictures/demo-profilepicture.png" alt="Contact Image Enlarged">
 					</div>
 				</div>
 			</div>
@@ -200,7 +200,7 @@
 								<div class="d-flex justify-content-between gap-3 mb-3">
 									<div class="col-md-6">
 										<label class="contactManagementLabel" for="address">Address *</label>
-										<input class="contactManagementInput py-1 mt-1" type="text" id="address" name="address" placeholder="Enter Address">
+										<input class="contactManagementInput py-1 mt-1" type="text" id="address" name="address" placeholder="Enter Address" autocomplete="address">
 									</div>
 									<div class="col-md-6">
 										<label class="contactManagementLabel" for="street">Street *</label>
@@ -220,7 +220,7 @@
 								<div class="d-flex justify-content-between gap-3 mb-3">
 									<div class="col-md-6">
 										<label class="contactManagementLabel" for="country">Country *</label>
-										<input class="contactManagementInput py-1 mt-1" type="text" id="country" name="country" placeholder="Enter Country">
+										<input class="contactManagementInput py-1 mt-1" type="text" id="country" name="country" placeholder="Enter Country" autocomplete="country">
 									</div>
 									<div class="col-md-6">
 										<label class="contactManagementLabel" for="pincode">Pincode *</label>
@@ -230,11 +230,11 @@
 								<div class="d-flex justify-content-between gap-3 mb-3">
 									<div class="col-md-6">
 										<label class="contactManagementLabel" for="email">Email Id *</label>
-										<input class="contactManagementInput py-1 mt-1" type="email" id="email" name="email" placeholder="Enter Email Id">
+										<input class="contactManagementInput py-1 mt-1" type="email" id="email" name="email" placeholder="Enter Email Id" autocomplete="email">
 									</div>
 									<div class="col-md-6">
 										<label class="contactManagementLabel" for="phone">Phone number *</label>
-										<input class="contactManagementInput py-1 mt-1" type="text" maxlength="10" id="phone" name="phone" placeholder="Enter Phone number">
+										<input class="contactManagementInput py-1 mt-1" type="text" maxlength="10" id="phone" name="phone" placeholder="Enter Phone number" autocomplete="tel">
 									</div>
 								</div>
 							</div>
