@@ -10,7 +10,7 @@
 			<cfinclude template="home.cfm">
 		<cfelse>
 			<cfif requestedPage IS "/shreyas/cf-testtask/home.cfm">
-				<cfinclude template="login.cfm">
+				<cfinclude template="index.cfm">
 			<cfelse>
 				<cfinclude template="#requestedPage#">
 			</cfif>

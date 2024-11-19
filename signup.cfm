@@ -21,7 +21,7 @@
                     <i class="fa-solid fa-user"></i>
                     Sign Up
                 </a>
-                <a class="text-white text-decoration-none" href="login.cfm">
+                <a class="text-white text-decoration-none" href="index.cfm">
                     <i class="fa-solid fa-right-to-bracket"></i>
                     Login
                 </a>
@@ -67,7 +67,7 @@
                             <button type="submit" name="submitBtn" id="submitBtn" class="btn text-primary border-primary w-100 rounded-pill">REGISTER</button>
                         </form>
                         <div class="text-center mt-3">
-                            Already have an account? <a class="text-decoration-none" href="login.cfm">Login</a>
+                            Already have an account? <a class="text-decoration-none" href="index.cfm">Login</a>
                         </div>
                     </div>
             </div>
@@ -200,7 +200,7 @@
                         contentType: false,
                         success: function(response) {
                             submitMsgSection.css("color", "green");
-                            submitMsgSection.html("Account created successfully. <a class='text-decoration-none text-primary' href='login.cfm'>Login</a> to continue.");
+                            submitMsgSection.html("Account created successfully. <a class='text-decoration-none text-primary' href='index.cfm'>Login</a> to continue.");
                             thisForm.reset();
                         },
                         error: function (xhr, ajaxOptions, thrownError) {

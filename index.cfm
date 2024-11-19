@@ -21,7 +21,7 @@
                     <i class="fa-solid fa-user"></i>
                     Sign Up
                 </a>
-                <a class="text-white text-decoration-none" href="login.cfm">
+                <a class="text-white text-decoration-none" href="index.cfm">
                     <i class="fa-solid fa-right-to-bracket"></i>
                     Login
                 </a>
