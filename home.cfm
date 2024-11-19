@@ -24,16 +24,16 @@
         </header>
 
 		<div class="container-fluid px-5 py-2 my-5">
-			<div class="px-3 py-2 w-100 bg-white rounded-1 d-flex align-items-center justify-content-end">
-				<a href="##" onclick="createPdf()" class="mx-2">
+			<div class="px-1 w-100 bg-white rounded-1 d-flex align-items-center justify-content-end">
+				<button onclick="createPdf()" class="btn">
 					<img class="toolbarIcon p-1" src="./assets/images/pdficon.png" alt="PDF Icon">
-				</a>
-				<a href="##" onclick="return createExcel()" class="mx-2">
+				</button>
+				<button onclick="return createExcel()" class="btn">
 					<img class="toolbarIcon" src="./assets/images/excelicon.png" alt="Excel Icon">
-				</a>
-				<a href="##" onclick="window.print()" class="mx-2">
+				</button>
+				<button onclick="window.print()" class="btn">
 					<img class="toolbarIcon p-1" src="./assets/images/printericon.png" alt="Printer Icon">
-				</a>
+				</button>
 			</div>
 			<div class="row p-3 d-flex flex-nowrap gap-2">
 				<div class="col-md-3 px-2 py-4 bg-white rounded-1 d-flex flex-column align-items-center gap-4">
