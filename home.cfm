@@ -16,7 +16,7 @@
                 <div class="text-white">ADDRESS BOOK</div>
             </a>
             <nav class="d-flex align-items-center gap-4">
-                <a class="text-white text-decoration-none" href="##">
+                <a class="text-white text-decoration-none">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     Logout
                 </a>

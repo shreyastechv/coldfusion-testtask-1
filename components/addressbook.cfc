@@ -34,4 +34,34 @@
 
         <cfreturn local.message>
     </cffunction>
+
+    <cffunction name="logIn" returnType="struct" returnFormat="json" access="remote">
+        <cfargument required="true" name="userName" type="string">
+        <cfargument required="true" name="password" type="string">
+
+        <cfset local.hashedPassword = Hash(password, "SHA-256")>
+        <cfset local.response = StructNew()>
+        <cfset local.response["statusCode"] = 0>
+        <cfset local.response["message"] = "">
+
+        <cfquery name="getUserDetails">
+            SELECT username, fullname, pwd, profilepicture
+            FROM users
+            WHERE username=<cfqueryparam value="#arguments.userName#" cfsqltype="cf_sql_varchar">;
+        </cfquery>
+
+        <cfif getUserDetails.RecordCount EQ 0>
+            <cfset local.response.statusCode = 1>
+            <cfset local.response.message = "Username does not exist!">
+        <cfelseif getUserDetails.pwd NEQ local.hashedPassword>
+            <cfset local.response.statusCode = 2>
+            <cfset local.response.message = "Wrong password!">
+        <cfelse>
+            <cfset session.userName = getUserDetails.username>
+            <cfset session.fullName = getUserDetails.fullname>
+            <cfset session.profilePicture = getUserDetails.profilepicture>
+        </cfif>
+
+        <cfreturn local.response>
+    </cffunction>
 </cfcomponent>
