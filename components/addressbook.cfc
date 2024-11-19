@@ -1,5 +1,5 @@
 <cfcomponent name="addressBook">
-    <cffunction name="signUp" returnType="any" returnFormat="json" access="remote">
+    <cffunction name="signUp" returnType="string" returnFormat="json" access="remote">
         <cfargument required="true" name="fullName" type="string">
         <cfargument required="true" name="email" type="string">
         <cfargument required="true" name="userName" type="string">
