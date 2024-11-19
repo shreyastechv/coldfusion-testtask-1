@@ -190,7 +190,6 @@
                 if (valid) {
                     const thisForm = $(this)[0];
                     const formData = new FormData(thisForm);
-                    // formData.append("profilePicture", $("#profilePicture")[0].files[0]);
                     $.ajax({
                         type: "POST",
                         url: "./components/addressbook.cfc?method=signUp",
@@ -208,9 +207,6 @@
                             submitMsgSection.text("We encountered an error! Error details are: " + thrownError);
                         }
                     });
-                }
-                else {
-                    // event.preventDefault();
                 }
             });
         </script>
