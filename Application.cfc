@@ -6,7 +6,7 @@
 	<cffunction name="onRequest" type="public" returnType="void">
 		<cfargument name="requestedPage" type="string">
 
-		<cfif StructKeyExists(session, "isLoggedIn") AND session.isLoggedIn EQ true>
+		<cfif StructKeyExists(session, "isLoggedIn") AND session.isLoggedIn>
 			<cfinclude template="home.cfm">
 		<cfelse>
 			<cfif requestedPage IS "/shreyas/cf-testtask/home.cfm">
