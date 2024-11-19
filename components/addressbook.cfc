@@ -82,4 +82,13 @@
 
         <cfreturn local.response>
     </cffunction>
+
+    <cffunction name="getContacts" returnType="query" access="public">
+        <cfquery name="local.getContactsQuery">
+            SELECT title, firstname, lastname, gender, dob, address, street, district, state, country, pincode, email, phone
+            FROM contactDetails
+            WHERE _createdBy=<cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">;
+        </cfquery>
+        <cfreturn local.getContactsQuery>
+    </cffunction>
 </cfcomponent>

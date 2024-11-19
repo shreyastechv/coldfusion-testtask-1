@@ -66,23 +66,29 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<td>
-										<img class="contactImage p-2" src="./assets/images/defaultcontactimage-man.png" alt="Contact Image">
-									</td>
-									<td>Anjana S</td>
-									<td>anjana@gmail.com</td>
-									<td>6354826452</td>
-									<td>
-										<button class="actionBtn btn btn-outline-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="##contactManagementModal">EDIT</button>
-									</td>
-									<td>
-										<button class="actionBtn btn btn-outline-danger rounded-pill px-3">DELETE</button>
-									</td>
-									<td>
-										<button class="actionBtn btn btn-outline-info rounded-pill px-3" data-bs-toggle="modal" data-bs-target="##viewContactModal">VIEW</button>
-									</td>
-								</tr>
+								<cfif NOT StructKeyExists(session, "getContactsQuery")>
+									<cfset local.contactsObject = CreateObject("component", "components.addressbook")>
+									<cfset local.getContactsQuery = contactsObject.getContacts()>
+									<cfloop query="local.getContactsQuery">
+										<tr>
+											<td>
+												<img class="contactImage p-2" src="./assets/images/defaultcontactimage-man.png" alt="Contact Image">
+											</td>
+											<td>#firstname# #lastname#</td>
+											<td>#email#</td>
+											<td>#phone#</td>
+											<td>
+												<button class="actionBtn btn btn-outline-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="##contactManagementModal">EDIT</button>
+											</td>
+											<td>
+												<button class="actionBtn btn btn-outline-danger rounded-pill px-3">DELETE</button>
+											</td>
+											<td>
+												<button class="actionBtn btn btn-outline-info rounded-pill px-3" data-bs-toggle="modal" data-bs-target="##viewContactModal">VIEW</button>
+											</td>
+										</tr>
+									</cfloop>
+								</cfif>
 							</tbody>
 						</table>
 					</div>
