@@ -7,16 +7,17 @@
 		<link href="./css/bootstrap.min.css" rel="stylesheet">
 		<link href="./css/home.css" rel="stylesheet">
 		<script src="./js/fontawesome.js"></script>
+		<script src="./js/jquery-3.7.1.min.js"></script>
     </head>
 
     <body>
         <header class="header d-flex align-items-center justify-content-between fixed-top px-5">
-            <a class="d-flex align-items-center text-decoration-none" href="##">
+            <a class="d-flex align-items-center text-decoration-none" href="#">
                 <img class="logo" src="./assets/images/logo.png" alt="Logo Image">
                 <div class="text-white">ADDRESS BOOK</div>
             </a>
             <nav class="d-flex align-items-center gap-4">
-                <a class="text-white text-decoration-none">
+                <a class="text-white text-decoration-none" href="#" onclick="logOut()">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     Logout
                 </a>
@@ -24,6 +25,7 @@
         </header>
 
 		<div class="container-fluid px-5 py-2 my-5">
+            <div id="submitMsgSection" class="text-danger text-center p-2"></div>
 			<div class="px-1 w-100 bg-white rounded-1 d-flex align-items-center justify-content-end">
 				<button onclick="createPdf()" class="btn">
 					<img class="toolbarIcon p-1" src="./assets/images/pdficon.png" alt="PDF Icon">
@@ -251,5 +253,27 @@
 			</div>
 		</div>
 		<script src="./js/bootstrap.bundle.min.js"></script>
+		<script>
+			function logOut() {
+				const submitMsgSection = $("#submitMsgSection");
+
+				$.ajax({
+                    type: "POST",
+                    url: "./components/addressbook.cfc?method=logOut",
+                    success: function(response) {
+						const responseJSON = JSON.parse(response);
+                        if (responseJSON.statusCode === 0) {
+							location.reload();
+						}
+						else {
+							submitMsgSection.text(responseJSON.message);
+						}
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        submitMsgSection.text("We encountered an error! Error details are: " + thrownError);
+                    }
+                });
+			}
+		</script>
     </body>
 </html>

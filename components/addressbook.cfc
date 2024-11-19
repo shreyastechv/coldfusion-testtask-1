@@ -57,9 +57,24 @@
             <cfset local.response.statusCode = 2>
             <cfset local.response.message = "Wrong password!">
         <cfelse>
+            <cfset session.isLoggedIn = true>
             <cfset session.userName = getUserDetails.username>
             <cfset session.fullName = getUserDetails.fullname>
             <cfset session.profilePicture = getUserDetails.profilepicture>
+        </cfif>
+
+        <cfreturn local.response>
+    </cffunction>
+
+    <cffunction name="logOut" returnType="struct" returnFormat="json" access="remote">
+        <cfset local.response = StructNew()>
+        <cfset local.response["statusCode"] = 0>
+        <cfset local.response["message"] = "">
+
+        <cfset StructClear(session)>
+        <cfif NOT StructIsEmpty(session)>
+            <cfset local.response.statusCode = 1>
+            <cfset local.response.message = "Unable to logout!">
         </cfif>
 
         <cfreturn local.response>
