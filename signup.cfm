@@ -200,7 +200,7 @@
                         contentType: false,
                         success: function(response) {
                             submitMsgSection.css("color", "green");
-                            submitMsgSection.html("Account created successfully. <a class='text-decoration-none text-primary' href='index.cfm'>Login</a> to continue.");
+                            submitMsgSection.html("Account created successfully. <a class='text-decoration-none text-primary' href='login.cfm'>Login</a> to continue.");
                             thisForm.reset();
                         },
                         error: function (xhr, ajaxOptions, thrownError) {
