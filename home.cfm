@@ -66,29 +66,27 @@
 								</tr>
 							</thead>
 							<tbody>
-								<cfif NOT StructKeyExists(session, "getContactsQuery")>
-									<cfset local.contactsObject = CreateObject("component", "components.addressbook")>
-									<cfset local.getContactsQuery = contactsObject.getContacts()>
-									<cfloop query="local.getContactsQuery">
-										<tr>
-											<td>
-												<img class="contactImage p-2" src="./assets/images/defaultcontactimage-man.png" alt="Contact Image">
-											</td>
-											<td>#firstname# #lastname#</td>
-											<td>#email#</td>
-											<td>#phone#</td>
-											<td>
-												<button class="actionBtn btn btn-outline-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="##contactManagementModal">EDIT</button>
-											</td>
-											<td>
-												<button class="actionBtn btn btn-outline-danger rounded-pill px-3">DELETE</button>
-											</td>
-											<td>
-												<button class="actionBtn btn btn-outline-info rounded-pill px-3" data-bs-toggle="modal" data-bs-target="##viewContactModal">VIEW</button>
-											</td>
-										</tr>
-									</cfloop>
-								</cfif>
+								<cfset local.contactsObject = CreateObject("component", "components.addressbook")>
+								<cfset session.getContactsQuery = contactsObject.getContacts()>
+								<cfloop query="session.getContactsQuery">
+									<tr>
+										<td>
+											<img class="contactImage p-2" src="./assets/images/defaultcontactimage-man.png" alt="Contact Image">
+										</td>
+										<td>#firstname# #lastname#</td>
+										<td>#email#</td>
+										<td>#phone#</td>
+										<td>
+											<button class="actionBtn btn btn-outline-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="##contactManagementModal">EDIT</button>
+										</td>
+										<td>
+											<button class="actionBtn btn btn-outline-danger rounded-pill px-3">DELETE</button>
+										</td>
+										<td>
+											<button class="actionBtn btn btn-outline-info rounded-pill px-3" value="#contactid#" onclick="viewContact(event)">VIEW</button>
+										</td>
+									</tr>
+								</cfloop>
 							</tbody>
 						</table>
 					</div>
@@ -111,37 +109,37 @@
 										<tr>
 											<td class="text-primary fw-semibold">Name</td>
 											<td class="text-primary fw-semibold">:</td>
-											<td>Miss. Anjana S</td>
+											<td id="viewContactName">Miss. Anjana S</td>
 										</tr>
 										<tr>
 											<td class="text-primary fw-semibold">Gender</td>
 											<td class="text-primary fw-semibold">:</td>
-											<td>Female</td>
+											<td id="viewContactGender">Female</td>
 										</tr>
 										<tr>
 											<td class="text-primary fw-semibold">Date Of Birth</td>
 											<td class="text-primary fw-semibold">:</td>
-											<td>12-05-2002</td>
+											<td id="viewContactDOB">12-05-2002</td>
 										</tr>
 										<tr>
 											<td class="text-primary fw-semibold">Address</td>
 											<td class="text-primary fw-semibold">:</td>
-											<td>sdfsad, sadasd, Thiruvananthapuram, Kerala, India</td>
+											<td id="viewContactAddress">sdfsad, sadasd, Thiruvananthapuram, Kerala, India</td>
 										</tr>
 										<tr>
 											<td class="text-primary fw-semibold">Pincode</td>
 											<td class="text-primary fw-semibold">:</td>
-											<td>567658</td>
+											<td id="viewContactPincode">567658</td>
 										</tr>
 										<tr>
 											<td class="text-primary fw-semibold">Email id</td>
 											<td class="text-primary fw-semibold">:</td>
-											<td>anjana@gmail.com</td>
+											<td id="viewContactEmail">anjana@gmail.com</td>
 										</tr>
 										<tr>
 											<td class="text-primary fw-semibold">Phone</td>
 											<td class="text-primary fw-semibold">:</td>
-											<td>9876567487</td>
+											<td id="viewContactPhone">9876567487</td>
 										</tr>
 									</tbody>
 								</table>
@@ -289,6 +287,28 @@
                         submitMsgSection.text("We encountered an error! Error details are: " + thrownError);
                     }
                 });
+			}
+
+			function viewContact(event) {
+				let viewContactName = $("#viewContactName").val();
+				let viewContactGender = $("#viewContactGender").val();
+				let viewContactDOB = $("#viewContactDOB").val();
+				let viewContactAddress = $("#viewContactAddress").val();
+				let viewContactPincode = $("#viewContactPincode").val();
+				let viewContactEmail = $("#viewContactEmail").val();
+				let viewContactPhone = $("#viewContactPhone").val();
+
+				$.ajax({
+                    type: "POST",
+                    url: "./components/addressbook.cfc?method=getContactById",
+					data: { contactId: event.target.value },
+                    success: function(response) {
+						const responseJSON = JSON.parse(response);
+						console.log(responseJSON);
+                    }
+                });
+
+				$('#viewContactModal').modal('show');
 			}
 		</script>
     </body>

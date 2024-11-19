@@ -85,10 +85,23 @@
 
     <cffunction name="getContacts" returnType="query" access="public">
         <cfquery name="local.getContactsQuery">
-            SELECT title, firstname, lastname, gender, dob, address, street, district, state, country, pincode, email, phone
+            SELECT contactid, title, firstname, lastname, gender, dob, address, street, district, state, country, pincode, email, phone
             FROM contactDetails
             WHERE _createdBy=<cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">;
         </cfquery>
         <cfreturn local.getContactsQuery>
+    </cffunction>
+
+    <cffunction name="getContactById" returnType="struct" returnFormat="json" access="remote">
+        <cfargument required="true" name="contactId" type="string">
+
+        <cfquery name="local.getContactById">
+            SELECT contactid, title, firstname, lastname, gender, dob, address, street, district, state, country, pincode, email, phone
+            FROM contactDetails
+            WHERE contactid=<cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_varchar">;
+        </cfquery>
+
+        <cfset local.contactDetails = QueryGetRow(local.getContactById, 1)>
+        <cfreturn local.contactDetails>
     </cffunction>
 </cfcomponent>
