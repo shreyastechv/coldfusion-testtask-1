@@ -7,7 +7,7 @@
 		<link href="./css/bootstrap.min.css" rel="stylesheet">
 		<link href="./css/signup.css" rel="stylesheet">
 		<script src="./js/fontawesome.js"></script>
-        <script src="../js/jquery-3.7.1.min.js"></script>
+        <script src="./js/jquery-3.7.1.min.js"></script>
     </head>
 
     <body>
@@ -199,7 +199,6 @@
                         processData: false,
                         contentType: false,
                         success: function(response) {
-                            console.log(JSON.parse(response));
                             submitMsgSection.css("color", "green");
                             submitMsgSection.html("Account created successfully. <a class='text-decoration-none text-primary' href='index.cfm'>Login</a> to continue.");
                             thisForm.reset();
