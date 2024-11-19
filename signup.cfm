@@ -198,9 +198,16 @@
                         processData: false,
                         contentType: false,
                         success: function(response) {
-                            submitMsgSection.css("color", "green");
-                            submitMsgSection.html("Account created successfully. <a class='text-decoration-none text-primary' href='index.cfm'>Login</a> to continue.");
-                            thisForm.reset();
+                            const responseJSON = JSON.parse(response);
+                            if (responseJSON.statusCode === 0) {
+                                submitMsgSection.css("color", "green");
+                                submitMsgSection.html("Account created successfully. <a class='text-decoration-none text-primary' href='index.cfm'>Login</a> to continue.");
+                                thisForm.reset();
+                            }
+                            else {
+                                submitMsgSection.css("color", "red");
+                                submitMsgSection.text(responseJSON.message);
+                            }
                         },
                         error: function (xhr, ajaxOptions, thrownError) {
                             submitMsgSection.css("color", "red");

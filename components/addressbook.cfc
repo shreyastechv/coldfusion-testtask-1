@@ -1,11 +1,14 @@
 <cfcomponent name="addressBook">
-    <cffunction name="signUp" returnType="string" returnFormat="json" access="remote">
+    <cffunction name="signUp" returnType="struct" returnFormat="json" access="remote">
         <cfargument required="true" name="fullName" type="string">
         <cfargument required="true" name="email" type="string">
         <cfargument required="true" name="userName" type="string">
         <cfargument required="true" name="password" type="string">
 
         <cfset local.hashedPassword = Hash(password, "SHA-256")>
+        <cfset local.response = StructNew()>
+        <cfset local.response["statusCode"] = 0>
+        <cfset local.response["message"] = 0>
 
        <cfquery name="checkUser">
             SELECT username
@@ -27,12 +30,12 @@
                     <cfqueryparam value="#local.profilePictureName#" cfsqltype="cf_sql_varchar">
                 );
             </cfquery>
-            <cfset local.message = "Account created successfully. Login to continue.">
         <cfelse>
-            <cfset local.message = "Username already taken.">
+            <cfset local.response.statusCode = 1>
+            <cfset local.response.message = "Username already exists!">
         </cfif>
 
-        <cfreturn local.message>
+        <cfreturn local.response>
     </cffunction>
 
     <cffunction name="logIn" returnType="struct" returnFormat="json" access="remote">
