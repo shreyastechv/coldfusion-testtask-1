@@ -24,7 +24,7 @@
         </header>
 
 		<div class="container-fluid px-5 py-2 my-5">
-			<div class="px-3 py-2 mx-auto w-100 bg-white rounded-1 d-flex align-items-center justify-content-end">
+			<div class="px-3 py-2 w-100 bg-white rounded-1 d-flex align-items-center justify-content-end">
 				<a href="##" onclick="createPdf()" class="mx-2">
 					<img class="toolbarIcon p-1" src="./assets/images/pdficon.png" alt="PDF Icon">
 				</a>
