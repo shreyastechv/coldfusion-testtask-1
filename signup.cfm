@@ -38,7 +38,7 @@
                         <div class="text-center mb-2">
                             <h3 class="fw-normal">SIGN UP</h3>
                         </div>
-                        <form id="loginForm" name="loginForm" method="post" enctype="multipart/form-data">
+                        <form id="signupForm" name="signupForm" method="post" enctype="multipart/form-data">
                             <div class="mb-3">
                                 <input type="text" class="inputBox" id="fullname" name="fullname" placeholder="Full Name">
                                 <div class="text-danger" id="fullnameError"></div>
@@ -74,9 +74,9 @@
         </div>
 		<script src="./js/bootstrap.bundle.min.js"></script>
         <script>
-            const loginForm = $("#loginForm");
+            const signupForm = $("#signupForm");
 
-            loginForm.submit(function(event) {
+            signupForm.submit(function(event) {
                 event.preventDefault();
                 const fullname = $("#fullname").val();
                 const fullnameError = $("#fullnameError");
