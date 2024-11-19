@@ -31,7 +31,7 @@
 				<a href="##" onclick="return createExcel()" class="mx-2">
 					<img class="toolbarIcon" src="./assets/images/excelicon.png" alt="Excel Icon">
 				</a>
-				<a href="##" onclick="printPage()" class="mx-2">
+				<a href="##" onclick="window.print()" class="mx-2">
 					<img class="toolbarIcon p-1" src="./assets/images/printericon.png" alt="Printer Icon">
 				</a>
 			</div>
