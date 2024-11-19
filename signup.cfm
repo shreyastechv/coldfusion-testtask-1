@@ -12,12 +12,12 @@
 
     <body>
         <header class="header d-flex align-items-center justify-content-between fixed-top px-5">
-            <a class="d-flex align-items-center text-decoration-none" href="##">
+            <a class="d-flex align-items-center text-decoration-none" href="#">
                 <img class="logo" src="./assets/images/logo.png" alt="Logo Image">
                 <div class="text-white">ADDRESS BOOK</div>
             </a>
             <nav class="d-flex align-items-center gap-4">
-                <a class="text-white text-decoration-none" href="signup.cfm">
+                <a class="text-white text-decoration-none" href="#">
                     <i class="fa-solid fa-user"></i>
                     Sign Up
                 </a>
