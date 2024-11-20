@@ -111,13 +111,18 @@
         <cfargument required="true" name="contactId" type="string">
         <cfset local.response = StructNew()>
 
-        <cfquery name="deleteContactQuery">
-            UPDATE contactDetails
-            SET active = 0
-            WHERE contactid=<cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_varchar">;
-        </cfquery>
+        <cfif StructKeyExists(session, "isLoggedIn")>
+            <cfquery name="deleteContactQuery">
+                UPDATE contactDetails
+                SET active = 0
+                WHERE contactid=<cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_varchar">
+            </cfquery>
 
-        <cfset local.response["statusCode"] = 0>
+            <cfset local.response["statusCode"] = 0>
+        <cfelse>
+            <cfset local.response["statusCode"] = 1>
+        </cfif>
+
         <cfreturn local.response>
     </cffunction>
 </cfcomponent>
