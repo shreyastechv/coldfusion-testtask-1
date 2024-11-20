@@ -320,17 +320,19 @@
 			}
 
 			function deleteContact(event) {
-				$.ajax({
-                    type: "POST",
-                    url: "./components/addressbook.cfc?method=deleteContact",
-					data: { contactId: event.target.value },
-                    success: function(response) {
-						const responseJSON = JSON.parse(response);
-						if (responseJSON.statusCode === 0) {
-							location.reload();
+				if (confirm("Delete this contact?")) {
+					$.ajax({
+						type: "POST",
+						url: "./components/addressbook.cfc?method=deleteContact",
+						data: { contactId: event.target.value },
+						success: function(response) {
+							const responseJSON = JSON.parse(response);
+							if (responseJSON.statusCode === 0) {
+								location.reload();
+							}
 						}
-                    }
-                });
+					});
+				}
 			}
 
 			function createContact() {
