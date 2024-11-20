@@ -71,7 +71,7 @@
 								<cfloop query="session.getContactsQuery">
 									<tr>
 										<td>
-											<img class="contactImage p-2" src="./assets/images/#contactpicture#" alt="Contact Image">
+											<img class="contactImage p-2" src="./assets/contactImages/#contactpicture#" alt="Contact Image">
 										</td>
 										<td>#firstname# #lastname#</td>
 										<td>#email#</td>
@@ -206,8 +206,8 @@
 									</div>
 									<div class="d-flex justify-content-between gap-3 mb-3">
 										<div class="col-md-9 w-75">
-											<label class="contactManagementLabel" for="profilePhoto">Upload Photo</label>
-											<input class="contactManagementInput py-1 mt-1" type="file" id="profilePhoto" name="profilePhoto">
+											<label class="contactManagementLabel" for="contactImage">Upload Photo</label>
+											<input class="contactManagementInput py-1 mt-1" type="file" id="contactImage" name="contactImage" accept="image/*">
 										</div>
 									</div>
 									<h6 class="text-primary my-1">Contact Details</h6>
@@ -253,6 +253,7 @@
 										</div>
 									</div>
 								</div>
+								<div id="contactManagementMsgSection" class="text-center p-2"></div>
 								<div class="modal-footer d-flex justify-content-around border-top-0">
 									<button type="button" class="btn text-white bg-customDarkBlue rounded-pill py-1 px-4" data-bs-dismiss="modal">CLOSE</button>
 									<button type="submit" class="btn btn-primary rounded-pill py-1 px-4" id="submitBtn" name="submitBtn">SUBMIT</button>
@@ -348,6 +349,35 @@
 				contactManagementHeading.text("EDIT CONTACT");
 				$('#contactManagementModal').modal('show');
 			}
+
+			$("#contactManagement").submit(function(event) {
+                event.preventDefault();
+                const contactManagementMsgSection = $("#contactManagementMsgSection");
+                const thisForm = $(this)[0];
+                const formData = new FormData(thisForm);
+                $.ajax({
+                    type: "POST",
+                    url: "./components/addressbook.cfc?method=createContact",
+                    data: formData,
+                    enctype: 'multipart/form-data',
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        const responseJSON = JSON.parse(response);
+                        if (responseJSON.statusCode === 0) {
+                            thisForm.reset();
+							contactManagementMsgSection.css("color", "green");
+                        }
+						else {
+							contactManagementMsgSection.css("color", "red");
+						}
+                        contactManagementMsgSection.text(responseJSON.message);
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        contactManagementMsgSection.text("We encountered an error! Error details are: " + thrownError);
+                    }
+                });
+            });
 		</script>
     </body>
 </html>

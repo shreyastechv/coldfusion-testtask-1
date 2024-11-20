@@ -125,4 +125,54 @@
 
         <cfreturn local.response>
     </cffunction>
+
+    <cffunction name="createContact" returnType="struct" returnFormat="json" access="remote">
+        <cfargument required="true" name="title" type="string">
+        <cfargument required="true" name="firstName" type="string">
+        <cfargument required="true" name="lastName" type="string">
+        <cfargument required="true" name="gender" type="string">
+        <cfargument required="true" name="dob" type="string">
+        <cfargument required="true" name="address" type="string">
+        <cfargument required="true" name="street" type="string">
+        <cfargument required="true" name="district" type="string">
+        <cfargument required="true" name="state" type="string">
+        <cfargument required="true" name="country" type="string">
+        <cfargument required="true" name="pincode" type="string">
+        <cfargument required="true" name="email" type="string">
+        <cfargument required="true" name="phone" type="string">
+        <cfset local.response = StructNew()>
+
+        <cfif StructKeyExists(session, "isLoggedIn")>
+            <cffile action="upload" destination="#expandpath("../assets/contactImages")#" fileField="form.contactImage" nameconflict="MakeUnique">
+            <cfset local.contactImage = cffile.serverFile>
+            <cfquery>
+                INSERT INTO contactDetails
+                (title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone, _createdBy, _updatedBy)
+                VALUES (
+                    <cfqueryparam value="#arguments.title#" cfsqltype="cf_sql_varchar">,
+                    <cfqueryparam value="#arguments.firstName#" cfsqltype="cf_sql_varchar">,
+                    <cfqueryparam value="#arguments.lastName#" cfsqltype="cf_sql_varchar">,
+                    <cfqueryparam value="#arguments.gender#" cfsqltype="cf_sql_varchar">,
+                    <cfqueryparam value="#arguments.dob#" cfsqltype="cf_sql_date">,
+                    <cfqueryparam value="#local.contactImage#" cfsqltype="cf_sql_varchar">,
+                    <cfqueryparam value="#arguments.address#" cfsqltype="cf_sql_varchar">,
+                    <cfqueryparam value="#arguments.street#" cfsqltype="cf_sql_varchar">,
+                    <cfqueryparam value="#arguments.district#" cfsqltype="cf_sql_varchar">,
+                    <cfqueryparam value="#arguments.state#" cfsqltype="cf_sql_varchar">,
+                    <cfqueryparam value="#arguments.country#" cfsqltype="cf_sql_varchar">,
+                    <cfqueryparam value="#arguments.pincode#" cfsqltype="cf_sql_char">,
+                    <cfqueryparam value="#arguments.email#" cfsqltype="cf_sql_varchar">,
+                    <cfqueryparam value="#arguments.phone#" cfsqltype="cf_sql_varchar">,
+                    <cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">,
+                    <cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">
+                );
+            </cfquery>
+            <cfset local.response["statusCode"] = 0>
+            <cfset local.response["message"] = "Contact Added Successfully">
+        <cfelse>
+            <cfset local.response["statusCode"] = 1>
+        </cfif>
+
+        <cfreturn local.response>
+    </cffunction>
 </cfcomponent>
