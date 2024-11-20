@@ -308,7 +308,7 @@
 						const { CONTACTID, TITLE, FIRSTNAME, LASTNAME, GENDER, DOB, CONTACTPICTURE, ADDRESS, STREET, DISTRICT, STATE, COUNTRY, PINCODE, EMAIL, PHONE } = responseJSON;
 						viewContactName.text(`${TITLE} ${FIRSTNAME} ${LASTNAME}`);
 						viewContactGender.text(GENDER);
-						viewContactDOB.text(DOB);
+						viewContactDOB.text(DOB.split(" ", 3).join(" "));
 						viewContactAddress.text(`${ADDRESS}, ${STREET}, ${DISTRICT}, ${STATE}, ${COUNTRY}`);
 						viewContactPincode.text(PINCODE);
 						viewContactEmail.text(EMAIL);
