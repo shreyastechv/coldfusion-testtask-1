@@ -290,13 +290,13 @@
 			}
 
 			function viewContact(event) {
-				let viewContactName = $("#viewContactName").val();
-				let viewContactGender = $("#viewContactGender").val();
-				let viewContactDOB = $("#viewContactDOB").val();
-				let viewContactAddress = $("#viewContactAddress").val();
-				let viewContactPincode = $("#viewContactPincode").val();
-				let viewContactEmail = $("#viewContactEmail").val();
-				let viewContactPhone = $("#viewContactPhone").val();
+				const viewContactName = $("#viewContactName");
+				const viewContactGender = $("#viewContactGender");
+				const viewContactDOB = $("#viewContactDOB");
+				const viewContactAddress = $("#viewContactAddress");
+				const viewContactPincode = $("#viewContactPincode");
+				const viewContactEmail = $("#viewContactEmail");
+				const viewContactPhone = $("#viewContactPhone");
 
 				$.ajax({
                     type: "POST",
@@ -304,11 +304,17 @@
 					data: { contactId: event.target.value },
                     success: function(response) {
 						const responseJSON = JSON.parse(response);
-						console.log(responseJSON);
+						const { CONTACTID, TITLE, FIRSTNAME, LASTNAME, GENDER, DOB, ADDRESS, STREET, DISTRICT, STATE, COUNTRY, PINCODE, EMAIL, PHONE } = responseJSON;
+						viewContactName.text(`${TITLE} ${FIRSTNAME} ${LASTNAME}`);
+						viewContactGender.text(GENDER);
+						viewContactDOB.text(DOB);
+						viewContactAddress.text(`${ADDRESS}, ${STREET}, ${DISTRICT}, ${STATE}, ${COUNTRY}`);
+						viewContactPincode.text(PINCODE);
+						viewContactEmail.text(EMAIL);
+						viewContactPhone.text(PHONE);
+						$('#viewContactModal').modal('show');
                     }
                 });
-
-				$('#viewContactModal').modal('show');
 			}
 		</script>
     </body>

@@ -85,7 +85,7 @@
 
     <cffunction name="getContacts" returnType="query" access="public">
         <cfquery name="local.getContactsQuery">
-            SELECT contactid, title, firstname, lastname, gender, dob, address, street, district, state, country, pincode, email, phone
+            SELECT contactid, firstname, lastname, email, phone
             FROM contactDetails
             WHERE _createdBy=<cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">;
         </cfquery>
@@ -102,6 +102,7 @@
         </cfquery>
 
         <cfset local.contactDetails = QueryGetRow(local.getContactById, 1)>
+
         <cfreturn local.contactDetails>
     </cffunction>
 </cfcomponent>
