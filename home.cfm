@@ -80,7 +80,7 @@
 											<button class="actionBtn btn btn-outline-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="##contactManagementModal">EDIT</button>
 										</td>
 										<td>
-											<button class="actionBtn btn btn-outline-danger rounded-pill px-3">DELETE</button>
+											<button class="actionBtn btn btn-outline-danger rounded-pill px-3" value="#contactid#" onclick="deleteContact(event)">DELETE</button>
 										</td>
 										<td>
 											<button class="actionBtn btn btn-outline-info rounded-pill px-3" value="#contactid#" onclick="viewContact(event)">VIEW</button>
@@ -315,6 +315,20 @@
 						viewContactPhone.text(PHONE);
 						viewContactPicture.attr("src", `./assets/contactImages/${CONTACTPICTURE}`);
 						$('#viewContactModal').modal('show');
+                    }
+                });
+			}
+
+			function deleteContact(event) {
+				$.ajax({
+                    type: "POST",
+                    url: "./components/addressbook.cfc?method=deleteContact",
+					data: { contactId: event.target.value },
+                    success: function(response) {
+						const responseJSON = JSON.parse(response);
+						if (responseJSON.statusCode === 0) {
+							location.reload();
+						}
                     }
                 });
 			}

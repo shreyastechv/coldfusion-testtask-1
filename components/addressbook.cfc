@@ -105,4 +105,17 @@
 
         <cfreturn local.contactDetails>
     </cffunction>
+
+    <cffunction name="deleteContact" returnType="struct" returnFormat="json" access="remote">
+        <cfargument required="true" name="contactId" type="string">
+        <cfset local.response = StructNew()>
+
+        <cfquery name="deleteContactQuery">
+            DELETE FROM contactDetails
+            WHERE contactid=<cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_varchar">;
+        </cfquery>
+
+        <cfset local.response["statusCode"] = 0>
+        <cfreturn local.response>
+    </cffunction>
 </cfcomponent>
