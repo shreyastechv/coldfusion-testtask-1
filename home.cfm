@@ -50,7 +50,7 @@
 						<cfelse>
 							<h4>User Fullname</h4>
 						</cfif>
-						<button class="btn bg-primary text-white rounded-pill">CREATE CONTACT</button>
+						<button class="btn bg-primary text-white rounded-pill" onclick="createContact()">CREATE CONTACT</button>
 					</div>
 					<div class="col-md-9 bg-white rounded-1 p-3">
 						<table class="table table-hover align-middle">
@@ -77,7 +77,7 @@
 										<td>#email#</td>
 										<td>#phone#</td>
 										<td>
-											<button class="actionBtn btn btn-outline-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="##contactManagementModal">EDIT</button>
+											<button class="actionBtn btn btn-outline-primary rounded-pill px-4" value="#contactid#" onclick="editContact(event)">EDIT</button>
 										</td>
 										<td>
 											<button class="actionBtn btn btn-outline-danger rounded-pill px-3" value="#contactid#" onclick="deleteContact(event)">DELETE</button>
@@ -163,7 +163,7 @@
 							<form id="contactManagement" name="contactManagement" method="post" enctype="multipart/form-data">
 								<div class="modal-header d-flex justify-content-around border-bottom-0">
 									<div class="contactModalHeader customDarkBlue px-5">
-										<h5 class="m-1">CREATE CONTACT</h5>
+										<h5 id="contactManagementHeading" class="m-1">CREATE CONTACT</h5>
 									</div>
 								</div>
 								<div class="modal-body">
@@ -331,6 +331,20 @@
 						}
                     }
                 });
+			}
+
+			function createContact() {
+				const contactManagementHeading = $("#contactManagementHeading");
+
+				contactManagementHeading.text("CREATE CONTACT");
+				$('#contactManagementModal').modal('show');
+			}
+
+			function editContact(event) {
+				const contactManagementHeading = $("#contactManagementHeading");
+
+				contactManagementHeading.text("EDIT CONTACT");
+				$('#contactManagementModal').modal('show');
 			}
 		</script>
     </body>
