@@ -80,8 +80,6 @@
 
             $("#loginForm").submit(function(event) {
                 event.preventDefault();
-                const email = $("#email").val();
-                const password =  $("#password").val();
                 const submitMsgSection = $("#submitMsgSection");
                 const thisForm = $(this)[0];
                 const formData = new FormData(thisForm);
