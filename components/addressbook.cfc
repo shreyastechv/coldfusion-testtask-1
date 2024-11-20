@@ -87,7 +87,8 @@
         <cfquery name="local.getContactsQuery">
             SELECT contactid, firstname, lastname, contactpicture, email, phone
             FROM contactDetails
-            WHERE _createdBy=<cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">;
+            WHERE _createdBy=<cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">
+            AND active = 1;
         </cfquery>
         <cfreturn local.getContactsQuery>
     </cffunction>
@@ -111,7 +112,8 @@
         <cfset local.response = StructNew()>
 
         <cfquery name="deleteContactQuery">
-            DELETE FROM contactDetails
+            UPDATE contactDetails
+            SET active = 0
             WHERE contactid=<cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_varchar">;
         </cfquery>
 
