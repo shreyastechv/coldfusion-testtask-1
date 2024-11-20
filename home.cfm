@@ -270,24 +270,26 @@
 		<script src="./js/bootstrap.bundle.min.js"></script>
 		<script>
 			function logOut() {
-				const submitMsgSection = $("#submitMsgSection");
+				if (confirm("Confirm logout")) {
+					const submitMsgSection = $("#submitMsgSection");
 
-				$.ajax({
-                    type: "POST",
-                    url: "./components/addressbook.cfc?method=logOut",
-                    success: function(response) {
-						const responseJSON = JSON.parse(response);
-                        if (responseJSON.statusCode === 0) {
-							location.reload();
+					$.ajax({
+						type: "POST",
+						url: "./components/addressbook.cfc?method=logOut",
+						success: function(response) {
+							const responseJSON = JSON.parse(response);
+							if (responseJSON.statusCode === 0) {
+								location.reload();
+							}
+							else {
+								submitMsgSection.text(responseJSON.message);
+							}
+						},
+						error: function (xhr, ajaxOptions, thrownError) {
+							submitMsgSection.text("We encountered an error! Error details are: " + thrownError);
 						}
-						else {
-							submitMsgSection.text(responseJSON.message);
-						}
-                    },
-                    error: function (xhr, ajaxOptions, thrownError) {
-                        submitMsgSection.text("We encountered an error! Error details are: " + thrownError);
-                    }
-                });
+					});
+				}
 			}
 
 			function viewContact(event) {
