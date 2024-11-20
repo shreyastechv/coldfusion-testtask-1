@@ -147,7 +147,9 @@
             <cfset local.contactImage = cffile.serverFile>
             <cfquery>
                 INSERT INTO contactDetails
-                (title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone, _createdBy, _updatedBy)
+                (
+                    title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone, _createdBy, _updatedBy
+                )
                 VALUES (
                     <cfqueryparam value="#arguments.title#" cfsqltype="cf_sql_varchar">,
                     <cfqueryparam value="#arguments.firstName#" cfsqltype="cf_sql_varchar">,
