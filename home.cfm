@@ -71,7 +71,7 @@
 								<cfloop query="session.getContactsQuery">
 									<tr>
 										<td>
-											<img class="contactImage p-2" src="./assets/images/defaultcontactimage-man.png" alt="Contact Image">
+											<img class="contactImage p-2" src="./assets/images/#contactpicture#" alt="Contact Image">
 										</td>
 										<td>#firstname# #lastname#</td>
 										<td>#email#</td>
@@ -149,7 +149,7 @@
 							</div>
 						</div>
 						<div class="contactImageEnlarged d-flex align-items-center justify-content-end p-4">
-							<img src="./assets/profilePictures/demo-profilepicture.png" alt="Contact Image Enlarged">
+							<img id="viewContactPicture" src="./assets/contactImages/demo-contact-image.png" alt="Contact Image Enlarged">
 						</div>
 					</div>
 				</div>
@@ -297,6 +297,7 @@
 				const viewContactPincode = $("#viewContactPincode");
 				const viewContactEmail = $("#viewContactEmail");
 				const viewContactPhone = $("#viewContactPhone");
+				const viewContactPicture = $("#viewContactPicture");
 
 				$.ajax({
                     type: "POST",
@@ -304,7 +305,7 @@
 					data: { contactId: event.target.value },
                     success: function(response) {
 						const responseJSON = JSON.parse(response);
-						const { CONTACTID, TITLE, FIRSTNAME, LASTNAME, GENDER, DOB, ADDRESS, STREET, DISTRICT, STATE, COUNTRY, PINCODE, EMAIL, PHONE } = responseJSON;
+						const { CONTACTID, TITLE, FIRSTNAME, LASTNAME, GENDER, DOB, CONTACTPICTURE, ADDRESS, STREET, DISTRICT, STATE, COUNTRY, PINCODE, EMAIL, PHONE } = responseJSON;
 						viewContactName.text(`${TITLE} ${FIRSTNAME} ${LASTNAME}`);
 						viewContactGender.text(GENDER);
 						viewContactDOB.text(DOB);
@@ -312,6 +313,7 @@
 						viewContactPincode.text(PINCODE);
 						viewContactEmail.text(EMAIL);
 						viewContactPhone.text(PHONE);
+						viewContactPicture.attr("src", `./assets/contactImages/${CONTACTPICTURE}`);
 						$('#viewContactModal').modal('show');
                     }
                 });
