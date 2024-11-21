@@ -220,6 +220,6 @@
             WHERE _createdBy=<cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">
             AND active = 1;
         </cfquery>
-        <cfspreadsheet action="write" filename="./assets/contacts.xlsx" query="createExcelQuery" sheetname="contacts" overwrite=true>
+        <cfspreadsheet action="write" filename="../assets/contacts.xlsx" query="createExcelQuery" sheetname="contacts" overwrite=true>
     </cffunction>
 </cfcomponent>
