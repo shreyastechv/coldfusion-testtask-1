@@ -133,6 +133,7 @@
         <cfargument required="true" name="lastName" type="string">
         <cfargument required="true" name="gender" type="string">
         <cfargument required="true" name="dob" type="string">
+        <cfargument required="true" name="contactImage" type="string">
         <cfargument required="true" name="address" type="string">
         <cfargument required="true" name="street" type="string">
         <cfargument required="true" name="district" type="string">
@@ -141,13 +142,16 @@
         <cfargument required="true" name="pincode" type="string">
         <cfargument required="true" name="email" type="string">
         <cfargument required="true" name="phone" type="string">
-        <cfreturn arguments>
         <cfset local.response = StructNew()>
 
         <cfif StructKeyExists(session, "isLoggedIn")>
-            <cffile action="upload" destination="#expandpath("../assets/contactImages")#" fileField="form.contactImage" nameconflict="MakeUnique">
-            <cfset local.contactImage = cffile.serverFile>
-            <cfif arguments.contactId IS "">
+            <cfif arguments.contactImage NEQ "">
+                <cffile action="upload" destination="#expandpath("../assets/contactImages")#" fileField="form.contactImage" nameconflict="MakeUnique">
+                <cfset local.contactImage = cffile.serverFile>
+            <cfelse>
+                <cfset local.contactImage = "demo-contact-image.png">
+            </cfif>
+            <cfif len(trim(arguments.contactId)) EQ 0>
                 <cfquery>
                     INSERT INTO contactDetails
                     (
@@ -159,6 +163,7 @@
                         <cfqueryparam value="#arguments.lastName#" cfsqltype="cf_sql_varchar">,
                         <cfqueryparam value="#arguments.gender#" cfsqltype="cf_sql_varchar">,
                         <cfqueryparam value="#arguments.dob#" cfsqltype="cf_sql_date">,
+                        <cfqueryparam value="#local.contactImage#" cfsqltype="cf_sql_varchar">,
                         <cfqueryparam value="#arguments.address#" cfsqltype="cf_sql_varchar">,
                         <cfqueryparam value="#arguments.street#" cfsqltype="cf_sql_varchar">,
                         <cfqueryparam value="#arguments.district#" cfsqltype="cf_sql_varchar">,
@@ -181,7 +186,6 @@
                     lastName = <cfqueryparam value="#arguments.lastName#" cfsqltype="cf_sql_varchar">,
                     gender = <cfqueryparam value="#arguments.gender#" cfsqltype="cf_sql_varchar">,
                     dob = <cfqueryparam value="#arguments.dob#" cfsqltype="cf_sql_date">,
-                    contactImage = <cfqueryparam value="#local.contactImage#" cfsqltype="cf_sql_varchar">,
                     address = <cfqueryparam value="#arguments.address#" cfsqltype="cf_sql_varchar">,
                     street = <cfqueryparam value="#arguments.street#" cfsqltype="cf_sql_varchar">,
                     district = <cfqueryparam value="#arguments.district#" cfsqltype="cf_sql_varchar">,
@@ -191,8 +195,15 @@
                     email = <cfqueryparam value="#arguments.email#" cfsqltype="cf_sql_varchar">,
                     phone = <cfqueryparam value="#arguments.phone#" cfsqltype="cf_sql_varchar">,
                     _updatedBy = <cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">
-                    WHERE contactid = <cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_varchar">
+                    WHERE contactid = <cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_varchar">;
                 </cfquery>
+                <cfif arguments.contactImage EQ "">
+                    <cfquery name="updateContactImage">
+                        UPDATE contactDetails
+                        SET contactpicture = <cfqueryparam value="#local.contactImage#" cfsqltype="cf_sql_varchar">
+                        WHERE contactid = <cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_varchar">;
+                    </cfquery>
+                </cfif>
                 <cfset local.response["statusCode"] = 0>
                 <cfset local.response["message"] = "Contact Updated Successfully">
             </cfif>

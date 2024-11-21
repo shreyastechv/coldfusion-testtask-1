@@ -398,6 +398,7 @@
 						lastName: $("#editContactLastname").val(),
 						gender: $("#editContactGender").val(),
 						dob: $("#editContactDOB").val(),
+						contactImage: $("#editContactImage").val() ? $("#editContactImage").val() : "",
 						address: $("#editContactAddress").val(),
 						street: $("#editContactStreet").val(),
 						district: $("#editContactDistrict").val(),
