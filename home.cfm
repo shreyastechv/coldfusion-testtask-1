@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Log In - Address Book</title>
+        <title>Home Page - Address Book</title>
 		<link href="./css/bootstrap.min.css" rel="stylesheet">
 		<link href="./css/home.css" rel="stylesheet">
 		<script src="./js/fontawesome.js"></script>
