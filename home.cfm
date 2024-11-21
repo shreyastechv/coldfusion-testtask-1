@@ -31,7 +31,7 @@
 					<button onclick="createPdf()" class="btn">
 						<img class="toolbarIcon p-1" src="./assets/images/pdficon.png" alt="PDF Icon">
 					</button>
-					<button onclick="return createExcel()" class="btn">
+					<button onclick="createExcel()" class="btn">
 						<img class="toolbarIcon" src="./assets/images/excelicon.png" alt="Excel Icon">
 					</button>
 					<button onclick="window.print()" class="btn">
