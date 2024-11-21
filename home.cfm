@@ -367,7 +367,7 @@
 						const year = dob.getFullYear();
 						let month = dob.getMonth()+1;
 						if (month < 10) month = '0' + month;
-						let day = dob.getDay();
+						let day = dob.getDate();
 						if (day < 10) day = '0' + day;
 						$("#editContactDOB").val(`${year}-${month}-${day}`);
 						$("#editContactPicture").attr("src", `./assets/contactImages/${CONTACTPICTURE}`);
