@@ -409,7 +409,6 @@
 						phone: $("#editContactPhone").val(),
 					},
                     success: function(response) {
-						console.log(response);
                         const responseJSON = JSON.parse(response);
                         if (responseJSON.statusCode === 0) {
                             $("#contactManagement")[0].reset();
