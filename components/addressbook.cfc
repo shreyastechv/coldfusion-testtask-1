@@ -84,25 +84,25 @@
     </cffunction>
 
     <cffunction name="getContacts" returnType="query" access="public">
-        <cfquery name="local.getContactsQuery">
+        <cfquery name="getContactsQuery">
             SELECT contactid, firstname, lastname, contactpicture, email, phone
             FROM contactDetails
             WHERE _createdBy=<cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">
             AND active = 1;
         </cfquery>
-        <cfreturn local.getContactsQuery>
+        <cfreturn getContactsQuery>
     </cffunction>
 
     <cffunction name="getContactById" returnType="struct" returnFormat="json" access="remote">
         <cfargument required="true" name="contactId" type="string">
 
-        <cfquery name="local.getContactById">
+        <cfquery name="getContactById">
             SELECT contactid, title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone
             FROM contactDetails
             WHERE contactid=<cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_varchar">;
         </cfquery>
 
-        <cfset local.contactDetails = QueryGetRow(local.getContactById, 1)>
+        <cfset local.contactDetails = QueryGetRow(getContactById, 1)>
 
         <cfreturn local.contactDetails>
     </cffunction>
@@ -151,7 +151,7 @@
                 <cfset local.contactImage = cffile.serverFile>
             </cfif>
             <cfif len(trim(arguments.editContactId)) EQ 0>
-                <cfquery>
+                <cfquery name="insertContactsQuery">
                     INSERT INTO contactDetails
                     (
                         title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone, _createdBy, _updatedBy
@@ -178,7 +178,7 @@
                 <cfset local.response["statusCode"] = 0>
                 <cfset local.response["message"] = "Contact Added Successfully">
             <cfelse>
-                <cfquery>
+                <cfquery name="updateContactDetailsQuery">
                     UPDATE contactDetails
                     SET title = <cfqueryparam value="#arguments.editContactTitle#" cfsqltype="cf_sql_varchar">,
                     firstName = <cfqueryparam value="#arguments.editContactFirstName#" cfsqltype="cf_sql_varchar">,
@@ -197,7 +197,7 @@
                     WHERE contactid = <cfqueryparam value="#arguments.editContactId#" cfsqltype="cf_sql_varchar">;
                 </cfquery>
                 <cfif arguments.editContactImage NEQ "">
-                    <cfquery name="updateContactImage">
+                    <cfquery name="updateContactImageQuery">
                         UPDATE contactDetails
                         SET contactpicture = <cfqueryparam value="#local.contactImage#" cfsqltype="cf_sql_varchar">
                         WHERE contactid = <cfqueryparam value="#arguments.editContactId#" cfsqltype="cf_sql_varchar">;
@@ -211,5 +211,15 @@
         </cfif>
 
         <cfreturn local.response>
+    </cffunction>
+
+    <cffunction name="createExcel" returnType="void" access="remote">
+        <cfquery name="createExcelQuery">
+            SELECT contactid, title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone, _createdBy, _updatedBy
+            FROM contactDetails
+            WHERE _createdBy=<cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">
+            AND active = 1;
+        </cfquery>
+        <cfspreadsheet action="write" filename="./assets/contacts.xlsx" query="createExcelQuery" sheetname="contacts" overwrite=true>
     </cffunction>
 </cfcomponent>

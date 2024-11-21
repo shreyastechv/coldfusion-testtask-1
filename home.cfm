@@ -393,7 +393,9 @@
                 $.ajax({
                     type: "POST",
                     url: "./components/addressbook.cfc?method=modifyContacts",
-                    data: formData,
+                    data: {
+
+					},
 					enctype: 'multipart/form-data',
 					processData: false,
 					contentType: false,
@@ -409,13 +411,31 @@
 						else {
 							contactManagementMsgSection.css("color", "red");
 						}
-                        contactManagementMsgSection.text(responseJSON.message);
+                        contactManagementMsgSection.inner(responseJSON.message);
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
                         contactManagementMsgSection.text("We encountered an error! Error details are: " + thrownError);
                     }
                 });
             });
+
+			function downloadURI(uri, name) {
+				var link = document.createElement("a");
+				link.download = name;
+				link.href = uri;
+				link.click();
+				link.remove();
+			}
+
+			function createExcel() {
+				$.ajax({
+					type: "POST",
+					url: "./components/addressbook.cfc?method=createExcel",
+					success: function() {
+						downloadURI("./assets/contacts.xlsx", "contact-details.xlsx");
+					}
+				});
+			}
 		</script>
     </body>
 </html>
