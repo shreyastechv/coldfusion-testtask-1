@@ -143,13 +143,12 @@
         <cfargument required="true" name="editContactEmail" type="string">
         <cfargument required="true" name="editContactPhone" type="string">
         <cfset local.response = StructNew()>
+        <cfset local.contactImage = "demo-contact-image.png">
 
         <cfif StructKeyExists(session, "isLoggedIn")>
             <cfif arguments.editContactImage NEQ "">
                 <cffile action="upload" destination="#expandpath("../assets/contactImages")#" fileField="form.editContactImage" nameconflict="MakeUnique">
-                <cfset local.contactImage = "profilepic-new1.jpg">
-            <cfelse>
-                <cfset local.contactImage = "demo-contact-image.png">
+                <cfset local.contactImage = cffile.serverFile>
             </cfif>
             <cfif len(trim(arguments.editContactId)) EQ 0>
                 <cfquery>
@@ -197,7 +196,7 @@
                     _updatedBy = <cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">
                     WHERE contactid = <cfqueryparam value="#arguments.editContactId#" cfsqltype="cf_sql_varchar">;
                 </cfquery>
-                <cfif arguments.editContactImage EQ "">
+                <cfif arguments.editContactImage NEQ "">
                     <cfquery name="updateContactImage">
                         UPDATE contactDetails
                         SET contactpicture = <cfqueryparam value="#local.contactImage#" cfsqltype="cf_sql_varchar">
