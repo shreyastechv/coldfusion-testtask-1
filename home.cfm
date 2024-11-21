@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Log In - Address Book</title>
+        <title>Home Page - Address Book</title>
 		<link href="./css/bootstrap.min.css" rel="stylesheet">
 		<link href="./css/home.css" rel="stylesheet">
 		<script src="./js/fontawesome.js"></script>
@@ -31,7 +31,7 @@
 					<button onclick="createPdf()" class="btn">
 						<img class="toolbarIcon p-1" src="./assets/images/pdficon.png" alt="PDF Icon">
 					</button>
-					<button onclick="return createExcel()" class="btn">
+					<button onclick="createExcel()" class="btn">
 						<img class="toolbarIcon" src="./assets/images/excelicon.png" alt="Excel Icon">
 					</button>
 					<button onclick="window.print()" class="btn">
@@ -53,42 +53,45 @@
 						<button class="btn bg-primary text-white rounded-pill" onclick="createContact()">CREATE CONTACT</button>
 					</div>
 					<div class="col-md-9 bg-white rounded-1 p-3">
-						<table class="table table-hover align-middle">
-							<thead>
-								<tr>
-									<th></th>
-									<th>NAME</th>
-									<th>EMAIL ID</th>
-									<th>PHONE NUMBER</th>
-									<th></th>
-									<th></th>
-									<th></th>
-								</tr>
-							</thead>
-							<tbody>
-								<cfset local.contactsObject = CreateObject("component", "components.addressbook")>
-								<cfset session.getContactsQuery = contactsObject.getContacts()>
-								<cfloop query="session.getContactsQuery">
+						<cfsavecontent variable="session.contactsTableSection">
+							<table class="table table-hover align-middle">
+								<thead>
 									<tr>
-										<td>
-											<img class="contactImage p-2" src="./assets/contactImages/#contactpicture#" alt="Contact Image">
-										</td>
-										<td>#firstname# #lastname#</td>
-										<td>#email#</td>
-										<td>#phone#</td>
-										<td>
-											<button class="actionBtn btn btn-outline-primary rounded-pill px-4" value="#contactid#" onclick="editContact(event)">EDIT</button>
-										</td>
-										<td>
-											<button class="actionBtn btn btn-outline-danger rounded-pill px-3" value="#contactid#" onclick="deleteContact(event)">DELETE</button>
-										</td>
-										<td>
-											<button class="actionBtn btn btn-outline-info rounded-pill px-3" value="#contactid#" onclick="viewContact(event)">VIEW</button>
-										</td>
+										<th></th>
+										<th>NAME</th>
+										<th>EMAIL ID</th>
+										<th>PHONE NUMBER</th>
+										<th></th>
+										<th></th>
+										<th></th>
 									</tr>
-								</cfloop>
-							</tbody>
-						</table>
+								</thead>
+								<tbody>
+									<cfset local.contactsObject = CreateObject("component", "components.addressbook")>
+									<cfset session.getContactsQuery = contactsObject.getContacts()>
+									<cfloop query="session.getContactsQuery">
+										<tr>
+											<td>
+												<img class="contactImage p-2" src="./assets/contactImages/#contactpicture#" alt="Contact Image">
+											</td>
+											<td>#firstname# #lastname#</td>
+											<td>#email#</td>
+											<td>#phone#</td>
+											<td>
+												<button class="actionBtn btn btn-outline-primary rounded-pill px-4" value="#contactid#" onclick="editContact(event)">EDIT</button>
+											</td>
+											<td>
+												<button class="actionBtn btn btn-outline-danger rounded-pill px-3" value="#contactid#" onclick="deleteContact(event)">DELETE</button>
+											</td>
+											<td>
+												<button class="actionBtn btn btn-outline-info rounded-pill px-3" value="#contactid#" onclick="viewContact(event)">VIEW</button>
+											</td>
+										</tr>
+									</cfloop>
+								</tbody>
+							</table>
+						</cfsavecontent>
+						#session.contactsTableSection#
 					</div>
 				</div>
 			</div>
@@ -173,7 +176,7 @@
 									<div class="d-flex justify-content-between mb-3">
 										<div class="col-md-2">
 											<label class="contactManagementLabel" for="editContactTitle">Title *</label>
-											<select class="contactManagementInput py-1 mt-1" id="editContactTitle" name="title">
+											<select class="contactManagementInput py-1 mt-1" id="editContactTitle" name="editContactTitle">
 												<option></option>
 												<option>Mr.</option>
 												<option>Miss.</option>
@@ -367,7 +370,7 @@
 						const year = dob.getFullYear();
 						let month = dob.getMonth()+1;
 						if (month < 10) month = '0' + month;
-						let day = dob.getDay();
+						let day = dob.getDate();
 						if (day < 10) day = '0' + day;
 						$("#editContactDOB").val(`${year}-${month}-${day}`);
 						$("#editContactPicture").attr("src", `./assets/contactImages/${CONTACTPICTURE}`);
@@ -387,43 +390,65 @@
 			$("#contactManagement").submit(function(event) {
                 event.preventDefault();
                 const contactManagementMsgSection = $("#contactManagementMsgSection");
+				const thisForm = $(this)[0];
+                const formData = new FormData(thisForm);
 
                 $.ajax({
                     type: "POST",
                     url: "./components/addressbook.cfc?method=modifyContacts",
                     data: {
-						contactId: $("#editContactId").val(),
-						title: $("#editContactTitle").val(),
-						firstName: $("#editContactFirstname").val(),
-						lastName: $("#editContactLastname").val(),
-						gender: $("#editContactGender").val(),
-						dob: $("#editContactDOB").val(),
-						address: $("#editContactAddress").val(),
-						street: $("#editContactStreet").val(),
-						district: $("#editContactDistrict").val(),
-						state: $("#editContactState").val(),
-						country: $("#editContactCountry").val(),
-						pincode: $("#editContactPincode").val(),
-						email: $("#editContactEmail").val(),
-						phone: $("#editContactPhone").val(),
+
 					},
+					enctype: 'multipart/form-data',
+					processData: false,
+					contentType: false,
                     success: function(response) {
-						console.log(response);
                         const responseJSON = JSON.parse(response);
                         if (responseJSON.statusCode === 0) {
-                            $("#contactManagement")[0].reset();
+							if ($("#editContactId").val() === "") {
+								$("#contactManagement")[0].reset();
+							}
 							contactManagementMsgSection.css("color", "green");
+							location.reload();
                         }
 						else {
 							contactManagementMsgSection.css("color", "red");
 						}
-                        contactManagementMsgSection.text(responseJSON.message);
+                        contactManagementMsgSection.inner(responseJSON.message);
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
                         contactManagementMsgSection.text("We encountered an error! Error details are: " + thrownError);
                     }
                 });
             });
+
+			function downloadURI(uri, name) {
+				var link = document.createElement("a");
+				link.download = name;
+				link.href = uri;
+				link.click();
+				link.remove();
+			}
+
+			function createExcel() {
+				$.ajax({
+					type: "POST",
+					url: "./components/addressbook.cfc?method=createExcel",
+					success: function() {
+						downloadURI("./assets/contacts.xlsx", "contact-details.xlsx");
+					}
+				});
+			}
+
+			function createPdf() {
+				$.ajax({
+					type: "POST",
+					url: "./components/addressbook.cfc?method=createPdf",
+					success: function() {
+						downloadURI("./assets/contacts.pdf", "contact-details.pdf");
+					}
+				});
+			}
 		</script>
     </body>
 </html>
