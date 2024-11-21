@@ -411,7 +411,9 @@
                     success: function(response) {
                         const responseJSON = JSON.parse(response);
                         if (responseJSON.statusCode === 0) {
-                            $("#contactManagement")[0].reset();
+							if ($("#editContactId").val() === "") {
+								$("#contactManagement")[0].reset();
+							}
 							contactManagementMsgSection.css("color", "green");
                         }
 						else {
