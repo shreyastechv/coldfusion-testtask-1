@@ -404,6 +404,7 @@
 								$("#contactManagement")[0].reset();
 							}
 							contactManagementMsgSection.css("color", "green");
+							location.reload();
                         }
 						else {
 							contactManagementMsgSection.css("color", "red");
