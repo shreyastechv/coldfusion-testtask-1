@@ -398,7 +398,7 @@
 						lastName: $("#editContactLastname").val(),
 						gender: $("#editContactGender").val(),
 						dob: $("#editContactDOB").val(),
-						contactImage: $("#editContactImage").val() ? $("#editContactImage").val() : "",
+						contactImage: $("#editContactImage")[0].files.length ? $("#editContactImage")[0].files[0].name : "",
 						address: $("#editContactAddress").val(),
 						street: $("#editContactStreet").val(),
 						district: $("#editContactDistrict").val(),
@@ -406,7 +406,7 @@
 						country: $("#editContactCountry").val(),
 						pincode: $("#editContactPincode").val(),
 						email: $("#editContactEmail").val(),
-						phone: $("#editContactPhone").val(),
+						phone: $("#editContactPhone").val()
 					},
                     success: function(response) {
                         const responseJSON = JSON.parse(response);
