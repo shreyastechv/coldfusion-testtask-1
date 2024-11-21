@@ -222,4 +222,10 @@
         </cfquery>
         <cfspreadsheet action="write" filename="../assets/contacts.xlsx" query="createExcelQuery" sheetname="contacts" overwrite=true>
     </cffunction>
+
+    <cffunction name="createPdf" returnType="void" access="remote">
+        <cfdocument format="pdf" filename="../assets/contacts.pdf" overwrite="true">
+            <cfoutput>#session.contactsTableSection#</cfoutput>
+        </cfdocument>
+    </cffunction>
 </cfcomponent>

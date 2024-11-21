@@ -53,42 +53,45 @@
 						<button class="btn bg-primary text-white rounded-pill" onclick="createContact()">CREATE CONTACT</button>
 					</div>
 					<div class="col-md-9 bg-white rounded-1 p-3">
-						<table class="table table-hover align-middle">
-							<thead>
-								<tr>
-									<th></th>
-									<th>NAME</th>
-									<th>EMAIL ID</th>
-									<th>PHONE NUMBER</th>
-									<th></th>
-									<th></th>
-									<th></th>
-								</tr>
-							</thead>
-							<tbody>
-								<cfset local.contactsObject = CreateObject("component", "components.addressbook")>
-								<cfset session.getContactsQuery = contactsObject.getContacts()>
-								<cfloop query="session.getContactsQuery">
+						<cfsavecontent variable="session.contactsTableSection">
+							<table class="table table-hover align-middle">
+								<thead>
 									<tr>
-										<td>
-											<img class="contactImage p-2" src="./assets/contactImages/#contactpicture#" alt="Contact Image">
-										</td>
-										<td>#firstname# #lastname#</td>
-										<td>#email#</td>
-										<td>#phone#</td>
-										<td>
-											<button class="actionBtn btn btn-outline-primary rounded-pill px-4" value="#contactid#" onclick="editContact(event)">EDIT</button>
-										</td>
-										<td>
-											<button class="actionBtn btn btn-outline-danger rounded-pill px-3" value="#contactid#" onclick="deleteContact(event)">DELETE</button>
-										</td>
-										<td>
-											<button class="actionBtn btn btn-outline-info rounded-pill px-3" value="#contactid#" onclick="viewContact(event)">VIEW</button>
-										</td>
+										<th></th>
+										<th>NAME</th>
+										<th>EMAIL ID</th>
+										<th>PHONE NUMBER</th>
+										<th></th>
+										<th></th>
+										<th></th>
 									</tr>
-								</cfloop>
-							</tbody>
-						</table>
+								</thead>
+								<tbody>
+									<cfset local.contactsObject = CreateObject("component", "components.addressbook")>
+									<cfset session.getContactsQuery = contactsObject.getContacts()>
+									<cfloop query="session.getContactsQuery">
+										<tr>
+											<td>
+												<img class="contactImage p-2" src="./assets/contactImages/#contactpicture#" alt="Contact Image">
+											</td>
+											<td>#firstname# #lastname#</td>
+											<td>#email#</td>
+											<td>#phone#</td>
+											<td>
+												<button class="actionBtn btn btn-outline-primary rounded-pill px-4" value="#contactid#" onclick="editContact(event)">EDIT</button>
+											</td>
+											<td>
+												<button class="actionBtn btn btn-outline-danger rounded-pill px-3" value="#contactid#" onclick="deleteContact(event)">DELETE</button>
+											</td>
+											<td>
+												<button class="actionBtn btn btn-outline-info rounded-pill px-3" value="#contactid#" onclick="viewContact(event)">VIEW</button>
+											</td>
+										</tr>
+									</cfloop>
+								</tbody>
+							</table>
+						</cfsavecontent>
+						#session.contactsTableSection#
 					</div>
 				</div>
 			</div>
@@ -433,6 +436,16 @@
 					url: "./components/addressbook.cfc?method=createExcel",
 					success: function() {
 						downloadURI("./assets/contacts.xlsx", "contact-details.xlsx");
+					}
+				});
+			}
+
+			function createPdf() {
+				$.ajax({
+					type: "POST",
+					url: "./components/addressbook.cfc?method=createPdf",
+					success: function() {
+						downloadURI("./assets/contacts.pdf", "contact-details.pdf");
 					}
 				});
 			}
