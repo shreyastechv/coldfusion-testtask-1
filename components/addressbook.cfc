@@ -127,51 +127,51 @@
     </cffunction>
 
     <cffunction name="modifyContacts" returnType="struct" returnFormat="json" access="remote">
-        <cfargument required="false" name="contactId" type="string">
-        <cfargument required="true" name="title" type="string">
-        <cfargument required="true" name="firstName" type="string">
-        <cfargument required="true" name="lastName" type="string">
-        <cfargument required="true" name="gender" type="string">
-        <cfargument required="true" name="dob" type="string">
-        <cfargument required="true" name="contactImage" type="string">
-        <cfargument required="true" name="address" type="string">
-        <cfargument required="true" name="street" type="string">
-        <cfargument required="true" name="district" type="string">
-        <cfargument required="true" name="state" type="string">
-        <cfargument required="true" name="country" type="string">
-        <cfargument required="true" name="pincode" type="string">
-        <cfargument required="true" name="email" type="string">
-        <cfargument required="true" name="phone" type="string">
+        <cfargument required="false" name="editContactId" type="string">
+        <cfargument required="true" name="editContactTitle" type="string">
+        <cfargument required="true" name="editContactFirstName" type="string">
+        <cfargument required="true" name="editContactLastName" type="string">
+        <cfargument required="true" name="editContactGender" type="string">
+        <cfargument required="true" name="editContactDOB" type="string">
+        <cfargument required="true" name="editContactImage" type="string">
+        <cfargument required="true" name="editContactAddress" type="string">
+        <cfargument required="true" name="editContactStreet" type="string">
+        <cfargument required="true" name="editContactDistrict" type="string">
+        <cfargument required="true" name="editContactState" type="string">
+        <cfargument required="true" name="editContactCountry" type="string">
+        <cfargument required="true" name="editContactPincode" type="string">
+        <cfargument required="true" name="editContactEmail" type="string">
+        <cfargument required="true" name="editContactPhone" type="string">
         <cfset local.response = StructNew()>
 
         <cfif StructKeyExists(session, "isLoggedIn")>
-            <cfif arguments.contactImage NEQ "">
-                <cffile action="upload" destination="#expandpath("../assets/contactImages")#" fileField="form.contactImage" nameconflict="MakeUnique">
-                <cfset local.contactImage = cffile.serverFile>
+            <cfif arguments.editContactImage NEQ "">
+                <cffile action="upload" destination="#expandpath("../assets/contactImages")#" fileField="form.editContactImage" nameconflict="MakeUnique">
+                <cfset local.contactImage = "profilepic-new1.jpg">
             <cfelse>
                 <cfset local.contactImage = "demo-contact-image.png">
             </cfif>
-            <cfif len(trim(arguments.contactId)) EQ 0>
+            <cfif len(trim(arguments.editContactId)) EQ 0>
                 <cfquery>
                     INSERT INTO contactDetails
                     (
                         title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone, _createdBy, _updatedBy
                     )
                     VALUES (
-                        <cfqueryparam value="#arguments.title#" cfsqltype="cf_sql_varchar">,
-                        <cfqueryparam value="#arguments.firstName#" cfsqltype="cf_sql_varchar">,
-                        <cfqueryparam value="#arguments.lastName#" cfsqltype="cf_sql_varchar">,
-                        <cfqueryparam value="#arguments.gender#" cfsqltype="cf_sql_varchar">,
-                        <cfqueryparam value="#arguments.dob#" cfsqltype="cf_sql_date">,
+                        <cfqueryparam value="#arguments.editContactTitle#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#arguments.editContactFirstName#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#arguments.editContactLastName#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#arguments.editContactGender#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#arguments.editContactDOB#" cfsqltype="cf_sql_date">,
                         <cfqueryparam value="#local.contactImage#" cfsqltype="cf_sql_varchar">,
-                        <cfqueryparam value="#arguments.address#" cfsqltype="cf_sql_varchar">,
-                        <cfqueryparam value="#arguments.street#" cfsqltype="cf_sql_varchar">,
-                        <cfqueryparam value="#arguments.district#" cfsqltype="cf_sql_varchar">,
-                        <cfqueryparam value="#arguments.state#" cfsqltype="cf_sql_varchar">,
-                        <cfqueryparam value="#arguments.country#" cfsqltype="cf_sql_varchar">,
-                        <cfqueryparam value="#arguments.pincode#" cfsqltype="cf_sql_char">,
-                        <cfqueryparam value="#arguments.email#" cfsqltype="cf_sql_varchar">,
-                        <cfqueryparam value="#arguments.phone#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#arguments.editContactAddress#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#arguments.editContactStreet#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#arguments.editContactDistrict#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#arguments.editContactState#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#arguments.editContactCountry#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#arguments.editContactPincode#" cfsqltype="cf_sql_char">,
+                        <cfqueryparam value="#arguments.editContactEmail#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#arguments.editContactPhone#" cfsqltype="cf_sql_varchar">,
                         <cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">,
                         <cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">
                     );
@@ -181,27 +181,27 @@
             <cfelse>
                 <cfquery>
                     UPDATE contactDetails
-                    SET title = <cfqueryparam value="#arguments.title#" cfsqltype="cf_sql_varchar">,
-                    firstName = <cfqueryparam value="#arguments.firstName#" cfsqltype="cf_sql_varchar">,
-                    lastName = <cfqueryparam value="#arguments.lastName#" cfsqltype="cf_sql_varchar">,
-                    gender = <cfqueryparam value="#arguments.gender#" cfsqltype="cf_sql_varchar">,
-                    dob = <cfqueryparam value="#arguments.dob#" cfsqltype="cf_sql_date">,
-                    address = <cfqueryparam value="#arguments.address#" cfsqltype="cf_sql_varchar">,
-                    street = <cfqueryparam value="#arguments.street#" cfsqltype="cf_sql_varchar">,
-                    district = <cfqueryparam value="#arguments.district#" cfsqltype="cf_sql_varchar">,
-                    state = <cfqueryparam value="#arguments.state#" cfsqltype="cf_sql_varchar">,
-                    country = <cfqueryparam value="#arguments.country#" cfsqltype="cf_sql_varchar">,
-                    pincode = <cfqueryparam value="#arguments.pincode#" cfsqltype="cf_sql_varchar">,
-                    email = <cfqueryparam value="#arguments.email#" cfsqltype="cf_sql_varchar">,
-                    phone = <cfqueryparam value="#arguments.phone#" cfsqltype="cf_sql_varchar">,
+                    SET title = <cfqueryparam value="#arguments.editContactTitle#" cfsqltype="cf_sql_varchar">,
+                    firstName = <cfqueryparam value="#arguments.editContactFirstName#" cfsqltype="cf_sql_varchar">,
+                    lastName = <cfqueryparam value="#arguments.editContactLastName#" cfsqltype="cf_sql_varchar">,
+                    gender = <cfqueryparam value="#arguments.editContactGender#" cfsqltype="cf_sql_varchar">,
+                    dob = <cfqueryparam value="#arguments.editContactDOB#" cfsqltype="cf_sql_date">,
+                    address = <cfqueryparam value="#arguments.editContactAddress#" cfsqltype="cf_sql_varchar">,
+                    street = <cfqueryparam value="#arguments.editContactStreet#" cfsqltype="cf_sql_varchar">,
+                    district = <cfqueryparam value="#arguments.editContactDistrict#" cfsqltype="cf_sql_varchar">,
+                    state = <cfqueryparam value="#arguments.editContactState#" cfsqltype="cf_sql_varchar">,
+                    country = <cfqueryparam value="#arguments.editContactCountry#" cfsqltype="cf_sql_varchar">,
+                    pincode = <cfqueryparam value="#arguments.editContactPincode#" cfsqltype="cf_sql_varchar">,
+                    email = <cfqueryparam value="#arguments.editContactEmail#" cfsqltype="cf_sql_varchar">,
+                    phone = <cfqueryparam value="#arguments.editContactPhone#" cfsqltype="cf_sql_varchar">,
                     _updatedBy = <cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">
-                    WHERE contactid = <cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_varchar">;
+                    WHERE contactid = <cfqueryparam value="#arguments.editContactId#" cfsqltype="cf_sql_varchar">;
                 </cfquery>
-                <cfif arguments.contactImage EQ "">
+                <cfif arguments.editContactImage EQ "">
                     <cfquery name="updateContactImage">
                         UPDATE contactDetails
                         SET contactpicture = <cfqueryparam value="#local.contactImage#" cfsqltype="cf_sql_varchar">
-                        WHERE contactid = <cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_varchar">;
+                        WHERE contactid = <cfqueryparam value="#arguments.editContactId#" cfsqltype="cf_sql_varchar">;
                     </cfquery>
                 </cfif>
                 <cfset local.response["statusCode"] = 0>

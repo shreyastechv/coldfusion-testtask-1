@@ -173,7 +173,7 @@
 									<div class="d-flex justify-content-between mb-3">
 										<div class="col-md-2">
 											<label class="contactManagementLabel" for="editContactTitle">Title *</label>
-											<select class="contactManagementInput py-1 mt-1" id="editContactTitle" name="title">
+											<select class="contactManagementInput py-1 mt-1" id="editContactTitle" name="editContactTitle">
 												<option></option>
 												<option>Mr.</option>
 												<option>Miss.</option>
@@ -387,27 +387,16 @@
 			$("#contactManagement").submit(function(event) {
                 event.preventDefault();
                 const contactManagementMsgSection = $("#contactManagementMsgSection");
+				const thisForm = $(this)[0];
+                const formData = new FormData(thisForm);
 
                 $.ajax({
                     type: "POST",
                     url: "./components/addressbook.cfc?method=modifyContacts",
-                    data: {
-						contactId: $("#editContactId").val(),
-						title: $("#editContactTitle").val(),
-						firstName: $("#editContactFirstname").val(),
-						lastName: $("#editContactLastname").val(),
-						gender: $("#editContactGender").val(),
-						dob: $("#editContactDOB").val(),
-						contactImage: $("#editContactImage")[0].files.length ? $("#editContactImage")[0].files[0].name : "",
-						address: $("#editContactAddress").val(),
-						street: $("#editContactStreet").val(),
-						district: $("#editContactDistrict").val(),
-						state: $("#editContactState").val(),
-						country: $("#editContactCountry").val(),
-						pincode: $("#editContactPincode").val(),
-						email: $("#editContactEmail").val(),
-						phone: $("#editContactPhone").val()
-					},
+                    data: formData,
+					enctype: 'multipart/form-data',
+					processData: false,
+					contentType: false,
                     success: function(response) {
                         const responseJSON = JSON.parse(response);
                         if (responseJSON.statusCode === 0) {
