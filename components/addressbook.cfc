@@ -225,7 +225,58 @@
 
     <cffunction name="createPdf" returnType="void" access="remote">
         <cfdocument format="pdf" filename="../assets/contacts.pdf" overwrite="true">
-            <cfoutput>#session.contactsTableSection#</cfoutput>
+            <cfquery name="createPdfQuery">
+                SELECT title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone, _createdBy, _updatedBy
+                FROM contactDetails
+                WHERE _createdBy=<cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">
+                AND active = 1;
+            </cfquery>
+            <cfoutput>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>TITLE</th>
+                            <th>FIRSTNAME</th>
+                            <th>LASTNAME</th>
+                            <th>GENDER</th>
+                            <th>DOB</th>
+                            <th>CONTACTPICTURE</th>
+                            <th>ADDRESS</th>
+                            <th>STREET</th>
+                            <th>DISTRICT</th>
+                            <th>STATE</th>
+                            <th>COUNTRY</th>
+                            <th>PINCODE</th>
+                            <th>EMAIL ID</th>
+                            <th>PHONE NUMBER</th>
+                            <th>CREATED BY</th>
+                            <th>UPDATED BY</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <cfloop query="createPdfQuery">
+                            <tr>
+                                <td>#title#</td>
+                                <td>#firstname#</td>
+                                <td>#lastname#</td>
+                                <td>#gender#</td>
+                                <td>#dob#</td>
+                                <td>#contactpicture#</td>
+                                <td>#address#</td>
+                                <td>#street#</td>
+                                <td>#district#</td>
+                                <td>#state#</td>
+                                <td>#country#</td>
+                                <td>#pincode#</td>
+                                <td>#email#</td>
+                                <td>#phone#</td>
+                                <td>#_createdBy#</td>
+                                <td>#_updatedBy#</td>
+                            </tr>
+                        </cfloop>
+                    </tbody>
+                </table>
+            </cfoutput>
         </cfdocument>
     </cffunction>
 </cfcomponent>

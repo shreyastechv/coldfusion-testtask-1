@@ -53,45 +53,42 @@
 						<button class="btn bg-primary text-white rounded-pill" onclick="createContact()">CREATE CONTACT</button>
 					</div>
 					<div class="col-md-9 bg-white rounded-1 p-3">
-						<cfsavecontent variable="session.contactsTableSection">
-							<table class="table table-hover align-middle">
-								<thead>
+						<table class="table table-hover align-middle">
+							<thead>
+								<tr>
+									<th></th>
+									<th>NAME</th>
+									<th>EMAIL ID</th>
+									<th>PHONE NUMBER</th>
+									<th></th>
+									<th></th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								<cfset local.contactsObject = CreateObject("component", "components.addressbook")>
+								<cfset session.getContactsQuery = contactsObject.getContacts()>
+								<cfloop query="session.getContactsQuery">
 									<tr>
-										<th></th>
-										<th>NAME</th>
-										<th>EMAIL ID</th>
-										<th>PHONE NUMBER</th>
-										<th></th>
-										<th></th>
-										<th></th>
+										<td>
+											<img class="contactImage p-2" src="./assets/contactImages/#contactpicture#" alt="Contact Image">
+										</td>
+										<td>#firstname# #lastname#</td>
+										<td>#email#</td>
+										<td>#phone#</td>
+										<td>
+											<button class="actionBtn btn btn-outline-primary rounded-pill px-4" value="#contactid#" onclick="editContact(event)">EDIT</button>
+										</td>
+										<td>
+											<button class="actionBtn btn btn-outline-danger rounded-pill px-3" value="#contactid#" onclick="deleteContact(event)">DELETE</button>
+										</td>
+										<td>
+											<button class="actionBtn btn btn-outline-info rounded-pill px-3" value="#contactid#" onclick="viewContact(event)">VIEW</button>
+										</td>
 									</tr>
-								</thead>
-								<tbody>
-									<cfset local.contactsObject = CreateObject("component", "components.addressbook")>
-									<cfset session.getContactsQuery = contactsObject.getContacts()>
-									<cfloop query="session.getContactsQuery">
-										<tr>
-											<td>
-												<img class="contactImage p-2" src="./assets/contactImages/#contactpicture#" alt="Contact Image">
-											</td>
-											<td>#firstname# #lastname#</td>
-											<td>#email#</td>
-											<td>#phone#</td>
-											<td>
-												<button class="actionBtn btn btn-outline-primary rounded-pill px-4" value="#contactid#" onclick="editContact(event)">EDIT</button>
-											</td>
-											<td>
-												<button class="actionBtn btn btn-outline-danger rounded-pill px-3" value="#contactid#" onclick="deleteContact(event)">DELETE</button>
-											</td>
-											<td>
-												<button class="actionBtn btn btn-outline-info rounded-pill px-3" value="#contactid#" onclick="viewContact(event)">VIEW</button>
-											</td>
-										</tr>
-									</cfloop>
-								</tbody>
-							</table>
-						</cfsavecontent>
-						#session.contactsTableSection#
+								</cfloop>
+							</tbody>
+						</table>
 					</div>
 				</div>
 			</div>
