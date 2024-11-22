@@ -69,6 +69,7 @@ function deleteContact(event) {
 
 function createContact() {
 	$("#contactManagementHeading").text("CREATE CONTACT");
+	resetContactFormErrors();
 	$("#contactManagement")[0].reset();
 	$("#editContactId").val("");
 	$("#contactManagementMsgSection").text("");
@@ -77,6 +78,7 @@ function createContact() {
 
 function editContact(event) {
 	$("#contactManagementHeading").text("EDIT CONTACT");
+	resetContactFormErrors();
 
 	$.ajax({
 		type: "POST",
@@ -243,6 +245,23 @@ function validateContactForm(){
         document.getElementById("phoneError").textContent = "";
     }
     return valid;
+}
+
+function resetContactFormErrors() {
+	document.getElementById("titleError").textContent = "";
+	document.getElementById("firstNameError").textContent = "";
+	document.getElementById("lastNameError").textContent = "";
+	document.getElementById("genderError").textContent = "";
+	document.getElementById("dobError").textContent = "";
+	document.getElementById("contactImageError").textContent = "";
+	document.getElementById("addressError").textContent = "";
+	document.getElementById("streetError").textContent = "";
+	document.getElementById("pincodeError").textContent = "";
+	document.getElementById("districtError").textContent = "";
+	document.getElementById("stateError").textContent = "";
+	document.getElementById("countryError").textContent = "";
+	document.getElementById("emailError").textContent = "";
+	document.getElementById("phoneError").textContent = "";
 }
 
 $("#contactManagement").submit(function(event) {
