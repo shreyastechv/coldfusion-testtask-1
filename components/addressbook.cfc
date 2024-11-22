@@ -272,7 +272,6 @@
                             <th>LASTNAME</th>
                             <th>GENDER</th>
                             <th>DOB</th>
-                            <th>CONTACTPICTURE</th>
                             <th>ADDRESS</th>
                             <th>STREET</th>
                             <th>DISTRICT</th>
@@ -281,6 +280,7 @@
                             <th>PINCODE</th>
                             <th>EMAIL ID</th>
                             <th>PHONE NUMBER</th>
+                            <th>CONTACTPICTURE</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -291,7 +291,6 @@
                                 <td>#lastname#</td>
                                 <td>#gender#</td>
                                 <td>#dob#</td>
-                                <td>#contactpicture#</td>
                                 <td>#address#</td>
                                 <td>#street#</td>
                                 <td>#district#</td>
@@ -300,6 +299,9 @@
                                 <td>#pincode#</td>
                                 <td>#email#</td>
                                 <td>#phone#</td>
+                                <td>
+                                    <img class="img" src="../assets/contactImages/#contactpicture#" alt="Contact Image">
+                                </td>
                             </tr>
                         </cfloop>
                     </tbody>
