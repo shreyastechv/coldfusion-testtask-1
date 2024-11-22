@@ -99,6 +99,7 @@ function editContact(event) {
 			let day = dob.getDate();
 			if (day < 10) day = '0' + day;
 			$("#editContactDOB").val(`${year}-${month}-${day}`);
+			$("#editContactImage").val("");
 			$("#editContactPicture").attr("src", `./assets/contactImages/${CONTACTPICTURE}`);
 			$("#editContactAddress").val(ADDRESS);
 			$("#editContactStreet").val(STREET);
