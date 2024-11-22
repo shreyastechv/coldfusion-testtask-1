@@ -12,7 +12,7 @@
 
     <body>
 		<cfset local.contactsObject = CreateObject("component", "components.addressbook")>
-		<cfset session.getContactsQuery = contactsObject.getContacts()>
+		<cfset session.getContactsQuery = local.contactsObject.getContacts()>
 		<cfoutput>
 			<header class="header d-flex align-items-center justify-content-between fixed-top px-5">
 				<a class="d-flex align-items-center text-decoration-none" href="##">
