@@ -43,12 +43,13 @@ $("#signupForm").submit(function(event) {
 	}
 
 	// Username validation
+	const usernamePattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 	if (username == "") {
 		usernameError.text("This field is requied!");
 		valid = false;
 	}
-	else if (!/^[a-z0-9_.-]+$/.test(username)) {
-		usernameError.text("Usernames can only use letters, numbers, hyphens, underscores, and periods.");
+	else if(!usernamePattern.test(username)) {
+		usernameError.text("Only emails can be used as username.");
 		valid = false;
 	}
 	else {
