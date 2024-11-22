@@ -127,7 +127,7 @@
     </cffunction>
 
     <cffunction name="modifyContacts" returnType="struct" returnFormat="json" access="remote">
-        <cfargument required="false" name="editContactId" type="string">
+        <cfargument required="true" name="editContactId" type="string">
         <cfargument required="true" name="editContactTitle" type="string">
         <cfargument required="true" name="editContactFirstName" type="string">
         <cfargument required="true" name="editContactLastName" type="string">
@@ -151,7 +151,6 @@
 				FROM contactDetails
 				WHERE _createdBy = <cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">
 				AND email = <cfqueryparam value="#arguments.editContactEmail#" cfsqltype="cf_sql_varchar">
-                AND contactid != <cfqueryparam value="#arguments.editContactId#" cfsqltype="cf_sql_varchar">
 				AND active = 1;
 			</cfquery>
 			<cfquery name="getPhoneQuery">
@@ -159,13 +158,12 @@
 				FROM contactDetails
 				WHERE _createdBy = <cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">
 				AND phone = <cfqueryparam value="#arguments.editContactPhone#" cfsqltype="cf_sql_varchar">
-                AND contactid != <cfqueryparam value="#arguments.editContactId#" cfsqltype="cf_sql_varchar">
 				AND active = 1;
 			</cfquery>
-			<cfif getEmailQuery.RecordCount NEQ 0>
+			<cfif getEmailQuery.RecordCount NEQ 0 AND getEmailQuery.contactid NEQ arguments.editContactId>
                 <cfset local.response["statusCode"] = 2>
                 <cfset local.response["message"] = "Email already exists">
-			<cfelseif getPhoneQuery.RecordCount NEQ 0>
+			<cfelseif getPhoneQuery.RecordCount NEQ 0 AND getPhoneQuery.contactid NEQ arguments.editContactId>
                 <cfset local.response["statusCode"] = 3>
                 <cfset local.response["message"] = "Phone number already exists">
 			<cfelse>
