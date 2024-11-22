@@ -1,6 +1,7 @@
 <cfcomponent>
     <cfset this.name = "Address Book">
     <cfset this.sessionManagement = true>
+	<cfset this.sessiontimeout = CreateTimeSpan(0, 1, 0, 0)>
     <cfset this.dataSource = "addressbookdatasource">
 
 	<cffunction name="onRequest" type="public" returnType="void">
