@@ -203,6 +203,7 @@ function validateContactForm(){
     }
 	else if (pin.length != 6) {
         document.getElementById("pincodeError").textContent = "Pincode should be six digits";
+        valid = false;
 	}
     else{
         document.getElementById("pincodeError").textContent = "";
@@ -240,8 +241,12 @@ function validateContactForm(){
         document.getElementById("emailError").textContent = "";
     }
 
-    if(phone == "" || !/^\d{10}$/.test(phone)){
+    if(phone == ""){
         document.getElementById("phoneError").textContent = "Please enter your contact number";
+        valid = false;
+    }
+    else if(!/^\d{10}$/.test(phone)){
+        document.getElementById("phoneError").textContent = "Phone number should be 10 characters long and contain only digits";
         valid = false;
     }
     else{
