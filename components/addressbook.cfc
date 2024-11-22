@@ -151,6 +151,7 @@
 				FROM contactDetails
 				WHERE _createdBy = <cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">
 				AND email = <cfqueryparam value="#arguments.editContactEmail#" cfsqltype="cf_sql_varchar">
+                AND contactid != <cfqueryparam value="#arguments.editContactId#" cfsqltype="cf_sql_varchar">
 				AND active = 1;
 			</cfquery>
 			<cfquery name="getPhoneQuery">
@@ -158,6 +159,7 @@
 				FROM contactDetails
 				WHERE _createdBy = <cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">
 				AND phone = <cfqueryparam value="#arguments.editContactPhone#" cfsqltype="cf_sql_varchar">
+                AND contactid != <cfqueryparam value="#arguments.editContactId#" cfsqltype="cf_sql_varchar">
 				AND active = 1;
 			</cfquery>
 			<cfif getEmailQuery.RecordCount NEQ 0>
@@ -238,8 +240,7 @@
     <cffunction name="createExcel" returnType="struct" returnFormat="json" access="remote">
 		<cfset local.response = StructNew()>
 		<cfset local.spreadsheetName = CreateUUID() & ".xlsx">
-		<cfset local.spreadsheetPath = GetTempDirectory() & local.spreadsheetName>
-		<cfset local.response["data"] = local.spreadsheetPath>
+		<cfset local.response["data"] = local.spreadsheetName>
 
         <cfquery name="createExcelQuery">
             SELECT contactid, title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone, _createdBy, _updatedBy
@@ -248,17 +249,16 @@
             AND active = 1;
         </cfquery>
 
-        <cfspreadsheet action="write" filename="#local.spreadsheetPath#" query="createExcelQuery" sheetname="contacts" overwrite=true>
+        <cfspreadsheet action="write" filename="../assets/spreadsheets/#local.spreadsheetName#" query="createExcelQuery" sheetname="contacts" overwrite=true>
 		<cfreturn local.response>
     </cffunction>
 
-    <cffunction name="createPdf" returnType="void" access="remote">
+    <cffunction name="createPdf" returnType="struct" returnFormat="json" access="remote">
 		<cfset local.response = StructNew()>
 		<cfset local.pdfName = CreateUUID() & ".xlsx">
-		<cfset local.pdfPath = GetTempDirectory() & local.pdfName>
-		<cfset local.response["data"] = local.pdfPath>
+		<cfset local.response["data"] = local.pdfName>
 
-        <cfdocument format="pdf" filename="#local.pdfPath#" overwrite="true">
+        <cfdocument format="pdf" filename="../assets/pdfs/#local.pdfName#" overwrite="true">
             <cfquery name="createPdfQuery">
                 SELECT title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone, _createdBy, _updatedBy
                 FROM contactDetails

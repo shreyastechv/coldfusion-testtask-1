@@ -71,6 +71,7 @@ function createContact() {
 	$("#contactManagementHeading").text("CREATE CONTACT");
 	$("#contactManagement")[0].reset();
 	$("#editContactId").val("");
+	$("#contactManagementMsgSection").text = "";
 	$('#contactManagementModal').modal('show');
 }
 
@@ -137,7 +138,7 @@ $("#contactManagement").submit(function(event) {
 			else {
 				contactManagementMsgSection.css("color", "red");
 			}
-			contactManagementMsgSection.inner(responseJSON.message);
+			contactManagementMsgSection.text(responseJSON.message);
 		},
 		error: function (xhr, ajaxOptions, thrownError) {
 			contactManagementMsgSection.text("We encountered an error! Error details are: " + thrownError);
@@ -159,7 +160,7 @@ function createExcel() {
 		url: "./components/addressbook.cfc?method=createExcel",
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
-			downloadURI(responseJSON.data, "contact-details.xlsx");
+			downloadURI(`./assets/spreadsheets/${responseJSON.data}`, "contact-details.xlsx");
 		}
 	});
 }
@@ -170,7 +171,7 @@ function createPdf() {
 		url: "./components/addressbook.cfc?method=createPdf",
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
-			downloadURI(responseJSON.data, "contact-details.pdf");
+			downloadURI(`./assets/pdfs/${responseJSON.data}`, "contact-details.pdf");
 		}
 	});
 }
