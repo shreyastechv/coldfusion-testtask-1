@@ -213,18 +213,30 @@
         <cfreturn local.response>
     </cffunction>
 
-    <cffunction name="createExcel" returnType="void" access="remote">
+    <cffunction name="createExcel" returnType="struct" returnFormat="json" access="remote">
+		<cfset local.response = StructNew()>
+		<cfset local.spreadsheetName = CreateUUID() & ".xlsx">
+		<cfset local.spreadsheetPath = GetTempDirectory() & local.spreadsheetName>
+		<cfset local.response["data"] = local.spreadsheetPath>
+
         <cfquery name="createExcelQuery">
             SELECT contactid, title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone, _createdBy, _updatedBy
             FROM contactDetails
             WHERE _createdBy=<cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">
             AND active = 1;
         </cfquery>
-        <cfspreadsheet action="write" filename="../assets/contacts.xlsx" query="createExcelQuery" sheetname="contacts" overwrite=true>
+
+        <cfspreadsheet action="write" filename="#local.spreadsheetPath#" query="createExcelQuery" sheetname="contacts" overwrite=true>
+		<cfreturn local.response>
     </cffunction>
 
     <cffunction name="createPdf" returnType="void" access="remote">
-        <cfdocument format="pdf" filename="../assets/contacts.pdf" overwrite="true">
+		<cfset local.response = StructNew()>
+		<cfset local.pdfName = CreateUUID() & ".xlsx">
+		<cfset local.pdfPath = GetTempDirectory() & local.pdfName>
+		<cfset local.response["data"] = local.pdfPath>
+
+        <cfdocument format="pdf" filename="#local.pdfPath#" overwrite="true">
             <cfquery name="createPdfQuery">
                 SELECT title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone, _createdBy, _updatedBy
                 FROM contactDetails
@@ -278,5 +290,7 @@
                 </table>
             </cfoutput>
         </cfdocument>
+
+		<cfreturn local.response>
     </cffunction>
 </cfcomponent>

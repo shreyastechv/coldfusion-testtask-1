@@ -157,8 +157,9 @@ function createExcel() {
 	$.ajax({
 		type: "POST",
 		url: "./components/addressbook.cfc?method=createExcel",
-		success: function() {
-			downloadURI("./assets/contacts.xlsx", "contact-details.xlsx");
+		success: function(response) {
+			const responseJSON = JSON.parse(response);
+			downloadURI(responseJSON.data, "contact-details.xlsx");
 		}
 	});
 }
@@ -167,8 +168,9 @@ function createPdf() {
 	$.ajax({
 		type: "POST",
 		url: "./components/addressbook.cfc?method=createPdf",
-		success: function() {
-			downloadURI("./assets/contacts.pdf", "contact-details.pdf");
+		success: function(response) {
+			const responseJSON = JSON.parse(response);
+			downloadURI(responseJSON.data, "contact-details.pdf");
 		}
 	});
 }
