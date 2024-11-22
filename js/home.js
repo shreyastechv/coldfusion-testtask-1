@@ -193,7 +193,7 @@ function validateContactForm(){
         document.getElementById("pincodeError").textContent = "Please enter your pin";
         valid = false;
     }
-	else if (pin.length != 6) {
+	else if (!/^\d{6}$/.test(pin)) {
         document.getElementById("pincodeError").textContent = "Pincode should be six digits";
         valid = false;
 	}
