@@ -149,12 +149,16 @@
 			<cfquery name="getEmailQuery">
 				SELECT contactid
 				FROM contactDetails
-				WHERE email = <cfqueryparam value="#arguments.editContactEmail#" cfsqltype="cf_sql_varchar">;
+				WHERE _createdBy = <cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">
+				AND email = <cfqueryparam value="#arguments.editContactEmail#" cfsqltype="cf_sql_varchar">
+				AND active = 1;
 			</cfquery>
 			<cfquery name="getPhoneQuery">
 				SELECT contactid
 				FROM contactDetails
-				WHERE phone = <cfqueryparam value="#arguments.editContactPhone#" cfsqltype="cf_sql_varchar">;
+				WHERE _createdBy = <cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">
+				AND phone = <cfqueryparam value="#arguments.editContactPhone#" cfsqltype="cf_sql_varchar">
+				AND active = 1;
 			</cfquery>
 			<cfif getEmailQuery.RecordCount NEQ 0>
                 <cfset local.response["statusCode"] = 2>
