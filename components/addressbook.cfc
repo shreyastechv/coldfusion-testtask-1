@@ -166,7 +166,7 @@
 			<cfelseif getPhoneQuery.RecordCount NEQ 0>
                 <cfset local.response["statusCode"] = 3>
                 <cfset local.response["message"] = "Phone number already exists">
-			</cfelse>
+			<cfelse>
 				<cfif arguments.editContactImage NEQ "">
 					<cffile action="upload" destination="#expandpath("../assets/contactImages")#" fileField="form.editContactImage" nameconflict="MakeUnique">
 					<cfset local.contactImage = cffile.serverFile>
