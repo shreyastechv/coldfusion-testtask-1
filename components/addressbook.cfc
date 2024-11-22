@@ -241,7 +241,7 @@
 		<cfset local.response["data"] = local.spreadsheetName>
 
         <cfquery name="createExcelQuery">
-            SELECT contactid, title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone, _createdBy, _updatedBy
+            SELECT title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone
             FROM contactDetails
             WHERE _createdBy=<cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">
             AND active = 1;
@@ -258,7 +258,7 @@
 
         <cfdocument format="pdf" filename="../assets/pdfs/#local.pdfName#" overwrite="true">
             <cfquery name="createPdfQuery">
-                SELECT title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone, _createdBy, _updatedBy
+                SELECT title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone
                 FROM contactDetails
                 WHERE _createdBy=<cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">
                 AND active = 1;
@@ -281,8 +281,6 @@
                             <th>PINCODE</th>
                             <th>EMAIL ID</th>
                             <th>PHONE NUMBER</th>
-                            <th>CREATED BY</th>
-                            <th>UPDATED BY</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -302,8 +300,6 @@
                                 <td>#pincode#</td>
                                 <td>#email#</td>
                                 <td>#phone#</td>
-                                <td>#_createdBy#</td>
-                                <td>#_updatedBy#</td>
                             </tr>
                         </cfloop>
                     </tbody>
