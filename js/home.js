@@ -201,6 +201,9 @@ function validateContactForm(){
         document.getElementById("pincodeError").textContent = "Please enter your pin";
         valid = false;
     }
+	else if (pin.length != 6) {
+        document.getElementById("pincodeError").textContent = "Pincode should be six digits";
+	}
     else{
         document.getElementById("pincodeError").textContent = "";
     }
