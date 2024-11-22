@@ -173,14 +173,6 @@ function validateContactForm(){
         document.getElementById("dobError").textContent = "";
     }
 
-    if(img == ""){
-        document.getElementById("contactImageError").textContent = "Please select image file for profile pic";
-        valid = false;
-    }
-    else{
-        document.getElementById("contactImageError").textContent = "";
-    }
-
     if(address == ""){
         document.getElementById("addressError").textContent = "Please enter your address";
         valid = false;
@@ -261,7 +253,6 @@ function resetContactFormErrors() {
 	document.getElementById("lastNameError").textContent = "";
 	document.getElementById("genderError").textContent = "";
 	document.getElementById("dobError").textContent = "";
-	document.getElementById("contactImageError").textContent = "";
 	document.getElementById("addressError").textContent = "";
 	document.getElementById("streetError").textContent = "";
 	document.getElementById("pincodeError").textContent = "";

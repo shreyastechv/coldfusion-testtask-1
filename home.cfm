@@ -214,7 +214,6 @@
 										<div class="col-md-9 w-75">
 											<label class="contactManagementLabel" for="editContactImage">Upload Photo</label>
 											<input class="contactManagementInput py-1 mt-1" type="file" id="editContactImage" name="editContactImage" accept="image/*">
-											<div class="error text-danger" id="contactImageError"></div>
 										</div>
 									</div>
 									<h6 class="text-primary my-1">Contact Details</h6>
