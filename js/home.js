@@ -71,7 +71,7 @@ function createContact() {
 	$("#contactManagementHeading").text("CREATE CONTACT");
 	$("#contactManagement")[0].reset();
 	$("#editContactId").val("");
-	$("#contactManagementMsgSection").text = "";
+	$("#contactManagementMsgSection").text("");
 	$('#contactManagementModal').modal('show');
 }
 
