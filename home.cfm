@@ -11,6 +11,8 @@
     </head>
 
     <body>
+		<cfset local.contactsObject = CreateObject("component", "components.addressbook")>
+		<cfset session.getContactsQuery = contactsObject.getContacts()>
 		<cfoutput>
 			<header class="header d-flex align-items-center justify-content-between fixed-top px-5">
 				<a class="d-flex align-items-center text-decoration-none" href="##">
@@ -66,8 +68,6 @@
 								</tr>
 							</thead>
 							<tbody>
-								<cfset local.contactsObject = CreateObject("component", "components.addressbook")>
-								<cfset session.getContactsQuery = contactsObject.getContacts()>
 								<cfloop query="session.getContactsQuery">
 									<tr>
 										<td>
