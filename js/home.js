@@ -113,8 +113,142 @@ function editContact(event) {
 	});
 }
 
+function validateContactForm(){
+    let title = document.forms["contactManagement"]["editContactTitle"].value;
+    let firstname = document.forms["contactManagement"]["editContactFirstname"].value;
+    let lastname = document.forms["contactManagement"]["editContactLastname"].value;
+    let gender = document.forms["contactManagement"]["editContactGender"].value;
+    let dob = document.forms["contactManagement"]["editContactDOB"].value;
+    let img = document.forms["contactManagement"]["editContactImage"].value;
+    let address = document.forms["contactManagement"]["editContactAddress"].value;
+    let street = document.forms["contactManagement"]["editContactStreet"].value;
+    let district = document.forms["contactManagement"]["editContactDistrict"].value;
+    let state = document.forms["contactManagement"]["editContactState"].value;
+    let country = document.forms["contactManagement"]["editContactCountry"].value;
+    let pin = document.forms["contactManagement"]["editContactPincode"].value;
+    let mail = document.forms["contactManagement"]["editContactEmail"].value;
+    let phone = document.forms["contactManagement"]["editContactPhone"].value;
+    let valid = true;
+
+    if(title == ""){
+        document.getElementById("titleError").textContent = "Please select one option";
+        valid = false;
+    }
+    else{
+        document.getElementById("titleError").textContent = "";
+    }
+
+    if(firstname == "" || !/^[a-zA-Z ]+$/.test(firstname)){
+        document.getElementById("firstNameError").textContent = "Please enter your First name";
+        valid = false;
+    }
+    else{
+        document.getElementById("firstNameError").textContent = "";
+    }
+
+    if(lastname == "" || !/^[a-zA-Z ]+$/.test(lastname)){
+        document.getElementById("lastNameError").textContent = "Please enter your Last name";
+        valid = false;
+    }
+    else{
+        document.getElementById("lastNameError").textContent = "";
+    }
+
+    if(gender == ""){
+        document.getElementById("genderError").textContent = "Please select one option";
+        valid = false;
+    }
+    else{
+        document.getElementById("genderError").textContent = "";
+    }
+
+    if(dob == ""){
+        document.getElementById("dobError").textContent = "Please select your DOB";
+        valid = false;
+    }
+    else{
+        document.getElementById("dobError").textContent = "";
+    }
+
+    if(img == ""){
+        document.getElementById("contactImageError").textContent = "Please select image file for profile pic";
+        valid = false;
+    }
+    else{
+        document.getElementById("contactImageError").textContent = "";
+    }
+
+    if(address == ""){
+        document.getElementById("addressError").textContent = "Please enter your address";
+        valid = false;
+    }
+    else{
+        document.getElementById("addressError").textContent = "";
+    }
+
+    if(street == ""){
+        document.getElementById("streetError").textContent = "Please enter your street";
+        valid = false;
+    }
+    else{
+        document.getElementById("streetError").textContent = "";
+    }
+
+    if(pin == ""){
+        document.getElementById("pincodeError").textContent = "Please enter your pin";
+        valid = false;
+    }
+    else{
+        document.getElementById("pincodeError").textContent = "";
+    }
+
+    if(district == ""){
+        document.getElementById("districtError").textContent = "Please enter your district";
+        valid = false;
+    }
+    else{
+        document.getElementById("districtError").textContent = "";
+    }
+
+    if(state == ""){
+        document.getElementById("stateError").textContent = "Please enter your state";
+        valid = false;
+    }
+    else{
+        document.getElementById("stateError").textContent = "";
+    }
+
+    if(country == ""){
+        document.getElementById("countryError").textContent = "Please enter your country";
+        valid = false;
+    }
+    else{
+        document.getElementById("countryError").textContent = "";
+    }
+
+    if(mail == "" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){
+        document.getElementById("emailError").textContent = "Please enter your mail";
+        valid = false;
+    }
+    else{
+        document.getElementById("emailError").textContent = "";
+    }
+
+    if(phone == "" || !/^\d{10}$/.test(phone)){
+        document.getElementById("phoneError").textContent = "Please enter your contact number";
+        valid = false;
+    }
+    else{
+        document.getElementById("phoneError").textContent = "";
+    }
+    return valid;
+}
+
 $("#contactManagement").submit(function(event) {
 	event.preventDefault();
+	if (!validateContactForm()) {
+		return;
+	}
 	const contactManagementMsgSection = $("#contactManagementMsgSection");
 	const thisForm = $(this)[0];
 	const formData = new FormData(thisForm);

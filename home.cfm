@@ -180,14 +180,17 @@
 												<option>Ms.</option>
 												<option>Mrs.</option>
 											</select>
+											<div class="error text-danger" id="titleError"></div>
 										</div>
 										<div class="col-md-4">
 											<label class="contactManagementLabel" for="editContactFirstname">First Name *</label>
 											<input class="contactManagementInput py-1 mt-1 w-100" type="text" id="editContactFirstname" name="editContactFirstname" placeholder="Enter First Name">
+											<div class="error text-danger" id="firstNameError"></div>
 										</div>
 										<div class="col-md-4">
 											<label class="contactManagementLabel" for="editContactLastname">Last Name *</label>
 											<input class="contactManagementInput py-1 mt-1 w-100" type="text" id="editContactLastname" name="editContactLastname" placeholder="Enter Last Name">
+											<div class="error text-danger" id="lastNameError"></div>
 										</div>
 									</div>
 									<div class="d-flex justify-content-between gap-3 mb-3">
@@ -199,16 +202,19 @@
 												<option>Female</option>
 												<option>Others</option>
 											</select>
+											<div class="error text-danger" id="genderError"></div>
 										</div>
 										<div class="col-md-6">
 											<label class="contactManagementLabel" for="editContactDOB">Date Of Birth *</label>
 											<input class="contactManagementInput py-1 mt-0" type="date" id="editContactDOB" name="editContactDOB">
+											<div class="error text-danger" id="dobError"></div>
 										</div>
 									</div>
 									<div class="d-flex justify-content-between gap-3 mb-3">
 										<div class="col-md-9 w-75">
 											<label class="contactManagementLabel" for="editContactImage">Upload Photo</label>
 											<input class="contactManagementInput py-1 mt-1" type="file" id="editContactImage" name="editContactImage" accept="image/*">
+											<div class="error text-danger" id="contactImageError"></div>
 										</div>
 									</div>
 									<h6 class="text-primary my-1">Contact Details</h6>
@@ -217,40 +223,48 @@
 										<div class="col-md-6">
 											<label class="contactManagementLabel" for="editContactAddress">Address *</label>
 											<input class="contactManagementInput py-1 mt-1" type="text" id="editContactAddress" name="editContactAddress" placeholder="Enter Address" autocomplete="address">
+											<div class="error text-danger" id="addressError"></div>
 										</div>
 										<div class="col-md-6">
 											<label class="contactManagementLabel" for="editContactStreet">Street *</label>
 											<input class="contactManagementInput py-1 mt-1" type="text" id="editContactStreet" name="editContactStreet" placeholder="Enter Street Name">
+											<div class="error text-danger" id="streetError"></div>
 										</div>
 									</div>
 									<div class="d-flex justify-content-between gap-3 mb-3">
 										<div class="col-md-6">
 											<label class="contactManagementLabel" for="editContactDistrict">District *</label>
 											<input class="contactManagementInput py-1 mt-1" type="text" id="editContactDistrict" name="editContactDistrict" placeholder="Enter District">
+											<div class="error text-danger" id="districtError"></div>
 										</div>
 										<div class="col-md-6">
 											<label class="contactManagementLabel" for="editContactState">State *</label>
 											<input class="contactManagementInput py-1 mt-1" type="text" id="editContactState" name="editContactState" placeholder="Enter State">
+											<div class="error text-danger" id="stateError"></div>
 										</div>
 									</div>
 									<div class="d-flex justify-content-between gap-3 mb-3">
 										<div class="col-md-6">
 											<label class="contactManagementLabel" for="editContactCountry">Country *</label>
 											<input class="contactManagementInput py-1 mt-1" type="text" id="editContactCountry" name="editContactCountry" placeholder="Enter Country" autocomplete="country">
+											<div class="error text-danger" id="countryError"></div>
 										</div>
 										<div class="col-md-6">
 											<label class="contactManagementLabel" for="editContactPincode">Pincode *</label>
 											<input class="contactManagementInput py-1 mt-1" type="text" maxlength="6" id="editContactPincode" name="editContactPincode" placeholder="Enter Pincode">
+											<div class="error text-danger" id="pincodeError"></div>
 										</div>
 									</div>
 									<div class="d-flex justify-content-between gap-3 mb-3">
 										<div class="col-md-6">
 											<label class="contactManagementLabel" for="editContactEmail">Email Id *</label>
 											<input class="contactManagementInput py-1 mt-1" type="email" id="editContactEmail" name="editContactEmail" placeholder="Enter Email Id" autocomplete="email">
+											<div class="error text-danger" id="emailError"></div>
 										</div>
 										<div class="col-md-6">
 											<label class="contactManagementLabel" for="editContactPhone">Phone number *</label>
 											<input class="contactManagementInput py-1 mt-1" type="text" maxlength="10" id="editContactPhone" name="editContactPhone" placeholder="Enter Phone number" autocomplete="tel">
+											<div class="error text-danger" id="phoneError"></div>
 										</div>
 									</div>
 								</div>
