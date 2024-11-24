@@ -14,22 +14,24 @@
 		<cfset local.contactsObject = CreateObject("component", "components.addressbook")>
 		<cfset local.getContactsQuery = local.contactsObject.getContacts()>
 		<cfoutput>
-			<header class="header d-flex align-items-center justify-content-between fixed-top px-5">
-				<a class="d-flex align-items-center text-decoration-none" href="##">
-					<img class="logo" src="./assets/images/logo.png" alt="Logo Image">
-					<div class="text-white">ADDRESS BOOK</div>
-				</a>
-				<nav class="d-flex align-items-center gap-4">
+			<!--- Navbar --->
+			<nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background-color: ##337ab7;">
+				<div class="container-fluid">
+					<a class="navbar-brand text-white" href="##">
+						<img src="./assets/images/logo.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+						ADDRESS BOOK
+					</a>
 					<a class="text-white text-decoration-none" href="##" onclick="logOut()">
 						<i class="fa-solid fa-right-from-bracket"></i>
 						Logout
 					</a>
-				</nav>
-			</header>
+				</div>
+			</nav>
 
-			<div class="container-fluid px-5 py-2 my-5">
-				<div id="submitMsgSection" class="text-danger text-center p-2"></div>
-				<div class="px-1 w-100 bg-white rounded-1 d-flex align-items-center justify-content-end">
+			<!--- Main Content --->
+			<div class="container-fluid contentSection">
+				<!--- Toolbar --->
+				<div class="toolbar d-flex justify-content-end">
 					<button onclick="createPdf()" class="btn">
 						<img class="toolbarIcon p-1" src="./assets/images/pdficon.png" alt="PDF Icon">
 					</button>
@@ -40,56 +42,73 @@
 						<img class="toolbarIcon p-1" src="./assets/images/printericon.png" alt="Printer Icon">
 					</button>
 				</div>
-				<div class="row p-3 d-flex flex-nowrap gap-2">
-					<div class="col-md-3 px-2 py-4 bg-white rounded-1 d-flex flex-column align-items-center gap-4">
-						<cfif StructKeyExists(session, "profilePicture")>
-							<img class="userProfileIcon" src="./assets/profilePictures/#session.profilePicture#" alt="User Profile Icon">
-						<cfelse>
-							<img class="userProfileIcon" src="./assets/images/user-profileicon.png" alt="User Profile Icon">
-						</cfif>
-						<cfif StructKeyExists(session, "fullName")>
-							<h4>#session.fullName#</h4>
-						<cfelse>
-							<h4>User Fullname</h4>
-						</cfif>
-						<button class="btn bg-primary text-white rounded-pill" onclick="createContact()">CREATE CONTACT</button>
+
+				<!--- Bottom Content --->
+				<div class="row ps-1 pe-2">
+					<!--- Left Section --->
+					<div class="col-lg-3 col-md-4 col-12 sidebar bg-transparent">
+						<div class="bg-white d-flex flex-column align-items-center p-3">
+							<cfif StructKeyExists(session, "profilePicture")>
+								<img class="userProfileIcon" src="./assets/profilePictures/#session.profilePicture#" alt="User Profile Icon">
+							<cfelse>
+								<img class="userProfileIcon" src="./assets/images/user-profileicon.png" alt="User Profile Icon">
+							</cfif>
+							<cfif StructKeyExists(session, "fullName")>
+								<h4>#session.fullName#</h4>
+							<cfelse>
+								<h4>User Fullname</h4>
+							</cfif>
+							<button class="btn bg-primary text-white rounded-pill" onclick="createContact()">CREATE CONTACT</button>
+						</div>
 					</div>
-					<div class="col-md-9 bg-white rounded-1 p-3">
+					<!--- Right Section --->
+					<div class="col-lg-9 col-md-8 col-12 mainContent bg-white">
 						<cfif local.getContactsQuery.RecordCount>
-							<table class="table table-hover align-middle">
-								<thead>
-									<tr>
-										<th></th>
-										<th>NAME</th>
-										<th>EMAIL ID</th>
-										<th>PHONE NUMBER</th>
-										<th></th>
-										<th></th>
-										<th></th>
-									</tr>
-								</thead>
-								<tbody>
-									<cfloop query="local.getContactsQuery">
+							<div class="table-responsive">
+								<table class="table table-hover align-middle">
+									<thead>
 										<tr>
-											<td>
-												<img class="contactImage p-2" src="./assets/contactImages/#contactpicture#" alt="Contact Image">
-											</td>
-											<td>#firstname# #lastname#</td>
-											<td>#email#</td>
-											<td>#phone#</td>
-											<td>
-												<button class="actionBtn btn btn-outline-primary rounded-pill px-4" value="#contactid#" onclick="editContact(event)">EDIT</button>
-											</td>
-											<td>
-												<button class="actionBtn btn btn-outline-danger rounded-pill px-3" value="#contactid#" onclick="deleteContact(event)">DELETE</button>
-											</td>
-											<td>
-												<button class="actionBtn btn btn-outline-info rounded-pill px-3" value="#contactid#" onclick="viewContact(event)">VIEW</button>
-											</td>
+											<th></th>
+											<th>NAME</th>
+											<th>EMAIL ID</th>
+											<th>PHONE NUMBER</th>
+											<th></th>
+											<th></th>
+											<th></th>
 										</tr>
-									</cfloop>
-								</tbody>
-							</table>
+									</thead>
+									<tbody>
+										<cfloop query="local.getContactsQuery">
+											<tr>
+												<td>
+													<img class="contactImage p-2" src="./assets/contactImages/#contactpicture#" alt="Contact Image">
+												</td>
+												<td>#firstname# #lastname#</td>
+												<td>#email#</td>
+												<td>#phone#</td>
+												<td>
+													<button class="actionBtn btn btn-outline-primary rounded-pill px-3" value="#contactid#" onclick="editContact(event)">
+														<span class="d-none d-lg-inline">EDIT</span>
+														<i class="fa-solid fa-pen-to-square d-lg-none"></i>
+													</button>
+												</td>
+												<td>
+													<button class="actionBtn btn btn-outline-danger rounded-pill px-3" value="#contactid#" onclick="deleteContact(event)">
+														<span class="d-none d-lg-inline">DELETE</span>
+														<i class="fa-solid fa-trash d-lg-none"></i>
+													</button>
+												</td>
+												<td>
+													<button class="actionBtn btn btn-outline-info rounded-pill px-3" value="#contactid#" onclick="viewContact(event)">
+														<span class="d-none d-lg-inline">VIEW</span>
+														<i class="fa-solid fa-eye d-lg-none"></i>
+													</button>
+												</td>
+											</tr>
+										</cfloop>
+									</tbody>
+								</table>
+							</div>
 						<cfelse>
 							<div class="d-flex fs-5 text-info justify-content-center">No contacts to display.</div>
 						</cfif>

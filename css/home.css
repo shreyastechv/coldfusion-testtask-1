@@ -4,26 +4,27 @@
 }
 
 body {
-    background-color: #d8e5f1;
+	background-color: #d8e5f1;
 }
-
-.header {
-    background-color: #337ab7;
-    height: 3em;
+.toolbar {
+	background-color: #f8f9fa;
+	margin-bottom: 20px;
 }
-
-.logo {
-    width: 35px;
-}
-
 .toolbarIcon {
 	width: 27px;
 }
-
+.contentSection {
+	margin-top: 20px;
+}
+.sidebar {
+	height: 100%;
+}
 .userProfileIcon {
 	width: 100px;
 }
-
+.mainContent {
+	padding: 20px;
+}
 .contactImage {
 	width: 65px;
 }
