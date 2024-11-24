@@ -12,7 +12,7 @@
 
     <body>
 		<cfset local.contactsObject = CreateObject("component", "components.addressbook")>
-		<cfset session.getContactsQuery = local.contactsObject.getContacts()>
+		<cfset local.getContactsQuery = local.contactsObject.getContacts()>
 		<cfoutput>
 			<header class="header d-flex align-items-center justify-content-between fixed-top px-5">
 				<a class="d-flex align-items-center text-decoration-none" href="##">
@@ -55,40 +55,44 @@
 						<button class="btn bg-primary text-white rounded-pill" onclick="createContact()">CREATE CONTACT</button>
 					</div>
 					<div class="col-md-9 bg-white rounded-1 p-3">
-						<table class="table table-hover align-middle">
-							<thead>
-								<tr>
-									<th></th>
-									<th>NAME</th>
-									<th>EMAIL ID</th>
-									<th>PHONE NUMBER</th>
-									<th></th>
-									<th></th>
-									<th></th>
-								</tr>
-							</thead>
-							<tbody>
-								<cfloop query="session.getContactsQuery">
+						<cfif local.getContactsQuery.RecordCount>
+							<table class="table table-hover align-middle">
+								<thead>
 									<tr>
-										<td>
-											<img class="contactImage p-2" src="./assets/contactImages/#contactpicture#" alt="Contact Image">
-										</td>
-										<td>#firstname# #lastname#</td>
-										<td>#email#</td>
-										<td>#phone#</td>
-										<td>
-											<button class="actionBtn btn btn-outline-primary rounded-pill px-4" value="#contactid#" onclick="editContact(event)">EDIT</button>
-										</td>
-										<td>
-											<button class="actionBtn btn btn-outline-danger rounded-pill px-3" value="#contactid#" onclick="deleteContact(event)">DELETE</button>
-										</td>
-										<td>
-											<button class="actionBtn btn btn-outline-info rounded-pill px-3" value="#contactid#" onclick="viewContact(event)">VIEW</button>
-										</td>
+										<th></th>
+										<th>NAME</th>
+										<th>EMAIL ID</th>
+										<th>PHONE NUMBER</th>
+										<th></th>
+										<th></th>
+										<th></th>
 									</tr>
-								</cfloop>
-							</tbody>
-						</table>
+								</thead>
+								<tbody>
+									<cfloop query="local.getContactsQuery">
+										<tr>
+											<td>
+												<img class="contactImage p-2" src="./assets/contactImages/#contactpicture#" alt="Contact Image">
+											</td>
+											<td>#firstname# #lastname#</td>
+											<td>#email#</td>
+											<td>#phone#</td>
+											<td>
+												<button class="actionBtn btn btn-outline-primary rounded-pill px-4" value="#contactid#" onclick="editContact(event)">EDIT</button>
+											</td>
+											<td>
+												<button class="actionBtn btn btn-outline-danger rounded-pill px-3" value="#contactid#" onclick="deleteContact(event)">DELETE</button>
+											</td>
+											<td>
+												<button class="actionBtn btn btn-outline-info rounded-pill px-3" value="#contactid#" onclick="viewContact(event)">VIEW</button>
+											</td>
+										</tr>
+									</cfloop>
+								</tbody>
+							</table>
+						<cfelse>
+							<div class="d-flex fs-5 text-info justify-content-center">No contacts to display.</div>
+						</cfif>
 					</div>
 				</div>
 			</div>
