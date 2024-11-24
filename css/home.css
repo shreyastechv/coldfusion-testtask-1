@@ -70,3 +70,7 @@ body {
     outline: none;
     font-size: 13px;
 }
+
+.error {
+    font-size: 12px;
+}
