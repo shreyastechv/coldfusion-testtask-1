@@ -1,4 +1,4 @@
 assets/profilePictures/*
 assets/contactImages/*
-assets/spreadsheets/*
-assets/pdfs/*
+assets/spreadsheets/*.xlsx
+assets/pdfs/*.pdf
