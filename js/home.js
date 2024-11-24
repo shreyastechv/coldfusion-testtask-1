@@ -269,6 +269,7 @@ $("#contactManagement").submit(function(event) {
 		return;
 	}
 	const contactManagementMsgSection = $("#contactManagementMsgSection");
+	$("#contactManagementMsgSection").text("");
 	const thisForm = $(this)[0];
 	const formData = new FormData(thisForm);
 
