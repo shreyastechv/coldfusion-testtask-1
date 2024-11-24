@@ -6,6 +6,11 @@
 body {
 	background-color: #d8e5f1;
 }
+
+.customNavbar {
+    background-color: #337ab7;
+}
+
 .toolbar {
 	background-color: #f8f9fa;
 	margin-bottom: 20px;

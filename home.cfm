@@ -15,7 +15,7 @@
 		<cfset local.getContactsQuery = local.contactsObject.getContacts()>
 		<cfoutput>
 			<!--- Navbar --->
-			<nav class="navbar navbar-expand-lg navbar-light shadow-sm px-2" style="background-color: ##337ab7;">
+			<nav class="navbar navbar-expand-lg shadow-sm customNavbar px-2">
 				<div class="container-fluid">
 					<a class="navbar-brand text-white" href="##">
 						<img src="./assets/images/logo.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
