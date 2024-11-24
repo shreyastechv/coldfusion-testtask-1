@@ -4,26 +4,32 @@
 }
 
 body {
-    background-color: #d8e5f1;
+	background-color: #d8e5f1;
 }
 
-.header {
+.customNavbar {
     background-color: #337ab7;
-    height: 3em;
 }
 
-.logo {
-    width: 35px;
+.toolbar {
+	background-color: #f8f9fa;
+	margin-bottom: 20px;
 }
-
 .toolbarIcon {
 	width: 27px;
 }
-
+.contentSection {
+	margin-top: 20px;
+}
+.sidebar {
+	height: 100%;
+}
 .userProfileIcon {
 	width: 100px;
 }
-
+.mainContent {
+	padding: 20px;
+}
 .contactImage {
 	width: 65px;
 }
@@ -69,4 +75,8 @@ body {
     border-bottom: 1px solid #776363;
     outline: none;
     font-size: 13px;
+}
+
+.error {
+    font-size: 12px;
 }

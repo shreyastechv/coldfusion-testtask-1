@@ -264,14 +264,13 @@ function resetContactFormErrors() {
 }
 
 $("#contactManagement").submit(function(event) {
-	event.preventDefault();
-	if (!validateContactForm()) {
-		return;
-	}
 	const contactManagementMsgSection = $("#contactManagementMsgSection");
 	const thisForm = $(this)[0];
 	const formData = new FormData(thisForm);
 
+	event.preventDefault();
+	$("#contactManagementMsgSection").text("");
+	if (!validateContactForm()) return;
 	$.ajax({
 		type: "POST",
 		url: "./components/addressbook.cfc?method=modifyContacts",
