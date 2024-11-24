@@ -21,7 +21,7 @@
 						<img src="./assets/images/logo.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
 						ADDRESS BOOK
 					</a>
-					<a class="text-white text-decoration-none" href="##" onclick="logOut()">
+					<a class="text-white text-decoration-none d-print-none" href="##" onclick="logOut()">
 						<i class="fa-solid fa-right-from-bracket"></i>
 						Logout
 					</a>
@@ -31,7 +31,7 @@
 			<!--- Main Content --->
 			<div class="container-fluid contentSection">
 				<!--- Toolbar --->
-				<div class="toolbar d-flex justify-content-end">
+				<div class="toolbar d-flex justify-content-end d-print-none">
 					<button onclick="createPdf()" class="btn">
 						<img class="toolbarIcon p-1" src="./assets/images/pdficon.png" alt="PDF Icon">
 					</button>
@@ -58,7 +58,7 @@
 							<cfelse>
 								<h4>User Fullname</h4>
 							</cfif>
-							<button class="btn bg-primary text-white rounded-pill" onclick="createContact()">CREATE CONTACT</button>
+							<button class="btn bg-primary text-white rounded-pill d-print-none" onclick="createContact()">CREATE CONTACT</button>
 						</div>
 					</div>
 					<!--- Right Section --->
@@ -72,9 +72,9 @@
 											<th>NAME</th>
 											<th>EMAIL ID</th>
 											<th>PHONE NUMBER</th>
-											<th></th>
-											<th></th>
-											<th></th>
+											<th class="d-print-none"></th>
+											<th class="d-print-none></th>
+											<th class="d-print-none></th>
 										</tr>
 									</thead>
 									<tbody>
@@ -86,19 +86,19 @@
 												<td>#firstname# #lastname#</td>
 												<td>#email#</td>
 												<td>#phone#</td>
-												<td>
+												<td class="d-print-none">
 													<button class="actionBtn btn btn-outline-primary rounded-pill px-3" value="#contactid#" onclick="editContact(event)">
 														<span class="d-none d-lg-inline">EDIT</span>
 														<i class="fa-solid fa-pen-to-square d-lg-none"></i>
 													</button>
 												</td>
-												<td>
+												<td class="d-print-none">
 													<button class="actionBtn btn btn-outline-danger rounded-pill px-3" value="#contactid#" onclick="deleteContact(event)">
 														<span class="d-none d-lg-inline">DELETE</span>
 														<i class="fa-solid fa-trash d-lg-none"></i>
 													</button>
 												</td>
-												<td>
+												<td class="d-print-none">
 													<button class="actionBtn btn btn-outline-info rounded-pill px-3" value="#contactid#" onclick="viewContact(event)">
 														<span class="d-none d-lg-inline">VIEW</span>
 														<i class="fa-solid fa-eye d-lg-none"></i>
