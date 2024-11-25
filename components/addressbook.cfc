@@ -253,7 +253,7 @@
 
     <cffunction name="createPdf" returnType="struct" returnFormat="json" access="remote">
 		<cfset local.response = StructNew()>
-		<cfset local.pdfName = CreateUUID() & ".xlsx">
+		<cfset local.pdfName = CreateUUID() & ".pdf">
 		<cfset local.response["data"] = local.pdfName>
 
         <cfdocument format="pdf" filename="../assets/pdfs/#local.pdfName#" overwrite="true">
