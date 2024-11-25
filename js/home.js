@@ -69,7 +69,7 @@ function deleteContact(event) {
 
 function createContact() {
 	$("#contactManagementHeading").text("CREATE CONTACT");
-	resetContactFormErrors();
+	$(".error").text("");
 	$("#contactManagement")[0].reset();
 	$("#editContactId").val("");
 	$("#contactManagementMsgSection").text("");
@@ -78,7 +78,7 @@ function createContact() {
 
 function editContact(event) {
 	$("#contactManagementHeading").text("EDIT CONTACT");
-	resetContactFormErrors();
+	$(".error").text("");
 
 	$.ajax({
 		type: "POST",
@@ -117,150 +117,133 @@ function editContact(event) {
 }
 
 function validateContactForm(){
-    let title = document.forms["contactManagement"]["editContactTitle"].value;
-    let firstname = document.forms["contactManagement"]["editContactFirstname"].value;
-    let lastname = document.forms["contactManagement"]["editContactLastname"].value;
-    let gender = document.forms["contactManagement"]["editContactGender"].value;
-    let dob = document.forms["contactManagement"]["editContactDOB"].value;
-    let img = document.forms["contactManagement"]["editContactImage"].value;
-    let address = document.forms["contactManagement"]["editContactAddress"].value;
-    let street = document.forms["contactManagement"]["editContactStreet"].value;
-    let district = document.forms["contactManagement"]["editContactDistrict"].value;
-    let state = document.forms["contactManagement"]["editContactState"].value;
-    let country = document.forms["contactManagement"]["editContactCountry"].value;
-    let pin = document.forms["contactManagement"]["editContactPincode"].value;
-    let mail = document.forms["contactManagement"]["editContactEmail"].value;
-    let phone = document.forms["contactManagement"]["editContactPhone"].value;
+    let title = $("#editContactTitle").val();
+    let firstname = $("#editContactFirstname").val();
+    let lastname = $("#editContactLastname").val();
+    let gender = $("#editContactGender").val();
+    let dob = $("#editContactDOB").val();
+    let address = $("#editContactAddress").val();
+    let street = $("#editContactStreet").val();
+    let district = $("#editContactDistrict").val();
+    let state = $("#editContactState").val();
+    let country = $("#editContactCountry").val();
+    let pin = $("#editContactPincode").val();
+    let mail = $("#editContactEmail").val();
+    let phone = $("#editContactPhone").val();
     let valid = true;
 
     if(title == ""){
-        document.getElementById("titleError").textContent = "Please select one option";
+        $("#titleError").text("Please select one option");
         valid = false;
     }
     else{
-        document.getElementById("titleError").textContent = "";
+        $("#titleError").text("");
     }
 
     if(firstname == "" || !/^[a-zA-Z ]+$/.test(firstname)){
-        document.getElementById("firstNameError").textContent = "Please enter your First name";
+        $("#firstNameError").text("Please enter your First name");
         valid = false;
     }
     else{
-        document.getElementById("firstNameError").textContent = "";
+        $("#firstNameError").text("");
     }
 
     if(lastname == "" || !/^[a-zA-Z ]+$/.test(lastname)){
-        document.getElementById("lastNameError").textContent = "Please enter your Last name";
+        $("#lastNameError").text("Please enter your Last name");
         valid = false;
     }
     else{
-        document.getElementById("lastNameError").textContent = "";
+        $("#lastNameError").text("");
     }
 
     if(gender == ""){
-        document.getElementById("genderError").textContent = "Please select one option";
+        $("#genderError").text("Please select one option");
         valid = false;
     }
     else{
-        document.getElementById("genderError").textContent = "";
+        $("#genderError").text("");
     }
 
     if(dob == ""){
-        document.getElementById("dobError").textContent = "Please select your DOB";
+        $("#dobError").text("Please select your DOB");
         valid = false;
     }
     else{
-        document.getElementById("dobError").textContent = "";
+        $("#dobError").text("");
     }
 
     if(address == ""){
-        document.getElementById("addressError").textContent = "Please enter your address";
+        $("#addressError").text("Please enter your address");
         valid = false;
     }
     else{
-        document.getElementById("addressError").textContent = "";
+        $("#addressError").text("");
     }
 
     if(street == ""){
-        document.getElementById("streetError").textContent = "Please enter your street";
+        $("#streetError").text("Please enter your street");
         valid = false;
     }
     else{
-        document.getElementById("streetError").textContent = "";
+        $("#streetError").text("");
     }
 
     if(pin == ""){
-        document.getElementById("pincodeError").textContent = "Please enter your pin";
+        $("#pincodeError").text("Please enter your pin");
         valid = false;
     }
 	else if (!/^\d{6}$/.test(pin)) {
-        document.getElementById("pincodeError").textContent = "Pincode should be six digits";
+        $("#pincodeError").text("Pincode should be six digits");
         valid = false;
 	}
     else{
-        document.getElementById("pincodeError").textContent = "";
+        $("#pincodeError").text("");
     }
 
     if(district == ""){
-        document.getElementById("districtError").textContent = "Please enter your district";
+        $("#districtError").text("Please enter your district");
         valid = false;
     }
     else{
-        document.getElementById("districtError").textContent = "";
+        $("#districtError").text("");
     }
 
     if(state == ""){
-        document.getElementById("stateError").textContent = "Please enter your state";
+        $("#stateError").text("Please enter your state");
         valid = false;
     }
     else{
-        document.getElementById("stateError").textContent = "";
+        $("#stateError").text("");
     }
 
     if(country == ""){
-        document.getElementById("countryError").textContent = "Please enter your country";
+        $("#countryError").text("Please enter your country");
         valid = false;
     }
     else{
-        document.getElementById("countryError").textContent = "";
+        $("#countryError").text("");
     }
 
     if(mail == "" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){
-        document.getElementById("emailError").textContent = "Please enter your mail";
+        $("#emailError").text("Please enter your mail");
         valid = false;
     }
     else{
-        document.getElementById("emailError").textContent = "";
+        $("#emailError").text("");
     }
 
     if(phone == ""){
-        document.getElementById("phoneError").textContent = "Please enter your contact number";
+        $("#phoneError").text("Please enter your contact number");
         valid = false;
     }
     else if(!/^\d{10}$/.test(phone)){
-        document.getElementById("phoneError").textContent = "Phone number should be 10 characters long and contain only digits";
+        $("#phoneError").text("Phone number should be 10 characters long and contain only digits");
         valid = false;
     }
     else{
-        document.getElementById("phoneError").textContent = "";
+        $("#phoneError").text("");
     }
     return valid;
-}
-
-function resetContactFormErrors() {
-	document.getElementById("titleError").textContent = "";
-	document.getElementById("firstNameError").textContent = "";
-	document.getElementById("lastNameError").textContent = "";
-	document.getElementById("genderError").textContent = "";
-	document.getElementById("dobError").textContent = "";
-	document.getElementById("addressError").textContent = "";
-	document.getElementById("streetError").textContent = "";
-	document.getElementById("pincodeError").textContent = "";
-	document.getElementById("districtError").textContent = "";
-	document.getElementById("stateError").textContent = "";
-	document.getElementById("countryError").textContent = "";
-	document.getElementById("emailError").textContent = "";
-	document.getElementById("phoneError").textContent = "";
 }
 
 $("#contactManagement").submit(function(event) {
