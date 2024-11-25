@@ -88,20 +88,20 @@
 												<td>#phone#</td>
 												<td class="d-print-none">
 													<button class="actionBtn btn btn-outline-primary rounded-pill px-3" value="#contactid#" onclick="editContact(event)">
-														<span class="d-none d-lg-inline">EDIT</span>
-														<i class="fa-solid fa-pen-to-square d-lg-none"></i>
+														<span class="d-none d-lg-inline pe-none">EDIT</span>
+														<i class="fa-solid fa-pen-to-square d-lg-none pe-none"></i>
 													</button>
 												</td>
 												<td class="d-print-none">
 													<button class="actionBtn btn btn-outline-danger rounded-pill px-3" value="#contactid#" onclick="deleteContact(event)">
-														<span class="d-none d-lg-inline">DELETE</span>
-														<i class="fa-solid fa-trash d-lg-none"></i>
+														<span class="d-none d-lg-inline pe-none">DELETE</span>
+														<i class="fa-solid fa-trash d-lg-none pe-none"></i>
 													</button>
 												</td>
 												<td class="d-print-none">
 													<button class="actionBtn btn btn-outline-info rounded-pill px-3" value="#contactid#" onclick="viewContact(event)">
-														<span class="d-none d-lg-inline">VIEW</span>
-														<i class="fa-solid fa-eye d-lg-none"></i>
+														<span class="d-none d-lg-inline pe-none">VIEW</span>
+														<i class="fa-solid fa-eye d-lg-none pe-none"></i>
 													</button>
 												</td>
 											</tr>
