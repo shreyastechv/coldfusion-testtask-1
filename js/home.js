@@ -7,7 +7,7 @@ function logOut() {
 			url: "./components/addressbook.cfc?method=logOut",
 			success: function(response) {
 				const responseJSON = JSON.parse(response);
-				if (responseJSON.statusCode === 0) {
+				if (responseJSON.statusCode === 200) {
 					location.reload();
 				}
 				else {
@@ -59,7 +59,7 @@ function deleteContact(event) {
 			data: { contactId: event.target.value },
 			success: function(response) {
 				const responseJSON = JSON.parse(response);
-				if (responseJSON.statusCode === 0) {
+				if (responseJSON.statusCode === 200) {
 					location.reload();
 				}
 			}
@@ -167,7 +167,7 @@ $("#contactManagement").submit(function(event) {
 		contentType: false,
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
-			if (responseJSON.statusCode === 0) {
+			if (responseJSON.statusCode === 200) {
 				if ($("#editContactId").val() === "") {
 					$("#contactManagement")[0].reset();
 				}

@@ -26,7 +26,7 @@ $("#loginForm").submit(function(event) {
 		contentType: false,
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
-			if (responseJSON.statusCode === 0) {
+			if (responseJSON.statusCode === 200) {
 				thisForm.reset();
 				window.location.href = "home.cfm";
 			}

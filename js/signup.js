@@ -122,7 +122,7 @@ $("#signupForm").submit(function(event) {
 			contentType: false,
 			success: function(response) {
 				const responseJSON = JSON.parse(response);
-				if (responseJSON.statusCode === 0) {
+				if (responseJSON.statusCode === 200) {
 					submitMsgSection.css("color", "green");
 					submitMsgSection.html("Account created successfully. <a class='text-decoration-none text-primary' href='index.cfm'>Login</a> to continue.");
 					thisForm.reset();

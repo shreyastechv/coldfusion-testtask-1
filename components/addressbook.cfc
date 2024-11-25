@@ -7,7 +7,7 @@
 
         <cfset local.hashedPassword = Hash(password, "SHA-256")>
         <cfset local.response = StructNew()>
-        <cfset local.response["statusCode"] = 0>
+        <cfset local.response["statusCode"] = 200>
         <cfset local.response["message"] = "">
 
        <cfquery name="checkUser">
@@ -23,10 +23,10 @@
         </cfquery>
 
         <cfif checkUser.RecordCount>
-			<cfset local.response.statusCode = 1>
+			<cfset local.response.statusCode = 400>
             <cfset local.response.message = "Username already exists!">
 		<cfelseif checkEmail.RecordCount>
-			<cfset local.response.statusCode = 2>
+			<cfset local.response.statusCode = 400>
             <cfset local.response.message = "Email already exists!">
 		<cfelse>
             <cffile action="upload" destination="#expandpath("../assets/profilePictures")#" fileField="form.profilePicture" nameconflict="MakeUnique">
@@ -53,7 +53,7 @@
 
         <cfset local.hashedPassword = Hash(password, "SHA-256")>
         <cfset local.response = StructNew()>
-        <cfset local.response["statusCode"] = 0>
+        <cfset local.response["statusCode"] = 200>
         <cfset local.response["message"] = "">
 
         <cfquery name="getUserDetails">
@@ -63,10 +63,10 @@
         </cfquery>
 
         <cfif getUserDetails.RecordCount EQ 0>
-            <cfset local.response.statusCode = 1>
+            <cfset local.response.statusCode = 404>
             <cfset local.response.message = "Username does not exist!">
         <cfelseif getUserDetails.pwd NEQ local.hashedPassword>
-            <cfset local.response.statusCode = 2>
+            <cfset local.response.statusCode = 401>
             <cfset local.response.message = "Wrong password!">
         <cfelse>
             <cfset session.isLoggedIn = true>
@@ -80,12 +80,12 @@
 
     <cffunction name="logOut" returnType="struct" returnFormat="json" access="remote">
         <cfset local.response = StructNew()>
-        <cfset local.response["statusCode"] = 0>
+        <cfset local.response["statusCode"] = 200>
         <cfset local.response["message"] = "">
 
         <cfset StructClear(session)>
         <cfif NOT StructIsEmpty(session)>
-            <cfset local.response.statusCode = 1>
+            <cfset local.response.statusCode = 401>
             <cfset local.response.message = "Unable to logout!">
         </cfif>
 
@@ -127,9 +127,9 @@
                 WHERE contactid=<cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_varchar">
             </cfquery>
 
-            <cfset local.response["statusCode"] = 0>
+            <cfset local.response["statusCode"] = 200>
         <cfelse>
-            <cfset local.response["statusCode"] = 1>
+            <cfset local.response["statusCode"] = 401>
         </cfif>
 
         <cfreturn local.response>
@@ -170,10 +170,10 @@
 				AND active = 1;
 			</cfquery>
 			<cfif getEmailQuery.RecordCount NEQ 0 AND getEmailQuery.contactid NEQ arguments.editContactId>
-                <cfset local.response["statusCode"] = 2>
+                <cfset local.response["statusCode"] = 409>
                 <cfset local.response["message"] = "Email already exists">
 			<cfelseif getPhoneQuery.RecordCount NEQ 0 AND getPhoneQuery.contactid NEQ arguments.editContactId>
-                <cfset local.response["statusCode"] = 3>
+                <cfset local.response["statusCode"] = 409>
                 <cfset local.response["message"] = "Phone number already exists">
 			<cfelse>
 				<cfif arguments.editContactImage NEQ "">
@@ -205,7 +205,7 @@
 							<cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">
 						);
 					</cfquery>
-					<cfset local.response["statusCode"] = 0>
+					<cfset local.response["statusCode"] = 200>
 					<cfset local.response["message"] = "Contact Added Successfully">
 				<cfelse>
 					<cfquery name="updateContactDetailsQuery">
@@ -233,12 +233,12 @@
 							WHERE contactid = <cfqueryparam value="#arguments.editContactId#" cfsqltype="cf_sql_varchar">;
 						</cfquery>
 					</cfif>
-					<cfset local.response["statusCode"] = 0>
+					<cfset local.response["statusCode"] = 200>
 					<cfset local.response["message"] = "Contact Updated Successfully">
 				</cfif>
 			</cfif>
         <cfelse>
-            <cfset local.response["statusCode"] = 1>
+            <cfset local.response["statusCode"] = 401>
         </cfif>
 
         <cfreturn local.response>
