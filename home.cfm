@@ -47,7 +47,7 @@
 				<div class="row ps-1 pe-2">
 					<!--- Left Section --->
 					<div class="col-lg-3 col-md-4 col-12 sidebar bg-transparent">
-						<div class="bg-white d-flex flex-column align-items-center p-3">
+						<div class="bg-white d-flex flex-column align-items-center p-3 gap-2">
 							<cfif StructKeyExists(session, "profilePicture")>
 								<img class="userProfileIcon" src="./assets/profilePictures/#session.profilePicture#" alt="User Profile Icon">
 							<cfelse>
