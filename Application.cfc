@@ -10,10 +10,10 @@
 		<cfif StructKeyExists(session, "isLoggedIn") AND session.isLoggedIn>
 			<cfinclude template="home.cfm">
 		<cfelse>
-			<cfif requestedPage IS "/shreyas/cf-testtask/home.cfm">
+			<cfif arguments.requestedPage IS "/shreyas/cf-testtask/home.cfm">
 				<cfinclude template="index.cfm">
 			<cfelse>
-				<cfinclude template="#requestedPage#">
+				<cfinclude template="#arguments.requestedPage#">
 			</cfif>
 		</cfif>
 	</cffunction>
