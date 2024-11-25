@@ -1,8 +1,8 @@
 <cfcomponent>
-    <cfset this.name = "Address Book">
-    <cfset this.sessionManagement = true>
+	<cfset this.name = "Address Book">
+	<cfset this.sessionManagement = true>
 	<cfset this.sessiontimeout = CreateTimeSpan(0, 1, 0, 0)>
-    <cfset this.dataSource = "addressbookdatasource">
+	<cfset this.dataSource = "addressbookdatasource">
 
 	<cffunction name="onRequest" type="public" returnType="void">
 		<cfargument name="requestedPage" type="string">
@@ -15,6 +15,28 @@
 			<cfelse>
 				<cfinclude template="#requestedPage#">
 			</cfif>
+		</cfif>
+	</cffunction>
+
+	<cffunction name="onError">
+		<cfargument name="exception" required="true">
+		<cfargument name="eventName" type="String" required="true">
+
+		<!--- Log all errors --->
+		<cflog file="#this.name#" type="error" text="Event Name: #arguments.eventName#" >
+		<cflog file="#this.name#" type="error" text="Message: #arguments.exception.message#">
+		<cflog file="#this.name#" type="error" text="Root Cause Message: #arguments.exception.rootcause.message#">
+
+		<!--- Display an error message if there is a page context --->
+		<cfif NOT (arguments.eventName IS "onSessionEnd") OR (arguments.eventName IS "onApplicationEnd")>
+			<cfoutput>
+				<div class="container">
+					<h2 class="h3 mt-2">An unexpected error occurred.</h2>
+					<p>Please provide the following information to technical support:</p>
+					<p>Error Event: #arguments.eventName#</p>
+					<p>Error code is: #arguments.exception.rootcause.cause.errorCode#</p>
+				</div>
+			</cfoutput>
 		</cfif>
 	</cffunction>
 </cfcomponent>

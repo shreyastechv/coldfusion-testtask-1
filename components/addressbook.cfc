@@ -8,7 +8,7 @@
         <cfset local.hashedPassword = Hash(password, "SHA-256")>
         <cfset local.response = StructNew()>
         <cfset local.response["statusCode"] = 0>
-        <cfset local.response["message"] = 0>
+        <cfset local.response["message"] = "">
 
        <cfquery name="checkUser">
             SELECT username
@@ -16,7 +16,19 @@
             WHERE username=<cfqueryparam value="#arguments.userName#" cfsqltype="cf_sql_varchar">;
         </cfquery>
 
-        <cfif checkUser.RecordCount EQ 0>
+		<cfquery name="checkEmail">
+            SELECT email
+            FROM users
+            WHERE email=<cfqueryparam value="#arguments.email#" cfsqltype="cf_sql_varchar">;
+        </cfquery>
+
+        <cfif checkUser.RecordCount>
+			<cfset local.response.statusCode = 1>
+            <cfset local.response.message = "Username already exists!">
+		<cfelseif checkEmail.RecordCount>
+			<cfset local.response.statusCode = 2>
+            <cfset local.response.message = "Email already exists!">
+		<cfelse>
             <cffile action="upload" destination="#expandpath("../assets/profilePictures")#" fileField="form.profilePicture" nameconflict="MakeUnique">
             <cfset local.profilePictureName = cffile.serverFile>
             <cfquery name="addUser">
@@ -30,9 +42,6 @@
                     <cfqueryparam value="#local.profilePictureName#" cfsqltype="cf_sql_varchar">
                 );
             </cfquery>
-        <cfelse>
-            <cfset local.response.statusCode = 1>
-            <cfset local.response.message = "Username already exists!">
         </cfif>
 
         <cfreturn local.response>
@@ -241,7 +250,7 @@
 		<cfset local.response["data"] = local.spreadsheetName>
 
         <cfquery name="createExcelQuery">
-            SELECT title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone
+            SELECT title, firstname, lastname, gender, dob, address, street, district, state, country, pincode, email, phone
             FROM contactDetails
             WHERE _createdBy=<cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">
             AND active = 1;
@@ -253,7 +262,7 @@
 
     <cffunction name="createPdf" returnType="struct" returnFormat="json" access="remote">
 		<cfset local.response = StructNew()>
-		<cfset local.pdfName = CreateUUID() & ".xlsx">
+		<cfset local.pdfName = CreateUUID() & ".pdf">
 		<cfset local.response["data"] = local.pdfName>
 
         <cfdocument format="pdf" filename="../assets/pdfs/#local.pdfName#" overwrite="true">
@@ -264,7 +273,7 @@
                 AND active = 1;
             </cfquery>
             <cfoutput>
-                <table>
+                <table border="1" cellpadding="0" cellspacing="0">
                     <thead>
                         <tr>
                             <th>TITLE</th>
@@ -300,7 +309,7 @@
                                 <td>#email#</td>
                                 <td>#phone#</td>
                                 <td>
-                                    <img class="img" src="../assets/contactImages/#contactpicture#" alt="Contact Image">
+                                    <img class="img" height="50" src="../assets/contactImages/#contactpicture#" alt="Contact Image">
                                 </td>
                             </tr>
                         </cfloop>
