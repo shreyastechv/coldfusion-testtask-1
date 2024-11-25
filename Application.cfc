@@ -32,4 +32,16 @@
 			<cfinclude template="error.cfm">
 		</cfif>
 	</cffunction>
+
+	<!--- <cffunction name="onApplicationStart" returnType="boolean">
+		<cfset session.statusCodes = StructNew()>
+
+		<cfquery name="getStatusCodesQuery">
+			SELECT statusCode, message
+			FROM statusCodes
+		</cfquery>
+		<cfloop query="getStatusCodesQuery">
+			<cfset session.statusCodes["#statusCode#"] = message>
+		</cfloop>
+	</cffunction> --->
 </cfcomponent>
