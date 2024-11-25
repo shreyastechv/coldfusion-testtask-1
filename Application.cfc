@@ -29,14 +29,7 @@
 
 		<!--- Display an error message if there is a page context --->
 		<cfif NOT (arguments.eventName IS "onSessionEnd") OR (arguments.eventName IS "onApplicationEnd")>
-			<cfoutput>
-				<div class="container">
-					<h2 class="h3 mt-2">An unexpected error occurred.</h2>
-					<p>Please provide the following information to technical support:</p>
-					<p>Error Event: #arguments.eventName#</p>
-					<p>Error code is: #arguments.exception.rootcause.cause.errorCode#</p>
-				</div>
-			</cfoutput>
+			<cfinclude template="error.cfm">
 		</cfif>
 	</cffunction>
 </cfcomponent>
