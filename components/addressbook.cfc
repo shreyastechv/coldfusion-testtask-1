@@ -250,7 +250,7 @@
 		<cfset local.response["data"] = local.spreadsheetName>
 
         <cfquery name="createExcelQuery">
-            SELECT title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone
+            SELECT title, firstname, lastname, gender, dob, address, street, district, state, country, pincode, email, phone
             FROM contactDetails
             WHERE _createdBy=<cfqueryparam value="#session.userName#" cfsqltype="cf_sql_varchar">
             AND active = 1;
