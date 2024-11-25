@@ -273,7 +273,7 @@
                 AND active = 1;
             </cfquery>
             <cfoutput>
-                <table>
+                <table border="1" cellpadding="0" cellspacing="0">
                     <thead>
                         <tr>
                             <th>TITLE</th>
@@ -309,7 +309,7 @@
                                 <td>#email#</td>
                                 <td>#phone#</td>
                                 <td>
-                                    <img class="img" src="../assets/contactImages/#contactpicture#" alt="Contact Image">
+                                    <img class="img" height="50" src="../assets/contactImages/#contactpicture#" alt="Contact Image">
                                 </td>
                             </tr>
                         </cfloop>
