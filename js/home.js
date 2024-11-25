@@ -116,133 +116,37 @@ function editContact(event) {
 	});
 }
 
-function validateContactForm(){
-    let title = $("#editContactTitle").val();
-    let firstname = $("#editContactFirstname").val();
-    let lastname = $("#editContactLastname").val();
-    let gender = $("#editContactGender").val();
-    let dob = $("#editContactDOB").val();
-    let address = $("#editContactAddress").val();
-    let street = $("#editContactStreet").val();
-    let district = $("#editContactDistrict").val();
-    let state = $("#editContactState").val();
-    let country = $("#editContactCountry").val();
-    let pin = $("#editContactPincode").val();
-    let mail = $("#editContactEmail").val();
-    let phone = $("#editContactPhone").val();
+function validateContactForm() {
+    const fields = [
+        { id: "editContactTitle", errorId: "titleError", message: "Please select one option", regex: null },
+        { id: "editContactFirstname", errorId: "firstNameError", message: "Please enter your First name", regex: /^[a-zA-Z ]+$/ },
+        { id: "editContactLastname", errorId: "lastNameError", message: "Please enter your Last name", regex: /^[a-zA-Z ]+$/ },
+        { id: "editContactGender", errorId: "genderError", message: "Please select one option", regex: null },
+        { id: "editContactDOB", errorId: "dobError", message: "Please select your DOB", regex: null },
+        { id: "editContactAddress", errorId: "addressError", message: "Please enter your address", regex: null },
+        { id: "editContactStreet", errorId: "streetError", message: "Please enter your street", regex: null },
+        { id: "editContactDistrict", errorId: "districtError", message: "Please enter your district", regex: null },
+        { id: "editContactState", errorId: "stateError", message: "Please enter your state", regex: null },
+        { id: "editContactCountry", errorId: "countryError", message: "Please enter your country", regex: null },
+        { id: "editContactPincode", errorId: "pincodeError", message: "Please enter your pin", regex: /^\d{6}$/, customError: "Pincode should be six digits" },
+        { id: "editContactEmail", errorId: "emailError", message: "Please enter your mail", regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
+        { id: "editContactPhone", errorId: "phoneError", message: "Please enter your contact number", regex: /^\d{10}$/, customError: "Phone number should be 10 characters long and contain only digits" },
+    ];
+
     let valid = true;
 
-    if(title == ""){
-        $("#titleError").text("Please select one option");
-        valid = false;
-    }
-    else{
-        $("#titleError").text("");
-    }
+    fields.forEach(field => {
+        const value = $(`#${field.id}`).val().trim();
 
-    if(firstname == "" || !/^[a-zA-Z ]+$/.test(firstname)){
-        $("#firstNameError").text("Please enter your First name");
-        valid = false;
-    }
-    else{
-        $("#firstNameError").text("");
-    }
+        if (value === "" || (field.regex && !field.regex.test(value))) {
+            const errorMessage = value === "" ? field.message : field.customError || field.message;
+            $(`#${field.errorId}`).text(errorMessage);
+            valid = false;
+        } else {
+            $(`#${field.errorId}`).text("");
+        }
+    });
 
-    if(lastname == "" || !/^[a-zA-Z ]+$/.test(lastname)){
-        $("#lastNameError").text("Please enter your Last name");
-        valid = false;
-    }
-    else{
-        $("#lastNameError").text("");
-    }
-
-    if(gender == ""){
-        $("#genderError").text("Please select one option");
-        valid = false;
-    }
-    else{
-        $("#genderError").text("");
-    }
-
-    if(dob == ""){
-        $("#dobError").text("Please select your DOB");
-        valid = false;
-    }
-    else{
-        $("#dobError").text("");
-    }
-
-    if(address == ""){
-        $("#addressError").text("Please enter your address");
-        valid = false;
-    }
-    else{
-        $("#addressError").text("");
-    }
-
-    if(street == ""){
-        $("#streetError").text("Please enter your street");
-        valid = false;
-    }
-    else{
-        $("#streetError").text("");
-    }
-
-    if(pin == ""){
-        $("#pincodeError").text("Please enter your pin");
-        valid = false;
-    }
-	else if (!/^\d{6}$/.test(pin)) {
-        $("#pincodeError").text("Pincode should be six digits");
-        valid = false;
-	}
-    else{
-        $("#pincodeError").text("");
-    }
-
-    if(district == ""){
-        $("#districtError").text("Please enter your district");
-        valid = false;
-    }
-    else{
-        $("#districtError").text("");
-    }
-
-    if(state == ""){
-        $("#stateError").text("Please enter your state");
-        valid = false;
-    }
-    else{
-        $("#stateError").text("");
-    }
-
-    if(country == ""){
-        $("#countryError").text("Please enter your country");
-        valid = false;
-    }
-    else{
-        $("#countryError").text("");
-    }
-
-    if(mail == "" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){
-        $("#emailError").text("Please enter your mail");
-        valid = false;
-    }
-    else{
-        $("#emailError").text("");
-    }
-
-    if(phone == ""){
-        $("#phoneError").text("Please enter your contact number");
-        valid = false;
-    }
-    else if(!/^\d{10}$/.test(phone)){
-        $("#phoneError").text("Phone number should be 10 characters long and contain only digits");
-        valid = false;
-    }
-    else{
-        $("#phoneError").text("");
-    }
     return valid;
 }
 
