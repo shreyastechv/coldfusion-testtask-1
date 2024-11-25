@@ -8,7 +8,7 @@
         <cfset local.hashedPassword = Hash(password, "SHA-256")>
         <cfset local.response = StructNew()>
         <cfset local.response["statusCode"] = 0>
-        <cfset local.response["message"] = 0>
+        <cfset local.response["message"] = "">
 
        <cfquery name="checkUser">
             SELECT username
@@ -16,7 +16,19 @@
             WHERE username=<cfqueryparam value="#arguments.userName#" cfsqltype="cf_sql_varchar">;
         </cfquery>
 
-        <cfif checkUser.RecordCount EQ 0>
+		<cfquery name="checkEmail">
+            SELECT email
+            FROM users
+            WHERE email=<cfqueryparam value="#arguments.email#" cfsqltype="cf_sql_varchar">;
+        </cfquery>
+
+        <cfif checkUser.RecordCount>
+			<cfset local.response.statusCode = 1>
+            <cfset local.response.message = "Username already exists!">
+		<cfelseif checkEmail.RecordCount>
+			<cfset local.response.statusCode = 2>
+            <cfset local.response.message = "Email already exists!">
+		<cfelse>
             <cffile action="upload" destination="#expandpath("../assets/profilePictures")#" fileField="form.profilePicture" nameconflict="MakeUnique">
             <cfset local.profilePictureName = cffile.serverFile>
             <cfquery name="addUser">
@@ -30,9 +42,6 @@
                     <cfqueryparam value="#local.profilePictureName#" cfsqltype="cf_sql_varchar">
                 );
             </cfquery>
-        <cfelse>
-            <cfset local.response.statusCode = 1>
-            <cfset local.response.message = "Username already exists!">
         </cfif>
 
         <cfreturn local.response>
