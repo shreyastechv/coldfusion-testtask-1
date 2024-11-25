@@ -15,21 +15,27 @@ body {
 	background-color: #f8f9fa;
 	margin-bottom: 20px;
 }
+
 .toolbarIcon {
 	width: 27px;
 }
+
 .contentSection {
 	margin-top: 20px;
 }
+
 .sidebar {
 	height: 100%;
 }
+
 .userProfileIcon {
 	width: 100px;
 }
+
 .mainContent {
 	padding: 20px;
 }
+
 .contactImage {
 	width: 65px;
 }
