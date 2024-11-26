@@ -39,3 +39,10 @@ $("#loginForm").submit(function(event) {
 		}
 	});
 });
+
+function googleLogin() {
+	$.ajax({
+		type: "POST",
+		url: "./components/addressbook.cfc?method=googleLogin"
+	})
+}

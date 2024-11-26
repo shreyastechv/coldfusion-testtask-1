@@ -51,8 +51,8 @@
                                 <button type="button" class="btn btn-primary rounded-circle">
                                     <i class="fab fa-facebook-f"></i>
                                 </button>
-                                <button type="button" class="btn btn-danger rounded-circle">
-                                    <i class="fab fa-google"></i>
+                                <button type="button" class="btn btn-danger rounded-circle" onclick="googleLogin()">
+                                    <i class="fab fa-google pe-none"></i>
                                 </button>
                             </div>
                         </form>
