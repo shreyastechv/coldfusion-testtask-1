@@ -72,7 +72,7 @@
             <cfset session.isLoggedIn = true>
             <cfset session.userName = getUserDetails.username>
             <cfset session.fullName = getUserDetails.fullname>
-            <cfset session.profilePicture = getUserDetails.profilepicture>
+            <cfset session.profilePicture = "./assets/profilePictures/" & getUserDetails.profilepicture>
         </cfif>
 
         <cfreturn local.response>

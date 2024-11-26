@@ -15,6 +15,7 @@
 			<cfset session.isLoggedIn = true>
 			<cfset session.userName = session.googleData.id>
 			<cfset session.fullName = session.googleData.name>
+            <cfset session.profilePicture = session.googleData.other.picture>
 			<cflocation url="home.cfm" addToken="no">
 		</cfif>
         <header class="header d-flex align-items-center justify-content-between fixed-top px-5">
