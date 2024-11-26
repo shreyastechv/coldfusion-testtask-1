@@ -73,8 +73,8 @@
 											<th>EMAIL ID</th>
 											<th>PHONE NUMBER</th>
 											<th class="d-print-none"></th>
-											<th class="d-print-none></th>
-											<th class="d-print-none></th>
+											<th class="d-print-none"></th>
+											<th class="d-print-none"></th>
 										</tr>
 									</thead>
 									<tbody>
