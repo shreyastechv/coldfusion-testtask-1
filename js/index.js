@@ -28,7 +28,7 @@ $("#loginForm").submit(function(event) {
 			const responseJSON = JSON.parse(response);
 			if (responseJSON.statusCode === 200) {
 				thisForm.reset();
-				window.location.href = "home.cfm";
+				location.reload();
 			}
 			else {
 				submitMsgSection.text(responseJSON.message);
@@ -39,3 +39,10 @@ $("#loginForm").submit(function(event) {
 		}
 	});
 });
+
+function googleLogin() {
+	$.ajax({
+		type: "POST",
+		url: "./components/addressbook.cfc?method=googleLogin"
+	})
+}
