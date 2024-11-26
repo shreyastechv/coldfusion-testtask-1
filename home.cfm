@@ -11,7 +11,6 @@
     </head>
 
     <body>
-				<cfset session.userName = 'hi'>
 		<cfset local.contactsObject = CreateObject("component", "components.addressbook")>
 		<cfset local.getContactsQuery = local.contactsObject.getContacts()>
 		<cfoutput>
@@ -31,7 +30,6 @@
 
 			<!--- Main Content --->
 			<div class="container-fluid contentSection">
-				<cfdump var = "#session.googleData#">
 				<!--- Toolbar --->
 				<div class="toolbar d-flex justify-content-end d-print-none">
 					<button onclick="createPdf()" class="btn">

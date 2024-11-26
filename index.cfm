@@ -11,6 +11,12 @@
     </head>
 
     <body>
+		<cfif StructKeyExists(session, "googleData")>
+			<cfset session.isLoggedIn = true>
+			<cfset session.userName = session.googleData.id>
+			<cfset session.fullName = session.googleData.name>
+			<cflocation url="home.cfm" addToken="no">
+		</cfif>
         <header class="header d-flex align-items-center justify-content-between fixed-top px-5">
             <a class="d-flex align-items-center text-decoration-none" href="#">
                 <img class="logo" src="./assets/images/logo.png" alt="Logo Image">
@@ -49,9 +55,9 @@
                             <div class="text-center my-3">Or Sign In Using</div>
                             <div class="d-flex justify-content-center gap-3">
                                 <button type="button" class="btn btn-primary rounded-circle">
-                                    <i class="fab fa-facebook-f"></i>
+                                    <i class="fab fa-facebook-f pe-none"></i>
                                 </button>
-                                <button type="button" class="btn btn-danger rounded-circle" onclick="googleLogin()">
+                                <button type="button" class="btn btn-danger rounded-circle"  onclick="window.location.href='./googleLogin.cfm'">
                                     <i class="fab fa-google pe-none"></i>
                                 </button>
                             </div>

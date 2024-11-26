@@ -321,20 +321,6 @@
 		<cfreturn local.response>
     </cffunction>
 
-	<cffunction name="googleLogin" returnType="void" access="remote">
-		<cfset local.response = StructNew()>
-		<cfset local.response["statusCode"] = 200>
-
-		<cfoauth
-			type="Google"
-			clientid="602241607717-ked372vkbsd38ur84h5q80ldffkqnqhi.apps.googleusercontent.com"
-			result="res"
-			redirecturi="http://addressbook.com/home.cfm"
-		>
-		<cfset session.googleData = res>
-
-	</cffunction>
-
 	<!--- <cffunction name="getStatusMessage" access="private" returnType="string">
 		<cfargument name="statusCode" type="numeric">
 		<cfset local.statusMessage = "">
