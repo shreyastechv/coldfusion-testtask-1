@@ -3,11 +3,10 @@
 		type="Google"
 		clientid="#application.googleClientId#"
 		secretkey="#application.googleSecretKey#"
-		result="output"
+		result="session.googleData"
 	>
-	
-	<cfif structKeyExists(variables, "output")>
-		<cfset session.googleData = output>
+
+	<cfif structKeyExists(session, "googleData")>
 		<cflocation url="index.cfm" addtoken="no">
 	</cfif>
 </cfif>
