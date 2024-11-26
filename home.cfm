@@ -11,7 +11,6 @@
     </head>
 
     <body>
-				<cfset session.userName = 'hi'>
 		<cfset local.contactsObject = CreateObject("component", "components.addressbook")>
 		<cfset local.getContactsQuery = local.contactsObject.getContacts()>
 		<cfoutput>
@@ -31,7 +30,6 @@
 
 			<!--- Main Content --->
 			<div class="container-fluid contentSection">
-				<cfdump var = "#session.googleData#">
 				<!--- Toolbar --->
 				<div class="toolbar d-flex justify-content-end d-print-none">
 					<button onclick="createPdf()" class="btn">
@@ -50,8 +48,8 @@
 					<!--- Left Section --->
 					<div class="col-lg-3 col-md-4 col-12 sidebar bg-transparent">
 						<div class="bg-white d-flex flex-column align-items-center p-3 gap-2">
-							<cfif StructKeyExists(session, "profilePicture") AND FileExists(ExpandPath("./assets/profilePictures/#session.profilePicture#"))>
-								<img class="userProfileIcon" src="./assets/profilePictures/#session.profilePicture#" alt="User Profile Icon">
+							<cfif StructKeyExists(session, "profilePicture")>
+								<img class="userProfileIcon" src="#session.profilePicture#" alt="User Profile Icon">
 							<cfelse>
 								<img class="userProfileIcon" src="./assets/images/user-profileicon.png" alt="User Profile Icon">
 							</cfif>

@@ -10,12 +10,17 @@
 		<cfif StructKeyExists(session, "isLoggedIn") AND session.isLoggedIn>
 			<cfinclude template="home.cfm">
 		<cfelse>
-			<cfif arguments.requestedPage IS "/shreyas/cf-testtask/home.cfm">
+			<cfif arguments.requestedPage IS "/home.cfm">
 				<cfinclude template="index.cfm">
 			<cfelse>
 				<cfinclude template="#arguments.requestedPage#">
 			</cfif>
 		</cfif>
+	</cffunction>
+
+	<cffunction name="onApplicationStart">
+		<cfset application.googleClientId = "">
+		<cfset application.googleSecretKey = "">
 	</cffunction>
 
 	<cffunction name="onError">
