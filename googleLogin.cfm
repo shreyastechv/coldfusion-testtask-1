@@ -3,6 +3,7 @@
 		type="Google"
 		clientid="#application.googleClientId#"
 		secretkey="#application.googleSecretKey#"
+		scope="email"
 		result="session.googleData"
 	>
 

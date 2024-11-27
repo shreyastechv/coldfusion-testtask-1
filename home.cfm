@@ -48,9 +48,9 @@
 					<div class="col-lg-3 col-md-4 col-12 sidebar bg-transparent">
 						<div class="bg-white d-flex flex-column align-items-center p-3 gap-2">
 							<cfif StructKeyExists(session, "profilePicture")>
-								<img class="userProfileIcon" src="#session.profilePicture#" alt="User Profile Icon">
+								<img class="userProfileIcon rounded-4" src="#session.profilePicture#" alt="User Profile Icon">
 							<cfelse>
-								<img class="userProfileIcon" src="./assets/images/user-profileicon.png" alt="User Profile Icon">
+								<img class="userProfileIcon rounded-4" src="./assets/images/user-profileicon.png" alt="User Profile Icon">
 							</cfif>
 							<cfif StructKeyExists(session, "fullName")>
 								<h4>#session.fullName#</h4>
@@ -61,9 +61,9 @@
 						</div>
 					</div>
 					<!--- Right Section --->
-					<div class="col-lg-9 col-md-8 col-12 mainContent bg-white">
+					<div class="col-lg-9 col-md-8 col-12 mainContent bg-white d-flex align-items-center justify-content-around">
 						<cfif local.getContactsQuery.RecordCount>
-							<div class="table-responsive">
+							<div class="table-responsive w-100">
 								<table class="table table-hover align-middle">
 									<thead>
 										<tr>
@@ -80,7 +80,7 @@
 										<cfloop query="local.getContactsQuery">
 											<tr>
 												<td>
-													<img class="contactImage p-2" src="./assets/contactImages/#contactpicture#" alt="Contact Image">
+													<img class="contactImage p-2 rounded-4" src="./assets/contactImages/#contactpicture#" alt="Contact Image">
 												</td>
 												<td>#firstname# #lastname#</td>
 												<td>#email#</td>

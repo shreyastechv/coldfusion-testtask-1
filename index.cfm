@@ -12,10 +12,27 @@
 
     <body>
 		<cfif StructKeyExists(session, "googleData")>
+			<cfquery name="checkEmailQuery">
+				SELECT email
+				FROM users
+				WHERE email = <cfqueryparam value="#session.googleData.other.email#" cfsqltype="cf_sql_varchar">;
+			</cfquery>
+			<cfif checkEmailQuery.RecordCount EQ 0>
+				<cfquery name="checkEmailQuery">
+					INSERT INTO users
+                	(fullname, email, username, profilePicture)
+					VALUES (
+						<cfqueryparam value="#session.googleData.name#" cfsqltype="cf_sql_varchar">,
+						<cfqueryparam value="#session.googleData.other.email#" cfsqltype="cf_sql_varchar">,
+						<cfqueryparam value="#session.googleData.other.email#" cfsqltype="cf_sql_varchar">,
+						<cfqueryparam value="#session.googleData.other.picture#" cfsqltype="cf_sql_varchar">
+					);
+				</cfquery>
+			</cfif>
 			<cfset session.isLoggedIn = true>
-			<cfset session.userName = session.googleData.id>
+			<cfset session.userName = session.googleData.other.email>
 			<cfset session.fullName = session.googleData.name>
-            <cfset session.profilePicture = session.googleData.other.picture>
+			<cfset session.profilePicture = session.googleData.other.picture>
 			<cflocation url="home.cfm" addToken="no">
 		</cfif>
         <header class="header d-flex align-items-center justify-content-between fixed-top px-5">
