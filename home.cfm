@@ -11,8 +11,7 @@
     </head>
 
     <body>
-		<cfset local.contactsObject = CreateObject("component", "components.addressbook")>
-		<cfset local.getContactsQuery = local.contactsObject.getContacts()>
+		<cfset local.getContactsQuery = application.addressbookObject.getContacts()>
 		<cfoutput>
 			<!--- Navbar --->
 			<nav class="navbar navbar-expand-lg shadow-sm customNavbar px-2">

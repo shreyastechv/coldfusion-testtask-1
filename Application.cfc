@@ -19,6 +19,7 @@
 	</cffunction>
 
 	<cffunction name="onApplicationStart">
+		<cfset application.addressbookObject = CreateObject("component", "components.addressbook")>
 		<cfset application.googleClientId = "">
 		<cfset application.googleSecretKey = "">
 	</cffunction>
