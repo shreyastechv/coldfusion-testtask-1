@@ -215,10 +215,41 @@ function createPdf() {
 	});
 }
 
-function scheduleBdayMails() {
-	console.log('hi');
+$(document).ready(function(){
+	$("#scheduleBdayEmailBtn").show();
+	$("#diableBdayEmailBtn").hide();
+
+	$.ajax({
+		type: "POST",
+		url: "./components/addressbook.cfc?method=getTaskStatus",
+		success: function(response) {
+			const responseJSON = JSON.parse(response);
+			if (responseJSON.taskExists) {
+				$("#scheduleBdayEmailBtn").hide();
+				$("#diableBdayEmailBtn").show();
+			}
+		}
+	});
+});
+
+function scheduleBdayEmails() {
 	$.ajax({
 		type: "POST",
 		url: "./components/addressbook.cfc?method=scheduleBdayEmails",
+		success: function() {
+			$("#scheduleBdayEmailBtn").hide();
+			$("#diableBdayEmailBtn").show();
+		}
+	});
+}
+
+function disableBdayEmails() {
+	$.ajax({
+		type: "POST",
+		url: "./components/addressbook.cfc?method=disableBdayEmails",
+		success: function() {
+			$("#scheduleBdayEmailBtn").show();
+			$("#diableBdayEmailBtn").hide();
+		}
 	});
 }

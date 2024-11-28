@@ -415,6 +415,22 @@
 		<cflocation url="home.cfm" addToken="no">
 	</cffunction>
 
+	<cffunction name="getTaskStatus" returnType="struct" returnFormat="json" access="remote">
+		<cfset local.response = StructNew()>
+		<cfset local.response["statusCode"] = 404>
+		<cfset local.response["taskExists"] = false>
+
+		<cfif StructKeyExists(session, "userName")>
+			<cfschedule action="list" mode="application" result="local.tasksQuery">
+			<cfset local.taskNames = ValueArray (local.tasksQuery, "task")>
+			<cfif QueryKeyExists(local.tasksQuery,"task") AND ArrayContains(local.taskNames, "sendBirthdayWishes-#session.userName#")>
+				<cfset local.response["statusCode"] = 200>
+				<cfset local.response["taskExists"] = true>
+			</cfif>
+		</cfif>
+		<cfreturn local.response>
+	</cffunction>
+
 	<cffunction name="scheduleBdayEmails" returnType="void" access="remote">
 		<cfif StructKeyExists(session, "userName")>
 			<cfschedule
@@ -426,6 +442,16 @@
 				mode="application"
 				url="http://addressbook.com/components/addressbook.cfc?method=sendBdayEmails&userName=#session.userName#"
 				interval="daily"
+			>
+		</cfif>
+	</cffunction>
+
+	<cffunction name="disableBdayEmails" returnType="void" access="remote">
+		<cfif StructKeyExists(session, "userName")>
+			<cfschedule
+				action="delete"
+				mode="application"
+				task="sendBirthdayWishes-#session.userName#"
 			>
 		</cfif>
 	</cffunction>
@@ -446,7 +472,6 @@
 			<cfloop query="getUsersAndDOB">
 				<cfif Day(dob) EQ Day(Now()) AND Month(dob) EQ Month(Now())>
 					<cfmail from="test@test.com" to="#email#" subject="Birthday Wishes">
-						<cfdump var = "#cgi#">
 						Good Morning #title# #firstname# #lastname#,
 						We are wishing you a happy birthday and many more happy returns of the day.
 					</cfmail>
