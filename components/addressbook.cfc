@@ -100,21 +100,6 @@
         <cfreturn local.response>
     </cffunction>
 
-    <cffunction name="getContacts" returnType="query" access="public">
-        <cfquery name="getContactsQuery">
-            SELECT contactid,
-				firstname,
-				lastname,
-				contactpicture,
-				email,
-				phone
-			FROM contactDetails
-			WHERE _createdBy = <cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">
-				AND active = 1
-        </cfquery>
-        <cfreturn getContactsQuery>
-    </cffunction>
-
     <cffunction name="getContactById" returnType="struct" returnFormat="json" access="remote">
         <cfargument required="true" name="contactId" type="string">
 
