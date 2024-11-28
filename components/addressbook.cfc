@@ -415,7 +415,7 @@
 		<cflocation url="home.cfm" addToken="no">
 	</cffunction>
 
-	<cffunction name="scheduleBdayEmails" access="remote" returnType="void">
+	<cffunction name="scheduleBdayEmails" returnType="void" access="remote">
 		<cfif StructKeyExists(session, "userName")>
 			<cfschedule
 				action="update"
@@ -439,15 +439,17 @@
 			dob,
 			email
 			FROM contactDetails
-			WHERE dob = <cfqueryparam value = "#DateFormat(Now(), "yyyy-mm-dd")#" cfsqltype = "cf_sql_varchar">
-				AND _createdBy = <cfqueryparam value = "#arguments.userName#" cfsqltype = "cf_sql_varchar">
+			WHERE _createdBy = <cfqueryparam value = "#arguments.userName#" cfsqltype = "cf_sql_varchar">
 		</cfquery>
 
 		<cfloop query="getUsersAndDOB">
-			<cfmail from="test@test.com" to="#email#" subject="Birthday Wishes">
-				Good Morning #title# #firstname# #lastname#,
-				We are wishing you a happy birthday and many more happy returns of the day.
-			</cfmail>
+			<cfif Day(dob) EQ Day(Now()) AND Month(dob) EQ Month(Now())>
+				<cfmail from="test@test.com" to="#email#" subject="Birthday Wishes">
+					#dob# #Now()#
+					Good Morning #title# #firstname# #lastname#,
+					We are wishing you a happy birthday and many more happy returns of the day.
+				</cfmail>
+			</cfif>
 		</cfloop>
 	</cffunction>
 
