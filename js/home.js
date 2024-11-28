@@ -214,3 +214,11 @@ function createPdf() {
 		}
 	});
 }
+
+function scheduleBdayMails() {
+	console.log('hi');
+	$.ajax({
+		type: "POST",
+		url: "./components/addressbook.cfc?method=scheduleBdayEmails",
+	});
+}

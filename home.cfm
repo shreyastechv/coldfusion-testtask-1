@@ -58,6 +58,7 @@
 								<h4>User Fullname</h4>
 							</cfif>
 							<button class="btn bg-primary text-white rounded-pill d-print-none" onclick="createContact()">CREATE CONTACT</button>
+							<button class="btn bg-secondary text-white rounded-pill d-print-none" onclick="scheduleBdayMails()">SCHEDULE BDAY MAILS</button>
 						</div>
 					</div>
 					<!--- Right Section --->
