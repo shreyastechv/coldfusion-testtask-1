@@ -11,7 +11,8 @@
     </head>
 
     <body>
-		<cfset local.getContactsQuery = application.addressbookObject.getContacts()>
+		<cfset ormReload()>
+		<cfset local.contacts = entityLoad("contactDetails", {_createdBy = session.userName, active = 1})>
 		<cfoutput>
 			<!--- Navbar --->
 			<nav class="navbar navbar-expand-lg shadow-sm customNavbar px-2">
@@ -31,13 +32,13 @@
 			<div class="container-fluid contentSection">
 				<!--- Toolbar --->
 				<div class="toolbar d-flex justify-content-end d-print-none">
-					<button onclick="createPdf()" class="btn">
+					<button onclick="createPdf()" class="btn" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Create PDF from contact list">
 						<img class="toolbarIcon p-1" src="./assets/images/pdficon.png" alt="PDF Icon">
 					</button>
-					<button onclick="createExcel()" class="btn">
+					<button onclick="createExcel()" class="btn" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Create Spreadsheet from contact list">
 						<img class="toolbarIcon" src="./assets/images/excelicon.png" alt="Excel Icon">
 					</button>
-					<button onclick="window.print()" class="btn">
+					<button onclick="window.print()" class="btn" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Print the page">
 						<img class="toolbarIcon p-1" src="./assets/images/printericon.png" alt="Printer Icon">
 					</button>
 				</div>
@@ -58,12 +59,13 @@
 								<h4>User Fullname</h4>
 							</cfif>
 							<button class="btn bg-primary text-white rounded-pill d-print-none" onclick="createContact()">CREATE CONTACT</button>
-							<button class="btn bg-secondary text-white rounded-pill d-print-none" onclick="scheduleBdayMails()">SCHEDULE BDAY MAILS</button>
+							<button id="scheduleBdayEmailBtn" class="btn bg-secondary text-white rounded-pill d-print-none" onclick="scheduleBdayEmails()" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Schedule sending a timely birthday message mail to people on your contact list">SCHEDULE BDAY MAILS</button>
+							<button id="diableBdayEmailBtn" class="btn bg-danger text-white rounded-pill d-print-none" onclick="disableBdayEmails()" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Disable the birthday message schedule">DISABLE BDAY MAILS</button>
 						</div>
 					</div>
 					<!--- Right Section --->
 					<div class="col-lg-9 col-md-8 col-12 mainContent bg-white d-flex align-items-center justify-content-around">
-						<cfif local.getContactsQuery.RecordCount>
+						<cfif arrayLen(local.contacts)>
 							<div class="table-responsive w-100">
 								<table class="table table-hover align-middle">
 									<thead>
@@ -78,28 +80,28 @@
 										</tr>
 									</thead>
 									<tbody>
-										<cfloop query="local.getContactsQuery">
+										<cfloop array="#local.contacts#" item="contactItem">
 											<tr>
 												<td>
-													<img class="contactImage p-2 rounded-4" src="./assets/contactImages/#contactpicture#" alt="Contact Image">
+													<img class="contactImage p-2 rounded-4" src="./assets/contactImages/#contactItem.getContactpicture()#" alt="Contact Image">
 												</td>
-												<td>#firstname# #lastname#</td>
-												<td>#email#</td>
-												<td>#phone#</td>
+												<td>#contactItem.getFirstName()# #contactItem.getLastName()#</td>
+												<td>#contactItem.getEmail()#</td>
+												<td>#contactItem.getPhone()#</td>
 												<td class="d-print-none">
-													<button class="actionBtn btn btn-outline-primary rounded-pill px-3" value="#contactid#" onclick="editContact(event)">
+													<button class="actionBtn btn btn-outline-primary rounded-pill px-3" value="#contactItem.getContactId()#" onclick="editContact(event)">
 														<span class="d-none d-lg-inline pe-none">EDIT</span>
 														<i class="fa-solid fa-pen-to-square d-lg-none pe-none"></i>
 													</button>
 												</td>
 												<td class="d-print-none">
-													<button class="actionBtn btn btn-outline-danger rounded-pill px-3" value="#contactid#" onclick="deleteContact(event)">
+													<button class="actionBtn btn btn-outline-danger rounded-pill px-3" value="#contactItem.getContactId()#" onclick="deleteContact(event)">
 														<span class="d-none d-lg-inline pe-none">DELETE</span>
 														<i class="fa-solid fa-trash d-lg-none pe-none"></i>
 													</button>
 												</td>
 												<td class="d-print-none">
-													<button class="actionBtn btn btn-outline-info rounded-pill px-3" value="#contactid#" onclick="viewContact(event)">
+													<button class="actionBtn btn btn-outline-info rounded-pill px-3" value="#contactItem.getContactId()#" onclick="viewContact(event)">
 														<span class="d-none d-lg-inline pe-none">VIEW</span>
 														<i class="fa-solid fa-eye d-lg-none pe-none"></i>
 													</button>

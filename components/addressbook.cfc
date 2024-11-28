@@ -100,21 +100,6 @@
         <cfreturn local.response>
     </cffunction>
 
-    <cffunction name="getContacts" returnType="query" access="public">
-        <cfquery name="getContactsQuery">
-            SELECT contactid,
-				firstname,
-				lastname,
-				contactpicture,
-				email,
-				phone
-			FROM contactDetails
-			WHERE _createdBy = <cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">
-				AND active = 1
-        </cfquery>
-        <cfreturn getContactsQuery>
-    </cffunction>
-
     <cffunction name="getContactById" returnType="struct" returnFormat="json" access="remote">
         <cfargument required="true" name="contactId" type="string">
 
@@ -415,7 +400,23 @@
 		<cflocation url="home.cfm" addToken="no">
 	</cffunction>
 
-	<cffunction name="scheduleBdayEmails" access="remote" returnType="void">
+	<cffunction name="getTaskStatus" returnType="struct" returnFormat="json" access="remote">
+		<cfset local.response = StructNew()>
+		<cfset local.response["statusCode"] = 404>
+		<cfset local.response["taskExists"] = false>
+
+		<cfif StructKeyExists(session, "userName")>
+			<cfschedule action="list" mode="application" result="local.tasksQuery">
+			<cfset local.taskNames = ValueArray (local.tasksQuery, "task")>
+			<cfif QueryKeyExists(local.tasksQuery,"task") AND ArrayContains(local.taskNames, "sendBirthdayWishes-#session.userName#")>
+				<cfset local.response["statusCode"] = 200>
+				<cfset local.response["taskExists"] = true>
+			</cfif>
+		</cfif>
+		<cfreturn local.response>
+	</cffunction>
+
+	<cffunction name="scheduleBdayEmails" returnType="void" access="remote">
 		<cfif StructKeyExists(session, "userName")>
 			<cfschedule
 				action="update"
@@ -430,25 +431,42 @@
 		</cfif>
 	</cffunction>
 
+	<cffunction name="disableBdayEmails" returnType="void" access="remote">
+		<cfif StructKeyExists(session, "userName")>
+			<cfschedule
+				action="delete"
+				mode="application"
+				task="sendBirthdayWishes-#session.userName#"
+			>
+		</cfif>
+	</cffunction>
+
 	<cffunction name="sendBdayEmails" access="remote" returnType="void">
 		<cfargument name="userName" type="string" required="true">
-		<cfquery name="getUsersAndDOB">
-			SELECT title,
-			firstname,
-			lastname,
-			dob,
-			email
-			FROM contactDetails
-			WHERE dob = <cfqueryparam value = "#DateFormat(Now(), "yyyy-mm-dd")#" cfsqltype = "cf_sql_varchar">
-				AND _createdBy = <cfqueryparam value = "#arguments.userName#" cfsqltype = "cf_sql_varchar">
-		</cfquery>
+		<cfif cgi.HTTP_USER_AGENT EQ "CFSCHEDULE">
+			<cfquery name="getUsersAndDOB">
+				SELECT title,
+				firstname,
+				lastname,
+				dob,
+				email
+				FROM contactDetails
+				WHERE _createdBy = <cfqueryparam value = "#arguments.userName#" cfsqltype = "cf_sql_varchar">
+			</cfquery>
 
-		<cfloop query="getUsersAndDOB">
-			<cfmail from="test@test.com" to="#email#" subject="Birthday Wishes">
-				Good Morning #title# #firstname# #lastname#,
-				We are wishing you a happy birthday and many more happy returns of the day.
-			</cfmail>
-		</cfloop>
+			<cfloop query="getUsersAndDOB">
+				<cfif Day(dob) EQ Day(Now()) AND Month(dob) EQ Month(Now())>
+					<cfmail from="test@test.com" to="#email#" subject="Birthday Wishes">
+						Good Morning #title# #firstname# #lastname#,
+						We are wishing you a happy birthday and many more happy returns of the day.
+					</cfmail>
+				</cfif>
+			</cfloop>
+		<cfelse>
+			<cfheader statusCode="403" statusText="Forbidden">
+			<cfoutput>Access denied.</cfoutput>
+			<cfabort>
+		</cfif>
 	</cffunction>
 
 	<!--- <cffunction name="getStatusMessage" access="private" returnType="string">
