@@ -32,13 +32,13 @@
 			<div class="container-fluid contentSection">
 				<!--- Toolbar --->
 				<div class="toolbar d-flex justify-content-end d-print-none">
-					<button onclick="createPdf()" class="btn">
+					<button onclick="createPdf()" class="btn" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Create PDF from contact list">
 						<img class="toolbarIcon p-1" src="./assets/images/pdficon.png" alt="PDF Icon">
 					</button>
-					<button onclick="createExcel()" class="btn">
+					<button onclick="createExcel()" class="btn" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Create Spreadsheet from contact list">
 						<img class="toolbarIcon" src="./assets/images/excelicon.png" alt="Excel Icon">
 					</button>
-					<button onclick="window.print()" class="btn">
+					<button onclick="window.print()" class="btn" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Print the page">
 						<img class="toolbarIcon p-1" src="./assets/images/printericon.png" alt="Printer Icon">
 					</button>
 				</div>
@@ -59,8 +59,8 @@
 								<h4>User Fullname</h4>
 							</cfif>
 							<button class="btn bg-primary text-white rounded-pill d-print-none" onclick="createContact()">CREATE CONTACT</button>
-							<button id="scheduleBdayEmailBtn" class="btn bg-secondary text-white rounded-pill d-print-none" onclick="scheduleBdayEmails()">SCHEDULE BDAY MAILS</button>
-							<button id="diableBdayEmailBtn" class="btn bg-danger text-white rounded-pill d-print-none" onclick="disableBdayEmails()">DISABLE BDAY MAILS</button>
+							<button id="scheduleBdayEmailBtn" class="btn bg-secondary text-white rounded-pill d-print-none" onclick="scheduleBdayEmails()" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Schedule sending a timely birthday message mail to people on your contact list">SCHEDULE BDAY MAILS</button>
+							<button id="diableBdayEmailBtn" class="btn bg-danger text-white rounded-pill d-print-none" onclick="disableBdayEmails()" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Disable the birthday message schedule">DISABLE BDAY MAILS</button>
 						</div>
 					</div>
 					<!--- Right Section --->
