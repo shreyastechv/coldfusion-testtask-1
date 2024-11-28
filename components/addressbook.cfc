@@ -432,25 +432,31 @@
 
 	<cffunction name="sendBdayEmails" access="remote" returnType="void">
 		<cfargument name="userName" type="string" required="true">
-		<cfquery name="getUsersAndDOB">
-			SELECT title,
-			firstname,
-			lastname,
-			dob,
-			email
-			FROM contactDetails
-			WHERE _createdBy = <cfqueryparam value = "#arguments.userName#" cfsqltype = "cf_sql_varchar">
-		</cfquery>
+		<cfif cgi.HTTP_USER_AGENT EQ "CFSCHEDULE">
+			<cfquery name="getUsersAndDOB">
+				SELECT title,
+				firstname,
+				lastname,
+				dob,
+				email
+				FROM contactDetails
+				WHERE _createdBy = <cfqueryparam value = "#arguments.userName#" cfsqltype = "cf_sql_varchar">
+			</cfquery>
 
-		<cfloop query="getUsersAndDOB">
-			<cfif Day(dob) EQ Day(Now()) AND Month(dob) EQ Month(Now())>
-				<cfmail from="test@test.com" to="#email#" subject="Birthday Wishes">
-					#dob# #Now()#
-					Good Morning #title# #firstname# #lastname#,
-					We are wishing you a happy birthday and many more happy returns of the day.
-				</cfmail>
-			</cfif>
-		</cfloop>
+			<cfloop query="getUsersAndDOB">
+				<cfif Day(dob) EQ Day(Now()) AND Month(dob) EQ Month(Now())>
+					<cfmail from="test@test.com" to="#email#" subject="Birthday Wishes">
+						<cfdump var = "#cgi#">
+						Good Morning #title# #firstname# #lastname#,
+						We are wishing you a happy birthday and many more happy returns of the day.
+					</cfmail>
+				</cfif>
+			</cfloop>
+		<cfelse>
+			<cfheader statusCode="403" statusText="Forbidden">
+			<cfoutput>Access denied.</cfoutput>
+			<cfabort>
+		</cfif>
 	</cffunction>
 
 	<!--- <cffunction name="getStatusMessage" access="private" returnType="string">
