@@ -44,7 +44,7 @@
 		</cfif>
 	</cffunction>
 
-	<!--- <cffunction name="onApplicationStart" returnType="boolean">
+	<cffunction name="onApplicationStart" returnType="boolean">
 		<cfset session.statusCodes = StructNew()>
 
 		<cfquery name="getStatusCodesQuery">
@@ -54,5 +54,5 @@
 		<cfloop query="getStatusCodesQuery">
 			<cfset session.statusCodes["#statusCode#"] = message>
 		</cfloop>
-	</cffunction> --->
+	</cffunction>
 </cfcomponent>
