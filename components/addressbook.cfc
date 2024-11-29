@@ -469,7 +469,7 @@
 		</cfif>
 	</cffunction>
 
-	<!--- <cffunction name="getStatusMessage" access="private" returnType="string">
+	<cffunction name="getStatusMessage" access="private" returnType="string">
 		<cfargument name="statusCode" type="numeric">
 		<cfset local.statusMessage = "">
 
@@ -478,5 +478,5 @@
 		</cfif>
 
 		<cfreturn local.statusMessage>
-	</cffunction> --->
+	</cffunction>
 </cfcomponent>
