@@ -291,6 +291,7 @@
 				phone
 			FROM contactDetails
 			WHERE _createdBy = <cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">
+				AND active = 1
         </cfquery>
 
         <cfspreadsheet action="write" filename="../assets/spreadsheets/#local.spreadsheetName#" query="createExcelQuery" sheetname="contacts" overwrite=true>
