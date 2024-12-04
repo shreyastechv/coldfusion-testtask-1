@@ -27,32 +27,24 @@
 		<cfset application.addressbookObject = CreateObject("component", "components.addressbook")>
 		<cfset application.googleClientId = "">
 		<cfset application.googleSecretKey = "">
+		<!--- <cfset session.statusCodes = StructNew() --->
+
+		<!---<cfquery name="getStatusCodesQuery">
+			SELECT statusCode, message
+			FROM statusCodes
+		</cfquery>
+		<cfloop query="getStatusCodesQuery">
+			<cfset session.statusCodes["#statusCode#"] = message>
+		</cfloop>--->
 	</cffunction>
 
 	<cffunction name="onError">
 		<cfargument name="exception" required="true">
 		<cfargument name="eventName" type="String" required="true">
 
-		<!--- Log all errors --->
-		<cflog file="#this.name#" type="error" text="Event Name: #arguments.eventName#" >
-		<cflog file="#this.name#" type="error" text="Message: #arguments.exception.message#">
-		<cflog file="#this.name#" type="error" text="Root Cause Message: #arguments.exception.rootcause.message#">
-
 		<!--- Display an error message if there is a page context --->
 		<cfif NOT (arguments.eventName IS "onSessionEnd") OR (arguments.eventName IS "onApplicationEnd")>
 			<cfinclude template="error.cfm">
 		</cfif>
-	</cffunction>
-
-	<cffunction name="onApplicationStart" returnType="boolean">
-		<cfset session.statusCodes = StructNew()>
-
-		<cfquery name="getStatusCodesQuery">
-			SELECT statusCode, message
-			FROM statusCodes
-		</cfquery>
-		<cfloop query="getStatusCodesQuery">
-			<cfset session.statusCodes["#statusCode#"] = message>
-		</cfloop>
 	</cffunction>
 </cfcomponent>

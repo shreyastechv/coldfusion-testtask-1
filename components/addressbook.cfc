@@ -291,6 +291,7 @@
 				phone
 			FROM contactDetails
 			WHERE _createdBy = <cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">
+				AND active = 1
         </cfquery>
 
         <cfspreadsheet action="write" filename="../assets/spreadsheets/#local.spreadsheetName#" query="createExcelQuery" sheetname="contacts" overwrite=true>
@@ -407,7 +408,7 @@
 
 		<cfif StructKeyExists(session, "userName")>
 			<cfschedule action="list" mode="application" result="local.tasksQuery">
-			<cfset local.taskNames = ValueArray (local.tasksQuery, "task")>
+			<cfset local.taskNames = ValueArray(local.tasksQuery, "task")>
 			<cfif QueryKeyExists(local.tasksQuery,"task") AND ArrayContains(local.taskNames, "sendBirthdayWishes-#session.userName#")>
 				<cfset local.response["statusCode"] = 200>
 				<cfset local.response["taskExists"] = true>
@@ -469,7 +470,7 @@
 		</cfif>
 	</cffunction>
 
-	<cffunction name="getStatusMessage" access="private" returnType="string">
+	<!--- <cffunction name="getStatusMessage" access="private" returnType="string">
 		<cfargument name="statusCode" type="numeric">
 		<cfset local.statusMessage = "">
 
@@ -478,5 +479,5 @@
 		</cfif>
 
 		<cfreturn local.statusMessage>
-	</cffunction>
+	</cffunction> --->
 </cfcomponent>
