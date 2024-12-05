@@ -12,7 +12,7 @@
 
     <body>
 		<cfset ormReload()>
-		<cfset local.contacts = entityLoad("contactDetails", {createdBy = session.userName, active = 1})>
+		<cfset local.contacts = entityLoad("contactDetails", {createdBy = session.userId, active = 1})>
 		<cfoutput>
 			<!--- Navbar --->
 			<nav class="navbar navbar-expand-lg shadow-sm customNavbar px-2">
