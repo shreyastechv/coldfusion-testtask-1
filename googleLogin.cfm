@@ -8,6 +8,8 @@
 	>
 
 	<cfif structKeyExists(session, "googleData")>
-		<cflocation url="index.cfm" addtoken="no">
+		<cfset application.addressbookObject.googleSSOLogin()>
+	<cfelse>
+		<cflocation  url="/" addToken="No">
 	</cfif>
 </cfif>
