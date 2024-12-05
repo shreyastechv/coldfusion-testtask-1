@@ -39,7 +39,12 @@ function viewContact(event) {
 			const responseJSON = JSON.parse(response);
 			const { title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone } = responseJSON;
 			const convertedDOB = new Date(dob);
-			const formattedDOB = `${convertedDOB.getDate()}-${convertedDOB.getMonth() + 1}-${convertedDOB.getFullYear()}`;
+			const formattedDOB = new Date(dob).toLocaleDateString('en-US', {
+				year: "numeric",
+				month: "long",
+				day: "numeric",
+			})
+
 			viewContactName.text(`${title} ${firstname} ${lastname}`);
 			viewContactGender.text(gender);
 			viewContactDOB.text(formattedDOB);
@@ -89,19 +94,14 @@ function editContact(event) {
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
 			const { contactid, title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone } = responseJSON;
-			const convertedDOB = new Date(dob);
-			const year = convertedDOB.getFullYear();
-			let month = convertedDOB.getMonth()+1;
-			if (month < 10) month = '0' + month;
-			let day = convertedDOB.getDate();
-			if (day < 10) day = '0' + day;
+			const formattedDOB = new Date(dob).toLocaleDateString('fr-ca')
 
 			$("#editContactId").val(contactid);
 			$("#editContactTitle").val(title);
 			$("#editContactFirstname").val(firstname);
 			$("#editContactLastname").val(lastname);
 			$("#editContactGender").val(gender);
-			$("#editContactDOB").val(`${year}-${month}-${day}`);
+			$("#editContactDOB").val(formattedDOB);
 			$("#editContactImage").val("");
 			$("#editContactPicture").attr("src", `./assets/contactImages/${contactpicture}`);
 			$("#editContactAddress").val(address);
@@ -234,6 +234,11 @@ $(document).ready(function(){
 
 	// Enable custom tooltip styling using bootstrap
 	$('[data-bs-toggle="tooltip"]').tooltip();
+
+	// Set max of dob input to current date
+	$("#editContactDOB").attr({
+		"max": new Date().toLocaleDateString('fr-ca')
+	})
 });
 
 function scheduleBdayEmails() {
