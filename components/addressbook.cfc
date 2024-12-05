@@ -62,7 +62,8 @@
         <cfset local.response["message"] = "">
 
         <cfquery name="getUserDetails">
-            SELECT username,
+            SELECT userid,
+				username,
 				fullname,
 				pwd,
 				profilepicture
@@ -78,6 +79,7 @@
             <cfset local.response.message = "Wrong password!">
         <cfelse>
             <cfset session.isLoggedIn = true>
+            <cfset session.userId = getUserDetails.userId>
             <cfset session.userName = getUserDetails.username>
             <cfset session.fullName = getUserDetails.fullname>
             <cfset session.profilePicture = "./assets/profilePictures/" & getUserDetails.profilepicture>
@@ -102,6 +104,24 @@
 
     <cffunction name="getContactById" returnType="struct" returnFormat="json" access="remote">
         <cfargument required="true" name="contactId" type="string">
+		<cfset local.contactStruct = StructNew()>
+		<cfset local.columnList = [
+			"contactid",
+			"title",
+			"firstname",
+			"lastname",
+			"gender",
+			"dob",
+			"contactpicture",
+			"address",
+			"street",
+			"district",
+			"state",
+			"country",
+			"pincode",
+			"email",
+			"phone"
+		]>
 
         <cfquery name="getContactById">
             SELECT contactid,
@@ -123,9 +143,11 @@
 			WHERE contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
         </cfquery>
 
-        <cfset local.contactDetails = QueryGetRow(getContactById, 1)>
+		<cfloop array="#local.columnList#" item="columnName">
+			<cfset local.contactStruct[columnName] = getContactById[columnName]>
+		</cfloop>
 
-        <cfreturn local.contactDetails>
+        <cfreturn local.contactStruct>
     </cffunction>
 
     <cffunction name="deleteContact" returnType="struct" returnFormat="json" access="remote">
@@ -170,14 +192,14 @@
 			<cfquery name="getEmailQuery">
 				SELECT contactid
 				FROM contactDetails
-				WHERE _createdBy = <cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">
+				WHERE createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
 					AND email = <cfqueryparam value = "#arguments.editContactEmail#" cfsqltype = "cf_sql_varchar">
 					AND active = 1
 			</cfquery>
 			<cfquery name="getPhoneQuery">
 				SELECT contactid
 				FROM contactDetails
-				WHERE _createdBy = <cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">
+				WHERE createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
 					AND phone = <cfqueryparam value = "#arguments.editContactPhone#" cfsqltype = "cf_sql_varchar">
 					AND active = 1
 			</cfquery>
@@ -209,9 +231,9 @@
 							pincode,
 							email,
 							phone,
-							_createdBy,
-							_updatedBy
-							)
+							createdBy,
+							updatedBy
+						)
 						VALUES (
 							<cfqueryparam value = "#arguments.editContactTitle#" cfsqltype = "cf_sql_varchar">,
 							<cfqueryparam value = "#arguments.editContactFirstName#" cfsqltype = "cf_sql_varchar">,
@@ -227,9 +249,9 @@
 							<cfqueryparam value = "#arguments.editContactPincode#" cfsqltype = "cf_sql_char">,
 							<cfqueryparam value = "#arguments.editContactEmail#" cfsqltype = "cf_sql_varchar">,
 							<cfqueryparam value = "#arguments.editContactPhone#" cfsqltype = "cf_sql_varchar">,
-							<cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">,
-							<cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">
-							)
+							<cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
+						);
 					</cfquery>
 					<cfset local.response["statusCode"] = 200>
 					<cfset local.response["message"] = "Contact Added Successfully">
@@ -249,7 +271,7 @@
 							pincode = <cfqueryparam value = "#arguments.editContactPincode#" cfsqltype = "cf_sql_varchar">,
 							email = <cfqueryparam value = "#arguments.editContactEmail#" cfsqltype = "cf_sql_varchar">,
 							phone = <cfqueryparam value = "#arguments.editContactPhone#" cfsqltype = "cf_sql_varchar">,
-							_updatedBy = <cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">
+							updatedBy = <cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">
 						WHERE contactid = <cfqueryparam value = "#arguments.editContactId#" cfsqltype = "cf_sql_varchar">
 					</cfquery>
 					<cfif arguments.editContactImage NEQ "">
@@ -290,7 +312,7 @@
 				email,
 				phone
 			FROM contactDetails
-			WHERE _createdBy = <cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">
+			WHERE createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
 				AND active = 1
         </cfquery>
 
@@ -320,7 +342,7 @@
 					email,
 					phone
 				FROM contactDetails
-				WHERE _createdBy = <cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">
+				WHERE createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
 					AND active = 1
             </cfquery>
             <cfoutput>
@@ -379,26 +401,32 @@
 			WHERE email = <cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">
 		</cfquery>
 		<cfif checkEmailQuery.RecordCount EQ 0>
-			<cfquery name="checkEmailQuery">
+			<cfquery name="insertUserDataQuery">
 				INSERT INTO users (
 					fullname,
 					email,
 					username,
 					profilePicture
-					)
+				)
 				VALUES (
 					<cfqueryparam value = "#session.googleData.name#" cfsqltype = "cf_sql_varchar">,
 					<cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">,
 					<cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">,
 					<cfqueryparam value = "#session.googleData.other.picture#" cfsqltype = "cf_sql_varchar">
-					)
+				);
+			</cfquery>
+			<cfquery name="getUserIdQuery">
+				SELECT userid
+				FROM users
+				WHERE email = <cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">
 			</cfquery>
 		</cfif>
 		<cfset session.isLoggedIn = true>
+		<cfset session.userId = getUserIdQuery.userid>
 		<cfset session.userName = session.googleData.other.email>
 		<cfset session.fullName = session.googleData.name>
 		<cfset session.profilePicture = session.googleData.other.picture>
-		<cflocation url="home.cfm" addToken="no">
+		<cflocation url="/" addToken="no">
 	</cffunction>
 
 	<cffunction name="getTaskStatus" returnType="struct" returnFormat="json" access="remote">
@@ -452,7 +480,7 @@
 				dob,
 				email
 				FROM contactDetails
-				WHERE _createdBy = <cfqueryparam value = "#arguments.userName#" cfsqltype = "cf_sql_varchar">
+				WHERE createdBy = <cfqueryparam value = "#arguments.userId#" cfsqltype = "cf_sql_varchar">
 			</cfquery>
 
 			<cfloop query="getUsersAndDOB">

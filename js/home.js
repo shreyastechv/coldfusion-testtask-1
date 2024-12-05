@@ -37,15 +37,22 @@ function viewContact(event) {
 		data: { contactId: event.target.value },
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
-			const { TITLE, FIRSTNAME, LASTNAME, GENDER, DOB, CONTACTPICTURE, ADDRESS, STREET, DISTRICT, STATE, COUNTRY, PINCODE, EMAIL, PHONE } = responseJSON;
-			viewContactName.text(`${TITLE} ${FIRSTNAME} ${LASTNAME}`);
-			viewContactGender.text(GENDER);
-			viewContactDOB.text(DOB.split(" ", 3).join(" "));
-			viewContactAddress.text(`${ADDRESS}, ${STREET}, ${DISTRICT}, ${STATE}, ${COUNTRY}`);
-			viewContactPincode.text(PINCODE);
-			viewContactEmail.text(EMAIL);
-			viewContactPhone.text(PHONE);
-			viewContactPicture.attr("src", `./assets/contactImages/${CONTACTPICTURE}`);
+			const { title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone } = responseJSON;
+			const convertedDOB = new Date(dob);
+			const formattedDOB = new Date(dob).toLocaleDateString('en-US', {
+				year: "numeric",
+				month: "long",
+				day: "numeric",
+			})
+
+			viewContactName.text(`${title} ${firstname} ${lastname}`);
+			viewContactGender.text(gender);
+			viewContactDOB.text(formattedDOB);
+			viewContactAddress.text(`${address}, ${street}, ${district}, ${state}, ${country}`);
+			viewContactPincode.text(pincode);
+			viewContactEmail.text(email);
+			viewContactPhone.text(phone);
+			viewContactPicture.attr("src", `./assets/contactImages/${contactpicture}`);
 			$('#viewContactModal').modal('show');
 		}
 	});
@@ -86,31 +93,25 @@ function editContact(event) {
 		data: { contactId: event.target.value },
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
-			const { CONTACTID, TITLE, FIRSTNAME, LASTNAME, GENDER, DOB, CONTACTPICTURE, ADDRESS, STREET, DISTRICT, STATE, COUNTRY, PINCODE, EMAIL, PHONE } = responseJSON;
+			const { contactid, title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone } = responseJSON;
+			const formattedDOB = new Date(dob).toLocaleDateString('fr-ca')
 
-		$("#editContactId").val(CONTACTID);
-			$("#editContactTitle").val(TITLE);
-			$("#editContactFirstname").val(FIRSTNAME);
-			$("#editContactLastname").val(LASTNAME);
-			$("#editContactGender").val(GENDER);
-			const formattedDOB = DOB.replace(",", "");
-			const dob = new Date(formattedDOB);
-			const year = dob.getFullYear();
-			let month = dob.getMonth()+1;
-			if (month < 10) month = '0' + month;
-			let day = dob.getDate();
-			if (day < 10) day = '0' + day;
-			$("#editContactDOB").val(`${year}-${month}-${day}`);
+			$("#editContactId").val(contactid);
+			$("#editContactTitle").val(title);
+			$("#editContactFirstname").val(firstname);
+			$("#editContactLastname").val(lastname);
+			$("#editContactGender").val(gender);
+			$("#editContactDOB").val(formattedDOB);
 			$("#editContactImage").val("");
-			$("#editContactPicture").attr("src", `./assets/contactImages/${CONTACTPICTURE}`);
-			$("#editContactAddress").val(ADDRESS);
-			$("#editContactStreet").val(STREET);
-			$("#editContactDistrict").val(DISTRICT);
-			$("#editContactState").val(STATE);
-			$("#editContactCountry").val(COUNTRY);
-			$("#editContactPincode").val(PINCODE);
-			$("#editContactEmail").val(EMAIL);
-			$("#editContactPhone").val(PHONE);
+			$("#editContactPicture").attr("src", `./assets/contactImages/${contactpicture}`);
+			$("#editContactAddress").val(address);
+			$("#editContactStreet").val(street);
+			$("#editContactDistrict").val(district);
+			$("#editContactState").val(state);
+			$("#editContactCountry").val(country);
+			$("#editContactPincode").val(pincode);
+			$("#editContactEmail").val(email);
+			$("#editContactPhone").val(phone);
 			$('#contactManagementModal').modal('show');
 		}
 	});
@@ -233,6 +234,11 @@ $(document).ready(function(){
 
 	// Enable custom tooltip styling using bootstrap
 	$('[data-bs-toggle="tooltip"]').tooltip();
+
+	// Set max of dob input to current date
+	$("#editContactDOB").attr({
+		"max": new Date().toLocaleDateString('fr-ca')
+	})
 });
 
 function scheduleBdayEmails() {

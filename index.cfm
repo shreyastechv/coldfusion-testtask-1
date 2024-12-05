@@ -11,9 +11,6 @@
     </head>
 
     <body>
-		<cfif StructKeyExists(session, "googleData")>
-			<cfset application.addressbookObject.googleSSOLogin()>
-		</cfif>
         <header class="header d-flex align-items-center justify-content-between fixed-top px-5">
             <a class="d-flex align-items-center text-decoration-none" href="#">
                 <img class="logo" src="./assets/images/logo.png" alt="Logo Image">

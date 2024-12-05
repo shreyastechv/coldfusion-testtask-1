@@ -5,6 +5,6 @@
 	<cfproperty name="contactPicture" type="string" column="contactpicture">
 	<cfproperty name="email" type="string" column="email">
 	<cfproperty name="phone" type="string" column="phone">
-	<cfproperty name="_createdBy" type="string" column="_createdBy">
+	<cfproperty name="createdBy" type="string" column="createdBy">
 	<cfproperty name="active" type="integer" column="active">
 </cfcomponent>
