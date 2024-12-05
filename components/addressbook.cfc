@@ -190,14 +190,14 @@
 			<cfquery name="getEmailQuery">
 				SELECT contactid
 				FROM contactDetails
-				WHERE _createdBy = <cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">
+				WHERE createdBy = <cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">
 					AND email = <cfqueryparam value = "#arguments.editContactEmail#" cfsqltype = "cf_sql_varchar">
 					AND active = 1
 			</cfquery>
 			<cfquery name="getPhoneQuery">
 				SELECT contactid
 				FROM contactDetails
-				WHERE _createdBy = <cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">
+				WHERE createdBy = <cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">
 					AND phone = <cfqueryparam value = "#arguments.editContactPhone#" cfsqltype = "cf_sql_varchar">
 					AND active = 1
 			</cfquery>
@@ -229,8 +229,8 @@
 							pincode,
 							email,
 							phone,
-							_createdBy,
-							_updatedBy
+							createdBy,
+							updatedBy
 							)
 						VALUES (
 							<cfqueryparam value = "#arguments.editContactTitle#" cfsqltype = "cf_sql_varchar">,
@@ -269,7 +269,7 @@
 							pincode = <cfqueryparam value = "#arguments.editContactPincode#" cfsqltype = "cf_sql_varchar">,
 							email = <cfqueryparam value = "#arguments.editContactEmail#" cfsqltype = "cf_sql_varchar">,
 							phone = <cfqueryparam value = "#arguments.editContactPhone#" cfsqltype = "cf_sql_varchar">,
-							_updatedBy = <cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">
+							updatedBy = <cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">
 						WHERE contactid = <cfqueryparam value = "#arguments.editContactId#" cfsqltype = "cf_sql_varchar">
 					</cfquery>
 					<cfif arguments.editContactImage NEQ "">
@@ -310,7 +310,7 @@
 				email,
 				phone
 			FROM contactDetails
-			WHERE _createdBy = <cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">
+			WHERE createdBy = <cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">
 				AND active = 1
         </cfquery>
 
@@ -340,7 +340,7 @@
 					email,
 					phone
 				FROM contactDetails
-				WHERE _createdBy = <cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">
+				WHERE createdBy = <cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">
 					AND active = 1
             </cfquery>
             <cfoutput>
@@ -472,7 +472,7 @@
 				dob,
 				email
 				FROM contactDetails
-				WHERE _createdBy = <cfqueryparam value = "#arguments.userName#" cfsqltype = "cf_sql_varchar">
+				WHERE createdBy = <cfqueryparam value = "#arguments.userName#" cfsqltype = "cf_sql_varchar">
 			</cfquery>
 
 			<cfloop query="getUsersAndDOB">
