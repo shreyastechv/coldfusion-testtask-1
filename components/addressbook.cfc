@@ -102,6 +102,24 @@
 
     <cffunction name="getContactById" returnType="struct" returnFormat="json" access="remote">
         <cfargument required="true" name="contactId" type="string">
+		<cfset local.contactStruct = StructNew()>
+		<cfset local.columnList = [
+			"contactid",
+			"title",
+			"firstname",
+			"lastname",
+			"gender",
+			"dob",
+			"contactpicture",
+			"address",
+			"street",
+			"district",
+			"state",
+			"country",
+			"pincode",
+			"email",
+			"phone"
+		]>
 
         <cfquery name="getContactById">
             SELECT contactid,
@@ -123,9 +141,11 @@
 			WHERE contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
         </cfquery>
 
-        <cfset local.contactDetails = QueryGetRow(getContactById, 1)>
+		<cfloop array="#local.columnList#" item="columnName">
+			<cfset local.contactStruct[columnName] = getContactById[columnName]>
+		</cfloop>
 
-        <cfreturn local.contactDetails>
+        <cfreturn local.contactStruct>
     </cffunction>
 
     <cffunction name="deleteContact" returnType="struct" returnFormat="json" access="remote">
@@ -398,7 +418,7 @@
 		<cfset session.userName = session.googleData.other.email>
 		<cfset session.fullName = session.googleData.name>
 		<cfset session.profilePicture = session.googleData.other.picture>
-		<cflocation url="home.cfm" addToken="no">
+		<cflocation url="/" addToken="no">
 	</cffunction>
 
 	<cffunction name="getTaskStatus" returnType="struct" returnFormat="json" access="remote">
