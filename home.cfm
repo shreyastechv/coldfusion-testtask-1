@@ -12,7 +12,7 @@
 
     <body>
 		<cfset ormReload()>
-		<cfset local.contacts = entityLoad("contactDetails", {createdBy = session.userId, active = 1})>
+		<cfset contacts = entityLoad("contactDetailsORM", {createdBy = session.userId, active = 1})>
 		<cfoutput>
 			<!--- Navbar --->
 			<nav class="navbar navbar-expand-lg shadow-sm customNavbar px-2">
@@ -65,7 +65,7 @@
 					</div>
 					<!--- Right Section --->
 					<div class="col-lg-9 col-md-8 col-12 mainContent bg-white d-flex align-items-center justify-content-around">
-						<cfif arrayLen(local.contacts)>
+						<cfif arrayLen(contacts)>
 							<div class="table-responsive w-100">
 								<table class="table table-hover align-middle">
 									<thead>
@@ -80,7 +80,7 @@
 										</tr>
 									</thead>
 									<tbody>
-										<cfloop array="#local.contacts#" item="contactItem">
+										<cfloop array="#contacts#" item="contactItem">
 											<tr>
 												<td>
 													<img class="contactImage p-2 rounded-4" src="./assets/contactImages/#contactItem.getContactpicture()#" alt="Contact Image">
