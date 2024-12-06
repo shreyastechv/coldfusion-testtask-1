@@ -169,9 +169,6 @@ $("#contactManagement").submit(function(event) {
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
 			if (responseJSON.statusCode === 200) {
-				if ($("#editContactId").val() === "") {
-					$("#contactManagement")[0].reset();
-				}
 				contactManagementMsgSection.css("color", "green");
 				location.reload();
 			}
