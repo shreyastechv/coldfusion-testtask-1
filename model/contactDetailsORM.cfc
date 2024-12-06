@@ -1,10 +1,19 @@
 <cfcomponent persistent="true" table="contactDetails">
-	<cfproperty name="contactid" fieldtype="id" generator="native">
-	<cfproperty name="firstName" type="string" column="firstname">
-	<cfproperty name="lastName" type="string" column="lastname">
-	<cfproperty name="contactPicture" type="string" column="contactpicture">
-	<cfproperty name="email" type="string" column="email">
-	<cfproperty name="phone" type="string" column="phone">
-	<cfproperty name="createdBy" type="string" column="createdBy">
-	<cfproperty name="active" type="integer" column="active">
+	<cfproperty name="contactid">
+	<cfproperty name="title">
+	<cfproperty name="firstName">
+	<cfproperty name="lastName">
+	<cfproperty name="gender">
+	<cfproperty name="dob">
+	<cfproperty name="contactPicture">
+	<cfproperty name="address">
+	<cfproperty name="street">
+	<cfproperty name="district">
+	<cfproperty name="state">
+	<cfproperty name="country">
+	<cfproperty name="pincode">
+	<cfproperty name="email">
+	<cfproperty name="phone">
+	<cfproperty name="createdBy">
+	<cfproperty name="active">
 </cfcomponent>

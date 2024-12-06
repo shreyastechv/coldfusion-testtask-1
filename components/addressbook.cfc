@@ -38,14 +38,14 @@
 					username,
 					pwd,
 					profilePicture
-					)
+				)
 				VALUES (
 					<cfqueryparam value = "#arguments.fullName#" cfsqltype = "cf_sql_varchar">,
 					<cfqueryparam value = "#arguments.email#" cfsqltype = "cf_sql_varchar">,
 					<cfqueryparam value = "#arguments.userName#" cfsqltype = "cf_sql_varchar">,
 					<cfqueryparam value = "#local.hashedPassword#" cfsqltype = "cf_sql_char">,
 					<cfqueryparam value = "#local.profilePictureName#" cfsqltype = "cf_sql_varchar">
-					)
+				)
             </cfquery>
         </cfif>
 
@@ -292,27 +292,10 @@
 		<cfset local.response = StructNew()>
 		<cfset local.spreadsheetName = CreateUUID() & ".xlsx">
 		<cfset local.response["data"] = local.spreadsheetName>
+		<cfset local.contacts = entityLoad("contactDetailsORM", {createdBy = session.userId, active = 1})>
+		<cfset local.createExcelQuery = EntityToQuery(local.contacts)>
 
-        <cfquery name="createExcelQuery">
-            SELECT title,
-				firstname,
-				lastname,
-				gender,
-				dob,
-				address,
-				street,
-				district,
-				STATE,
-				country,
-				pincode,
-				email,
-				phone
-			FROM contactDetails
-			WHERE createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
-				AND active = 1
-        </cfquery>
-
-        <cfspreadsheet action="write" filename="../assets/spreadsheets/#local.spreadsheetName#" query="createExcelQuery" sheetname="contacts" overwrite=true>
+        <cfspreadsheet action="write" filename="../assets/spreadsheets/#local.spreadsheetName#" query="local.createExcelQuery" sheetname="contacts" overwrite=true>
 		<cfreturn local.response>
     </cffunction>
 
@@ -320,27 +303,10 @@
 		<cfset local.response = StructNew()>
 		<cfset local.pdfName = CreateUUID() & ".pdf">
 		<cfset local.response["data"] = local.pdfName>
+		<cfset local.contacts = entityLoad("contactDetailsORM", {createdBy = session.userId, active = 1})>
+		<cfset local.createPdfQuery = EntityToQuery(local.contacts)>
 
         <cfdocument format="pdf" filename="../assets/pdfs/#local.pdfName#" overwrite="true">
-            <cfquery name="createPdfQuery">
-                SELECT title,
-					firstname,
-					lastname,
-					gender,
-					dob,
-					contactpicture,
-					address,
-					street,
-					district,
-					STATE,
-					country,
-					pincode,
-					email,
-					phone
-				FROM contactDetails
-				WHERE createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
-					AND active = 1
-            </cfquery>
             <cfoutput>
                 <table border="1" cellpadding="0" cellspacing="0">
                     <thead>
@@ -362,7 +328,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <cfloop query="createPdfQuery">
+                        <cfloop query="local.createPdfQuery">
                             <tr>
                                 <td>#title#</td>
                                 <td>#firstname#</td>
@@ -465,9 +431,9 @@
 			</cfif>
 
 			<cfset local.response["taskcurrentlyExists"] = getTaskStatus().taskExists>
-
-			<cfreturn local.response>
 		</cfif>
+
+		<cfreturn local.response>
 	</cffunction>
 
 	<cffunction name="sendBdayEmails" access="remote" returnType="void">
