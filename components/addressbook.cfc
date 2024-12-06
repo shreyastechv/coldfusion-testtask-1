@@ -463,15 +463,4 @@
 			<cfabort>
 		</cfif>
 	</cffunction>
-
-	<!--- <cffunction name="getStatusMessage" access="private" returnType="string">
-		<cfargument name="statusCode" type="numeric">
-		<cfset local.statusMessage = "">
-
-		<cfif StructKeyExists(session, "statusCodes")>
-			<cfset local.statusMessage = session.statusCodes["#arguments.statusCode#"]>
-		</cfif>
-
-		<cfreturn local.statusMessage>
-	</cffunction> --->
 </cfcomponent>
