@@ -440,28 +440,33 @@
 		<cfreturn local.response>
 	</cffunction>
 
-	<cffunction name="scheduleBdayEmails" returnType="void" access="remote">
-		<cfif StructKeyExists(session, "userName")>
-			<cfschedule
-				action="update"
-				task="sendBirthdayWishes-#session.userId#"
-				operation="HTTPRequest"
-				startDate="#DateFormat(Now(), "mm/dd/yyy")#"
-				startTime="8:00 AM"
-				mode="application"
-				url="http://addressbook.com/components/addressbook.cfc?method=sendBdayEmails&userId=#session.userId#"
-				interval="daily"
-			>
-		</cfif>
-	</cffunction>
+	<cffunction name="toggleBdayEmailSchedule" returnType="struct" returnFormat="json" access="remote">
+		<cfset local.response = StructNew()>
 
-	<cffunction name="disableBdayEmails" returnType="void" access="remote">
-		<cfif StructKeyExists(session, "userName")>
-			<cfschedule
-				action="delete"
-				mode="application"
-				task="sendBirthdayWishes-#session.userId#"
-			>
+		<cfif StructKeyExists(session, "userId")>
+			<cfset local.taskExists = getTaskStatus().taskExists>
+			<cfif local.taskExists>
+				<cfschedule
+					action="delete"
+					mode="application"
+					task="sendBirthdayWishes-#session.userId#"
+				>
+			<cfelse>
+				<cfschedule
+					action="update"
+					task="sendBirthdayWishes-#session.userId#"
+					operation="HTTPRequest"
+					startDate="#DateFormat(Now(), "mm/dd/yyy")#"
+					startTime="8:00 AM"
+					mode="application"
+					url="http://addressbook.com/components/addressbook.cfc?method=sendBdayEmails&userId=#session.userId#"
+					interval="daily"
+				>
+			</cfif>
+
+			<cfset local.response["taskcurrentlyExists"] = getTaskStatus().taskExists>
+
+			<cfreturn local.response>
 		</cfif>
 	</cffunction>
 

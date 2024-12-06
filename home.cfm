@@ -59,8 +59,7 @@
 								<h4>User Fullname</h4>
 							</cfif>
 							<button class="btn bg-primary text-white rounded-pill d-print-none" onclick="createContact()">CREATE CONTACT</button>
-							<button id="scheduleBdayEmailBtn" class="btn bg-secondary text-white rounded-pill d-print-none" onclick="scheduleBdayEmails()" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Schedule sending a timely birthday message mail to people on your contact list">SCHEDULE BDAY MAILS</button>
-							<button id="diableBdayEmailBtn" class="btn bg-danger text-white rounded-pill d-print-none" onclick="disableBdayEmails()" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Disable the birthday message schedule">DISABLE BDAY MAILS</button>
+							<button id="scheduleBdayEmailBtn" class="btn bg-secondary text-white rounded-pill d-print-none" onclick="toggleBdayEmailSchedule()">SCHEDULE BDAY MAILS</button>
 						</div>
 					</div>
 					<!--- Right Section --->
