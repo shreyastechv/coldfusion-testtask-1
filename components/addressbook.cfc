@@ -38,14 +38,14 @@
 					username,
 					pwd,
 					profilePicture
-					)
+				)
 				VALUES (
 					<cfqueryparam value = "#arguments.fullName#" cfsqltype = "cf_sql_varchar">,
 					<cfqueryparam value = "#arguments.email#" cfsqltype = "cf_sql_varchar">,
 					<cfqueryparam value = "#arguments.userName#" cfsqltype = "cf_sql_varchar">,
 					<cfqueryparam value = "#local.hashedPassword#" cfsqltype = "cf_sql_char">,
 					<cfqueryparam value = "#local.profilePictureName#" cfsqltype = "cf_sql_varchar">
-					)
+				)
             </cfquery>
         </cfif>
 
@@ -65,22 +65,18 @@
             SELECT userid,
 				username,
 				fullname,
-				pwd,
 				profilepicture
 			FROM users
 			WHERE username = <cfqueryparam value = "#arguments.userName#" cfsqltype = "cf_sql_varchar">
+				AND pwd = <cfqueryparam value = "#local.hashedPassword#" cfsqltype = "cf_sql_integer">
         </cfquery>
 
         <cfif getUserDetails.RecordCount EQ 0>
-            <cfset local.response.statusCode = 404>
-            <cfset local.response.message = "Username does not exist!">
-        <cfelseif getUserDetails.pwd NEQ local.hashedPassword>
             <cfset local.response.statusCode = 401>
-            <cfset local.response.message = "Wrong password!">
+            <cfset local.response.message = "Wrong username or password!">
         <cfelse>
             <cfset session.isLoggedIn = true>
             <cfset session.userId = getUserDetails.userId>
-            <cfset session.userName = getUserDetails.username>
             <cfset session.fullName = getUserDetails.fullname>
             <cfset session.profilePicture = "./assets/profilePictures/" & getUserDetails.profilepicture>
         </cfif>
@@ -192,14 +188,14 @@
 			<cfquery name="getEmailQuery">
 				SELECT contactid
 				FROM contactDetails
-				WHERE createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
+				WHERE createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
 					AND email = <cfqueryparam value = "#arguments.editContactEmail#" cfsqltype = "cf_sql_varchar">
 					AND active = 1
 			</cfquery>
 			<cfquery name="getPhoneQuery">
 				SELECT contactid
 				FROM contactDetails
-				WHERE createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
+				WHERE createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
 					AND phone = <cfqueryparam value = "#arguments.editContactPhone#" cfsqltype = "cf_sql_varchar">
 					AND active = 1
 			</cfquery>
@@ -231,8 +227,7 @@
 							pincode,
 							email,
 							phone,
-							createdBy,
-							updatedBy
+							createdBy
 						)
 						VALUES (
 							<cfqueryparam value = "#arguments.editContactTitle#" cfsqltype = "cf_sql_varchar">,
@@ -249,8 +244,7 @@
 							<cfqueryparam value = "#arguments.editContactPincode#" cfsqltype = "cf_sql_char">,
 							<cfqueryparam value = "#arguments.editContactEmail#" cfsqltype = "cf_sql_varchar">,
 							<cfqueryparam value = "#arguments.editContactPhone#" cfsqltype = "cf_sql_varchar">,
-							<cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">,
-							<cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
+							<cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
 						);
 					</cfquery>
 					<cfset local.response["statusCode"] = 200>
@@ -271,7 +265,7 @@
 							pincode = <cfqueryparam value = "#arguments.editContactPincode#" cfsqltype = "cf_sql_varchar">,
 							email = <cfqueryparam value = "#arguments.editContactEmail#" cfsqltype = "cf_sql_varchar">,
 							phone = <cfqueryparam value = "#arguments.editContactPhone#" cfsqltype = "cf_sql_varchar">,
-							updatedBy = <cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">
+							updatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
 						WHERE contactid = <cfqueryparam value = "#arguments.editContactId#" cfsqltype = "cf_sql_varchar">
 					</cfquery>
 					<cfif arguments.editContactImage NEQ "">
@@ -296,27 +290,10 @@
 		<cfset local.response = StructNew()>
 		<cfset local.spreadsheetName = CreateUUID() & ".xlsx">
 		<cfset local.response["data"] = local.spreadsheetName>
+		<cfset local.contacts = entityLoad("contactDetailsORM", {createdBy = session.userId, active = 1})>
+		<cfset local.createExcelQuery = EntityToQuery(local.contacts)>
 
-        <cfquery name="createExcelQuery">
-            SELECT title,
-				firstname,
-				lastname,
-				gender,
-				dob,
-				address,
-				street,
-				district,
-				STATE,
-				country,
-				pincode,
-				email,
-				phone
-			FROM contactDetails
-			WHERE createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
-				AND active = 1
-        </cfquery>
-
-        <cfspreadsheet action="write" filename="../assets/spreadsheets/#local.spreadsheetName#" query="createExcelQuery" sheetname="contacts" overwrite=true>
+        <cfspreadsheet action="write" filename="../assets/spreadsheets/#local.spreadsheetName#" query="local.createExcelQuery" sheetname="contacts" overwrite=true>
 		<cfreturn local.response>
     </cffunction>
 
@@ -324,27 +301,10 @@
 		<cfset local.response = StructNew()>
 		<cfset local.pdfName = CreateUUID() & ".pdf">
 		<cfset local.response["data"] = local.pdfName>
+		<cfset local.contacts = entityLoad("contactDetailsORM", {createdBy = session.userId, active = 1})>
+		<cfset local.createPdfQuery = EntityToQuery(local.contacts)>
 
         <cfdocument format="pdf" filename="../assets/pdfs/#local.pdfName#" overwrite="true">
-            <cfquery name="createPdfQuery">
-                SELECT title,
-					firstname,
-					lastname,
-					gender,
-					dob,
-					contactpicture,
-					address,
-					street,
-					district,
-					STATE,
-					country,
-					pincode,
-					email,
-					phone
-				FROM contactDetails
-				WHERE createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
-					AND active = 1
-            </cfquery>
             <cfoutput>
                 <table border="1" cellpadding="0" cellspacing="0">
                     <thead>
@@ -366,7 +326,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <cfloop query="createPdfQuery">
+                        <cfloop query="local.createPdfQuery">
                             <tr>
                                 <td>#title#</td>
                                 <td>#firstname#</td>
@@ -415,15 +375,14 @@
 					<cfqueryparam value = "#session.googleData.other.picture#" cfsqltype = "cf_sql_varchar">
 				);
 			</cfquery>
-			<cfquery name="getUserIdQuery">
-				SELECT userid
-				FROM users
-				WHERE email = <cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">
-			</cfquery>
 		</cfif>
+		<cfquery name="getUserIdQuery">
+			SELECT userid
+			FROM users
+			WHERE email = <cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">
+		</cfquery>
 		<cfset session.isLoggedIn = true>
 		<cfset session.userId = getUserIdQuery.userid>
-		<cfset session.userName = session.googleData.other.email>
 		<cfset session.fullName = session.googleData.name>
 		<cfset session.profilePicture = session.googleData.other.picture>
 		<cflocation url="/" addToken="no">
@@ -434,10 +393,10 @@
 		<cfset local.response["statusCode"] = 404>
 		<cfset local.response["taskExists"] = false>
 
-		<cfif StructKeyExists(session, "userName")>
+		<cfif StructKeyExists(session, "userId")>
 			<cfschedule action="list" mode="application" result="local.tasksQuery">
 			<cfset local.taskNames = ValueArray(local.tasksQuery, "task")>
-			<cfif QueryKeyExists(local.tasksQuery,"task") AND ArrayContains(local.taskNames, "sendBirthdayWishes-#session.userName#")>
+			<cfif QueryKeyExists(local.tasksQuery,"task") AND ArrayContains(local.taskNames, "sendBirthdayWishes-#session.userId#")>
 				<cfset local.response["statusCode"] = 200>
 				<cfset local.response["taskExists"] = true>
 			</cfif>
@@ -445,33 +404,38 @@
 		<cfreturn local.response>
 	</cffunction>
 
-	<cffunction name="scheduleBdayEmails" returnType="void" access="remote">
-		<cfif StructKeyExists(session, "userName")>
-			<cfschedule
-				action="update"
-				task="sendBirthdayWishes-#session.userName#"
-				operation="HTTPRequest"
-				startDate="#DateFormat(Now(), "mm/dd/yyy")#"
-				startTime="8:00 AM"
-				mode="application"
-				url="http://addressbook.com/components/addressbook.cfc?method=sendBdayEmails&userName=#session.userName#"
-				interval="daily"
-			>
-		</cfif>
-	</cffunction>
+	<cffunction name="toggleBdayEmailSchedule" returnType="struct" returnFormat="json" access="remote">
+		<cfset local.response = StructNew()>
 
-	<cffunction name="disableBdayEmails" returnType="void" access="remote">
-		<cfif StructKeyExists(session, "userName")>
-			<cfschedule
-				action="delete"
-				mode="application"
-				task="sendBirthdayWishes-#session.userName#"
-			>
+		<cfif StructKeyExists(session, "userId")>
+			<cfset local.taskExists = getTaskStatus().taskExists>
+			<cfif local.taskExists>
+				<cfschedule
+					action="delete"
+					mode="application"
+					task="sendBirthdayWishes-#session.userId#"
+				>
+			<cfelse>
+				<cfschedule
+					action="update"
+					task="sendBirthdayWishes-#session.userId#"
+					operation="HTTPRequest"
+					startDate="#DateFormat(Now(), "mm/dd/yyy")#"
+					startTime="8:00 AM"
+					mode="application"
+					url="http://addressbook.com/components/addressbook.cfc?method=sendBdayEmails&userId=#session.userId#"
+					interval="daily"
+				>
+			</cfif>
+
+			<cfset local.response["taskcurrentlyExists"] = getTaskStatus().taskExists>
 		</cfif>
+
+		<cfreturn local.response>
 	</cffunction>
 
 	<cffunction name="sendBdayEmails" access="remote" returnType="void">
-		<cfargument name="userName" type="string" required="true">
+		<cfargument name="userId" type="string" required="true">
 		<cfif cgi.HTTP_USER_AGENT EQ "CFSCHEDULE">
 			<cfquery name="getUsersAndDOB">
 				SELECT title,
@@ -497,15 +461,4 @@
 			<cfabort>
 		</cfif>
 	</cffunction>
-
-	<!--- <cffunction name="getStatusMessage" access="private" returnType="string">
-		<cfargument name="statusCode" type="numeric">
-		<cfset local.statusMessage = "">
-
-		<cfif StructKeyExists(session, "statusCodes")>
-			<cfset local.statusMessage = session.statusCodes["#arguments.statusCode#"]>
-		</cfif>
-
-		<cfreturn local.statusMessage>
-	</cffunction> --->
 </cfcomponent>

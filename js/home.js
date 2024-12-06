@@ -169,9 +169,6 @@ $("#contactManagement").submit(function(event) {
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
 			if (responseJSON.statusCode === 200) {
-				if ($("#editContactId").val() === "") {
-					$("#contactManagement")[0].reset();
-				}
 				contactManagementMsgSection.css("color", "green");
 				location.reload();
 			}
@@ -217,23 +214,23 @@ function createPdf() {
 }
 
 $(document).ready(function(){
-	$("#scheduleBdayEmailBtn").show();
-	$("#diableBdayEmailBtn").hide();
-
 	$.ajax({
 		type: "POST",
 		url: "./components/addressbook.cfc?method=getTaskStatus",
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
 			if (responseJSON.taskExists) {
-				$("#scheduleBdayEmailBtn").hide();
-				$("#diableBdayEmailBtn").show();
+				$("#scheduleBdayEmailBtn").text("DISABLE BDAY MAILS");
+				$("#scheduleBdayEmailBtn").addClass("bg-danger");
+				$("#scheduleBdayEmailBtn").removeClass("bg-secondary");
+			}
+			else {
+				$("#scheduleBdayEmailBtn").text("SCHEDULE BDAY MAILS");
+				$("#scheduleBdayEmailBtn").addClass("bg-secondary");
+				$("#scheduleBdayEmailBtn").removeClass("bg-danger");
 			}
 		}
 	});
-
-	// Enable custom tooltip styling using bootstrap
-	$('[data-bs-toggle="tooltip"]').tooltip();
 
 	// Set max of dob input to current date
 	$("#editContactDOB").attr({
@@ -241,24 +238,22 @@ $(document).ready(function(){
 	})
 });
 
-function scheduleBdayEmails() {
+function toggleBdayEmailSchedule() {
 	$.ajax({
 		type: "POST",
-		url: "./components/addressbook.cfc?method=scheduleBdayEmails",
-		success: function() {
-			$("#scheduleBdayEmailBtn").hide();
-			$("#diableBdayEmailBtn").show();
-		}
-	});
-}
-
-function disableBdayEmails() {
-	$.ajax({
-		type: "POST",
-		url: "./components/addressbook.cfc?method=disableBdayEmails",
-		success: function() {
-			$("#scheduleBdayEmailBtn").show();
-			$("#diableBdayEmailBtn").hide();
+		url: "./components/addressbook.cfc?method=toggleBdayEmailSchedule",
+		success: function(response) {
+			const responseJSON = JSON.parse(response);
+			if (responseJSON.taskcurrentlyExists) {
+				$("#scheduleBdayEmailBtn").text("DISABLE BDAY MAILS");
+				$("#scheduleBdayEmailBtn").addClass("bg-danger");
+				$("#scheduleBdayEmailBtn").removeClass("bg-secondary");
+			}
+			else {
+				$("#scheduleBdayEmailBtn").text("SCHEDULE BDAY MAILS");
+				$("#scheduleBdayEmailBtn").addClass("bg-secondary");
+				$("#scheduleBdayEmailBtn").removeClass("bg-danger");
+			}
 		}
 	});
 }

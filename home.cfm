@@ -12,7 +12,7 @@
 
     <body>
 		<cfset ormReload()>
-		<cfset local.contacts = entityLoad("contactDetails", {createdBy = session.userId, active = 1})>
+		<cfset contacts = entityLoad("contactDetailsORM", {createdBy = session.userId, active = 1})>
 		<cfoutput>
 			<!--- Navbar --->
 			<nav class="navbar navbar-expand-lg shadow-sm customNavbar px-2">
@@ -59,13 +59,12 @@
 								<h4>User Fullname</h4>
 							</cfif>
 							<button class="btn bg-primary text-white rounded-pill d-print-none" onclick="createContact()">CREATE CONTACT</button>
-							<button id="scheduleBdayEmailBtn" class="btn bg-secondary text-white rounded-pill d-print-none" onclick="scheduleBdayEmails()" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Schedule sending a timely birthday message mail to people on your contact list">SCHEDULE BDAY MAILS</button>
-							<button id="diableBdayEmailBtn" class="btn bg-danger text-white rounded-pill d-print-none" onclick="disableBdayEmails()" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Disable the birthday message schedule">DISABLE BDAY MAILS</button>
+							<button id="scheduleBdayEmailBtn" class="btn bg-secondary text-white rounded-pill d-print-none" onclick="toggleBdayEmailSchedule()">SCHEDULE BDAY MAILS</button>
 						</div>
 					</div>
 					<!--- Right Section --->
 					<div class="col-lg-9 col-md-8 col-12 mainContent bg-white d-flex align-items-center justify-content-around">
-						<cfif arrayLen(local.contacts)>
+						<cfif arrayLen(contacts)>
 							<div class="table-responsive w-100">
 								<table class="table table-hover align-middle">
 									<thead>
@@ -80,7 +79,7 @@
 										</tr>
 									</thead>
 									<tbody>
-										<cfloop array="#local.contacts#" item="contactItem">
+										<cfloop array="#contacts#" item="contactItem">
 											<tr>
 												<td>
 													<img class="contactImage p-2 rounded-4" src="./assets/contactImages/#contactItem.getContactpicture()#" alt="Contact Image">
