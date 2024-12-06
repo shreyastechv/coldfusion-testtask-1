@@ -244,7 +244,7 @@
 							<cfqueryparam value = "#arguments.editContactPincode#" cfsqltype = "cf_sql_char">,
 							<cfqueryparam value = "#arguments.editContactEmail#" cfsqltype = "cf_sql_varchar">,
 							<cfqueryparam value = "#arguments.editContactPhone#" cfsqltype = "cf_sql_varchar">,
-							<cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">,
+							<cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
 						);
 					</cfquery>
 					<cfset local.response["statusCode"] = 200>
