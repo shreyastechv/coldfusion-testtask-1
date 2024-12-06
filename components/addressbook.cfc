@@ -68,7 +68,7 @@
 				profilepicture
 			FROM users
 			WHERE username = <cfqueryparam value = "#arguments.userName#" cfsqltype = "cf_sql_varchar">
-				AND pwd = <cfqueryparam value = "#local.hashedPassword#" cfsqltype = "cf_sql_varchar">
+				AND pwd = <cfqueryparam value = "#local.hashedPassword#" cfsqltype = "cf_sql_integer">
         </cfquery>
 
         <cfif getUserDetails.RecordCount EQ 0>
@@ -188,14 +188,14 @@
 			<cfquery name="getEmailQuery">
 				SELECT contactid
 				FROM contactDetails
-				WHERE createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
+				WHERE createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
 					AND email = <cfqueryparam value = "#arguments.editContactEmail#" cfsqltype = "cf_sql_varchar">
 					AND active = 1
 			</cfquery>
 			<cfquery name="getPhoneQuery">
 				SELECT contactid
 				FROM contactDetails
-				WHERE createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
+				WHERE createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
 					AND phone = <cfqueryparam value = "#arguments.editContactPhone#" cfsqltype = "cf_sql_varchar">
 					AND active = 1
 			</cfquery>
@@ -227,8 +227,7 @@
 							pincode,
 							email,
 							phone,
-							createdBy,
-							updatedBy
+							createdBy
 						)
 						VALUES (
 							<cfqueryparam value = "#arguments.editContactTitle#" cfsqltype = "cf_sql_varchar">,
@@ -245,8 +244,7 @@
 							<cfqueryparam value = "#arguments.editContactPincode#" cfsqltype = "cf_sql_char">,
 							<cfqueryparam value = "#arguments.editContactEmail#" cfsqltype = "cf_sql_varchar">,
 							<cfqueryparam value = "#arguments.editContactPhone#" cfsqltype = "cf_sql_varchar">,
-							<cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">,
-							<cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
+							<cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">,
 						);
 					</cfquery>
 					<cfset local.response["statusCode"] = 200>
@@ -267,7 +265,7 @@
 							pincode = <cfqueryparam value = "#arguments.editContactPincode#" cfsqltype = "cf_sql_varchar">,
 							email = <cfqueryparam value = "#arguments.editContactEmail#" cfsqltype = "cf_sql_varchar">,
 							phone = <cfqueryparam value = "#arguments.editContactPhone#" cfsqltype = "cf_sql_varchar">,
-							updatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
+							updatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
 						WHERE contactid = <cfqueryparam value = "#arguments.editContactId#" cfsqltype = "cf_sql_varchar">
 					</cfquery>
 					<cfif arguments.editContactImage NEQ "">
