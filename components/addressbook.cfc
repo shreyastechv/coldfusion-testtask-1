@@ -65,22 +65,18 @@
             SELECT userid,
 				username,
 				fullname,
-				pwd,
 				profilepicture
 			FROM users
 			WHERE username = <cfqueryparam value = "#arguments.userName#" cfsqltype = "cf_sql_varchar">
+				AND pwd = <cfqueryparam value = "#local.hashedPassword#" cfsqltype = "cf_sql_varchar">
         </cfquery>
 
         <cfif getUserDetails.RecordCount EQ 0>
-            <cfset local.response.statusCode = 404>
-            <cfset local.response.message = "Username does not exist!">
-        <cfelseif getUserDetails.pwd NEQ local.hashedPassword>
             <cfset local.response.statusCode = 401>
-            <cfset local.response.message = "Wrong password!">
+            <cfset local.response.message = "Wrong username or password!">
         <cfelse>
             <cfset session.isLoggedIn = true>
             <cfset session.userId = getUserDetails.userId>
-            <cfset session.userName = getUserDetails.username>
             <cfset session.fullName = getUserDetails.fullname>
             <cfset session.profilePicture = "./assets/profilePictures/" & getUserDetails.profilepicture>
         </cfif>
@@ -271,7 +267,7 @@
 							pincode = <cfqueryparam value = "#arguments.editContactPincode#" cfsqltype = "cf_sql_varchar">,
 							email = <cfqueryparam value = "#arguments.editContactEmail#" cfsqltype = "cf_sql_varchar">,
 							phone = <cfqueryparam value = "#arguments.editContactPhone#" cfsqltype = "cf_sql_varchar">,
-							updatedBy = <cfqueryparam value = "#session.userName#" cfsqltype = "cf_sql_varchar">
+							updatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
 						WHERE contactid = <cfqueryparam value = "#arguments.editContactId#" cfsqltype = "cf_sql_varchar">
 					</cfquery>
 					<cfif arguments.editContactImage NEQ "">
@@ -423,7 +419,6 @@
 		</cfif>
 		<cfset session.isLoggedIn = true>
 		<cfset session.userId = getUserIdQuery.userid>
-		<cfset session.userName = session.googleData.other.email>
 		<cfset session.fullName = session.googleData.name>
 		<cfset session.profilePicture = session.googleData.other.picture>
 		<cflocation url="/" addToken="no">
@@ -437,7 +432,7 @@
 		<cfif StructKeyExists(session, "userName")>
 			<cfschedule action="list" mode="application" result="local.tasksQuery">
 			<cfset local.taskNames = ValueArray(local.tasksQuery, "task")>
-			<cfif QueryKeyExists(local.tasksQuery,"task") AND ArrayContains(local.taskNames, "sendBirthdayWishes-#session.userName#")>
+			<cfif QueryKeyExists(local.tasksQuery,"task") AND ArrayContains(local.taskNames, "sendBirthdayWishes-#session.userId#")>
 				<cfset local.response["statusCode"] = 200>
 				<cfset local.response["taskExists"] = true>
 			</cfif>
@@ -449,12 +444,12 @@
 		<cfif StructKeyExists(session, "userName")>
 			<cfschedule
 				action="update"
-				task="sendBirthdayWishes-#session.userName#"
+				task="sendBirthdayWishes-#session.userId#"
 				operation="HTTPRequest"
 				startDate="#DateFormat(Now(), "mm/dd/yyy")#"
 				startTime="8:00 AM"
 				mode="application"
-				url="http://addressbook.com/components/addressbook.cfc?method=sendBdayEmails&userName=#session.userName#"
+				url="http://addressbook.com/components/addressbook.cfc?method=sendBdayEmails&userId=#session.userId#"
 				interval="daily"
 			>
 		</cfif>
@@ -465,13 +460,13 @@
 			<cfschedule
 				action="delete"
 				mode="application"
-				task="sendBirthdayWishes-#session.userName#"
+				task="sendBirthdayWishes-#session.userId#"
 			>
 		</cfif>
 	</cffunction>
 
 	<cffunction name="sendBdayEmails" access="remote" returnType="void">
-		<cfargument name="userName" type="string" required="true">
+		<cfargument name="userId" type="string" required="true">
 		<cfif cgi.HTTP_USER_AGENT EQ "CFSCHEDULE">
 			<cfquery name="getUsersAndDOB">
 				SELECT title,
