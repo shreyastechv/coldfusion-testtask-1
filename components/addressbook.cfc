@@ -411,12 +411,12 @@
 					<cfqueryparam value = "#session.googleData.other.picture#" cfsqltype = "cf_sql_varchar">
 				);
 			</cfquery>
-			<cfquery name="getUserIdQuery">
-				SELECT userid
-				FROM users
-				WHERE email = <cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">
-			</cfquery>
 		</cfif>
+		<cfquery name="getUserIdQuery">
+			SELECT userid
+			FROM users
+			WHERE email = <cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">
+		</cfquery>
 		<cfset session.isLoggedIn = true>
 		<cfset session.userId = getUserIdQuery.userid>
 		<cfset session.fullName = session.googleData.name>
@@ -429,7 +429,7 @@
 		<cfset local.response["statusCode"] = 404>
 		<cfset local.response["taskExists"] = false>
 
-		<cfif StructKeyExists(session, "userName")>
+		<cfif StructKeyExists(session, "userId")>
 			<cfschedule action="list" mode="application" result="local.tasksQuery">
 			<cfset local.taskNames = ValueArray(local.tasksQuery, "task")>
 			<cfif QueryKeyExists(local.tasksQuery,"task") AND ArrayContains(local.taskNames, "sendBirthdayWishes-#session.userId#")>
