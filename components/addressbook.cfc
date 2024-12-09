@@ -406,9 +406,9 @@
 
 	<cffunction name="toggleBdayEmailSchedule" returnType="struct" returnFormat="json" access="remote">
 		<cfset local.response = StructNew()>
+		<cfset local.taskExists = getTaskStatus().taskExists>
 
 		<cfif StructKeyExists(session, "userId")>
-			<cfset local.taskExists = getTaskStatus().taskExists>
 			<cfif local.taskExists>
 				<cfschedule
 					action="delete"
