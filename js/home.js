@@ -38,7 +38,6 @@ function viewContact(event) {
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
 			const { title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone } = responseJSON;
-			const convertedDOB = new Date(dob);
 			const formattedDOB = new Date(dob).toLocaleDateString('en-US', {
 				year: "numeric",
 				month: "long",
@@ -94,7 +93,7 @@ function editContact(event) {
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
 			const { contactid, title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone } = responseJSON;
-			const formattedDOB = new Date(dob).toLocaleDateString('fr-ca')
+			const formattedDOB = new Date(dob).toLocaleDateString('fr-ca');
 
 			$("#editContactId").val(contactid);
 			$("#editContactTitle").val(title);
