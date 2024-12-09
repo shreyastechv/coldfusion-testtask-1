@@ -231,11 +231,6 @@ $(document).ready(function(){
 			}
 		}
 	});
-
-	// Set max of dob input to current date
-	$("#editContactDOB").attr({
-		"max": new Date().toLocaleDateString('fr-ca')
-	})
 });
 
 function toggleBdayEmailSchedule() {

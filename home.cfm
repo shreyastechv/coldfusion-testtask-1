@@ -230,7 +230,7 @@
 										</div>
 										<div class="col-md-6">
 											<label class="contactManagementLabel" for="editContactDOB">Date Of Birth *</label>
-											<input class="contactManagementInput py-1 mt-0" type="date" id="editContactDOB" name="editContactDOB">
+											<input class="contactManagementInput py-1 mt-0" type="date" id="editContactDOB" name="editContactDOB" max="#DateFormat(Now(), 'yyyy-mm-dd')#">
 											<div class="error text-danger" id="dobError"></div>
 										</div>
 									</div>
