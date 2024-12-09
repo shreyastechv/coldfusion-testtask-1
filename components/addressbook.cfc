@@ -159,6 +159,7 @@
         <cfargument required="true" name="editContactPincode" type="string">
         <cfargument required="true" name="editContactEmail" type="string">
         <cfargument required="true" name="editContactPhone" type="string">
+        <cfargument required="true" name="editContactRole" type="array">
         <cfset local.response = StructNew()>
         <cfset local.contactImage = "demo-contact-image.png">
 
@@ -218,6 +219,18 @@
 							<cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
 						);
 					</cfquery>
+					<cfloop array="#arguments.editContactRole#" item="local.userRole">
+						<cfquery name="local.addRolesQuery">
+							INSERT INTO contactRoles(
+								contactId,
+								role
+							)
+							VALUES (
+								<cfqueryparam value = "#arguments.editContactEmail#" cfsqltype = "cf_sql_varchar">,
+								<cfqueryparam value = "#arguments.editContactPhone#" cfsqltype = "cf_sql_varchar">
+							)
+						</cfquery>
+					</cfloop>
 					<cfset local.response["statusCode"] = 200>
 					<cfset local.response["message"] = "Contact Added Successfully">
 				<cfelse>

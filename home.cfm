@@ -290,6 +290,18 @@
 											<div class="error text-danger" id="phoneError"></div>
 										</div>
 									</div>
+									<div class="d-flex justify-content-between gap-3 mb-3">
+										<div class="col-md-6 d-flex flex-column">
+											<label class="contactManagementLabel" for="editContactRole">Role *</label>
+											<select class="contactManagementInput py-1 mt-1" id="editContactRole" name="editContactRole" multiple>
+												<option>Viewer</option>
+												<option>Editor</option>
+												<option>Owner</option>
+												<option>Admin</option>
+											</select>
+											<div class="error text-danger" id="roleError"></div>
+										</div>
+									</div>
 								</div>
 								<div id="contactManagementMsgSection" class="text-center p-2"></div>
 								<div class="modal-footer d-flex justify-content-around border-top-0">
