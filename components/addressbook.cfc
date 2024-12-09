@@ -68,7 +68,7 @@
 				profilepicture
 			FROM users
 			WHERE username = <cfqueryparam value = "#arguments.userName#" cfsqltype = "cf_sql_varchar">
-				AND pwd = <cfqueryparam value = "#local.hashedPassword#" cfsqltype = "cf_sql_integer">
+				AND pwd = <cfqueryparam value = "#local.hashedPassword#" cfsqltype = "cf_sql_varchar">
         </cfquery>
 
         <cfif getUserDetails.RecordCount EQ 0>
