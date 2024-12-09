@@ -3,7 +3,7 @@
 	<cfset this.sessionManagement = true>
 	<cfset this.ormEnabled = true>
 	<cfset this.ormSettings = {
-        cfclocation = "model",
+        cfclocation = "orm",
 		dbcreate = "update"
 	}>
 	<cfset this.sessiontimeout = CreateTimeSpan(0, 1, 0, 0)>
