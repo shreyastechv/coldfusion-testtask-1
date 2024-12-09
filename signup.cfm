@@ -40,15 +40,15 @@
                         </div>
                         <form id="signupForm" name="signupForm" method="post" enctype="multipart/form-data">
                             <div class="mb-3">
-                                <input type="text" class="inputBox" id="fullname" name="fullname" placeholder="Full Name">
+                                <input type="text" class="inputBox" id="fullname" name="fullname" placeholder="Full Name" maxlength="40">
                                 <div class="text-danger" id="fullnameError"></div>
                             </div>
                             <div class="mb-3">
-                                <input type="email" class="inputBox" id="email" name="email" placeholder="Email ID" autocomplete="username">
+                                <input type="email" class="inputBox" id="email" name="email" placeholder="Email ID" autocomplete="username" maxlength="40">
                                 <div class="text-danger" id="emailError"></div>
                             </div>
                             <div class="mb-3">
-                                <input type="text" class="inputBox" id="username" name="username" placeholder="Username" autocomplete="username">
+                                <input type="text" class="inputBox" id="username" name="username" placeholder="Username" autocomplete="username" maxlength="40">
                                 <div class="text-danger" id="usernameError"></div>
                             </div>
                             <div class="mb-3">
