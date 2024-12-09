@@ -10,28 +10,20 @@
         <cfset local.response["statusCode"] = 200>
         <cfset local.response["message"] = "">
 
-       <cfquery name="checkUser">
+       <cfquery name="local.checkUsernameAndEmail">
             SELECT username
 			FROM users
 			WHERE username = <cfqueryparam value = "#arguments.userName#" cfsqltype = "cf_sql_varchar">
+				OR email = <cfqueryparam value = "#arguments.email#" cfsqltype = "cf_sql_varchar">
         </cfquery>
 
-		<cfquery name="checkEmail">
-            SELECT email
-			FROM users
-			WHERE email = <cfqueryparam value = "#arguments.email#" cfsqltype = "cf_sql_varchar">
-        </cfquery>
-
-		<cfif checkEmail.RecordCount>
+		<cfif local.checkUsernameAndEmail.RecordCount>
 			<cfset local.response.statusCode = 400>
-            <cfset local.response.message = "Email already exists!">
-        <cfelseif checkUser.RecordCount>
-			<cfset local.response.statusCode = 400>
-            <cfset local.response.message = "Username already exists!">
+            <cfset local.response.message = "Email or Username already exists!">
 		<cfelse>
             <cffile action="upload" destination="#expandpath("../assets/profilePictures")#" fileField="form.profilePicture" nameconflict="MakeUnique">
             <cfset local.profilePictureName = cffile.serverFile>
-            <cfquery name="addUser">
+            <cfquery name="local.addUser">
                 INSERT INTO users (
 					fullname,
 					email,
@@ -61,7 +53,7 @@
         <cfset local.response["statusCode"] = 200>
         <cfset local.response["message"] = "">
 
-        <cfquery name="getUserDetails">
+        <cfquery name="local.getUserDetails">
             SELECT userid,
 				username,
 				fullname,
@@ -71,14 +63,14 @@
 				AND pwd = <cfqueryparam value = "#local.hashedPassword#" cfsqltype = "cf_sql_varchar">
         </cfquery>
 
-        <cfif getUserDetails.RecordCount EQ 0>
+        <cfif local.getUserDetails.RecordCount EQ 0>
             <cfset local.response.statusCode = 401>
             <cfset local.response.message = "Wrong username or password!">
         <cfelse>
             <cfset session.isLoggedIn = true>
-            <cfset session.userId = getUserDetails.userId>
-            <cfset session.fullName = getUserDetails.fullname>
-            <cfset session.profilePicture = "./assets/profilePictures/" & getUserDetails.profilepicture>
+            <cfset session.userId = local.getUserDetails.userId>
+            <cfset session.fullName = local.getUserDetails.fullname>
+            <cfset session.profilePicture = "./assets/profilePictures/" & local.getUserDetails.profilepicture>
         </cfif>
 
         <cfreturn local.response>
@@ -119,28 +111,14 @@
 			"phone"
 		]>
 
-        <cfquery name="getContactById">
-            SELECT contactid,
-				title,
-				firstname,
-				lastname,
-				gender,
-				dob,
-				contactpicture,
-				address,
-				street,
-				district,
-				state,
-				country,
-				pincode,
-				email,
-				phone
+        <cfquery name="local.getContactById">
+            SELECT #ArrayToList(local.columnList)#
 			FROM contactDetails
 			WHERE contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
         </cfquery>
 
 		<cfloop array="#local.columnList#" item="columnName">
-			<cfset local.contactStruct[columnName] = getContactById[columnName]>
+			<cfset local.contactStruct[columnName] = local.getContactById[columnName]>
 		</cfloop>
 
         <cfreturn local.contactStruct>
@@ -151,7 +129,7 @@
         <cfset local.response = StructNew()>
 
         <cfif StructKeyExists(session, "isLoggedIn")>
-            <cfquery name="deleteContactQuery">
+            <cfquery name="local.deleteContactQuery">
                 UPDATE contactDetails
 				SET active = 0
 				WHERE contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
@@ -185,33 +163,26 @@
         <cfset local.contactImage = "demo-contact-image.png">
 
         <cfif StructKeyExists(session, "isLoggedIn")>
-			<cfquery name="getEmailQuery">
+			<cfquery name="local.getEmailPhoneQuery">
 				SELECT contactid
 				FROM contactDetails
 				WHERE createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
-					AND email = <cfqueryparam value = "#arguments.editContactEmail#" cfsqltype = "cf_sql_varchar">
+					AND (
+						email = <cfqueryparam value = "#arguments.editContactEmail#" cfsqltype = "cf_sql_varchar">
+						OR phone = <cfqueryparam value = "#arguments.editContactPhone#" cfsqltype = "cf_sql_varchar">
+					)
 					AND active = 1
 			</cfquery>
-			<cfquery name="getPhoneQuery">
-				SELECT contactid
-				FROM contactDetails
-				WHERE createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
-					AND phone = <cfqueryparam value = "#arguments.editContactPhone#" cfsqltype = "cf_sql_varchar">
-					AND active = 1
-			</cfquery>
-			<cfif getEmailQuery.RecordCount NEQ 0 AND getEmailQuery.contactid NEQ arguments.editContactId>
+			<cfif local.getEmailPhoneQuery.RecordCount NEQ 0 AND local.getEmailPhoneQuery.contactid NEQ arguments.editContactId>
                 <cfset local.response["statusCode"] = 409>
-                <cfset local.response["message"] = "Email already exists">
-			<cfelseif getPhoneQuery.RecordCount NEQ 0 AND getPhoneQuery.contactid NEQ arguments.editContactId>
-                <cfset local.response["statusCode"] = 409>
-                <cfset local.response["message"] = "Phone number already exists">
+                <cfset local.response["message"] = "Email id or Phone number already exists">
 			<cfelse>
 				<cfif arguments.editContactImage NEQ "">
 					<cffile action="upload" destination="#expandpath("../assets/contactImages")#" fileField="form.editContactImage" nameconflict="MakeUnique">
 					<cfset local.contactImage = cffile.serverFile>
 				</cfif>
 				<cfif len(trim(arguments.editContactId)) EQ 0>
-					<cfquery name="insertContactsQuery">
+					<cfquery name="local.insertContactsQuery">
 						INSERT INTO contactDetails (
 							title,
 							firstname,
@@ -250,7 +221,7 @@
 					<cfset local.response["statusCode"] = 200>
 					<cfset local.response["message"] = "Contact Added Successfully">
 				<cfelse>
-					<cfquery name="updateContactDetailsQuery">
+					<cfquery name="local.updateContactDetailsQuery">
 						UPDATE contactDetails
 						SET title = <cfqueryparam value = "#arguments.editContactTitle#" cfsqltype = "cf_sql_varchar">,
 							firstName = <cfqueryparam value = "#arguments.editContactFirstName#" cfsqltype = "cf_sql_varchar">,
@@ -265,16 +236,12 @@
 							pincode = <cfqueryparam value = "#arguments.editContactPincode#" cfsqltype = "cf_sql_varchar">,
 							email = <cfqueryparam value = "#arguments.editContactEmail#" cfsqltype = "cf_sql_varchar">,
 							phone = <cfqueryparam value = "#arguments.editContactPhone#" cfsqltype = "cf_sql_varchar">,
+							<cfif arguments.editContactImage NEQ "">
+								contactpicture = <cfqueryparam value = "#local.contactImage#" cfsqltype = "cf_sql_varchar">,
+							</cfif>
 							updatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
 						WHERE contactid = <cfqueryparam value = "#arguments.editContactId#" cfsqltype = "cf_sql_varchar">
 					</cfquery>
-					<cfif arguments.editContactImage NEQ "">
-						<cfquery name="updateContactImageQuery">
-							UPDATE contactDetails
-							SET contactpicture = <cfqueryparam value = "#local.contactImage#" cfsqltype = "cf_sql_varchar">
-							WHERE contactid = <cfqueryparam value = "#arguments.editContactId#" cfsqltype = "cf_sql_varchar">
-						</cfquery>
-					</cfif>
 					<cfset local.response["statusCode"] = 200>
 					<cfset local.response["message"] = "Contact Updated Successfully">
 				</cfif>
@@ -376,13 +343,13 @@
 				);
 			</cfquery>
 		</cfif>
-		<cfquery name="getUserIdQuery">
+		<cfquery name="local.getUserIdQuery">
 			SELECT userid
 			FROM users
 			WHERE email = <cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">
 		</cfquery>
 		<cfset session.isLoggedIn = true>
-		<cfset session.userId = getUserIdQuery.userid>
+		<cfset session.userId = local.getUserIdQuery.userid>
 		<cfset session.fullName = session.googleData.name>
 		<cfset session.profilePicture = session.googleData.other.picture>
 		<cflocation url="/" addToken="no">
@@ -437,7 +404,7 @@
 	<cffunction name="sendBdayEmails" access="remote" returnType="void">
 		<cfargument name="userId" type="string" required="true">
 		<cfif cgi.HTTP_USER_AGENT EQ "CFSCHEDULE">
-			<cfquery name="getUsersAndDOB">
+			<cfquery name="local.getUsersAndDOB">
 				SELECT title,
 				firstname,
 				lastname,
@@ -447,7 +414,7 @@
 				WHERE createdBy = <cfqueryparam value = "#arguments.userId#" cfsqltype = "cf_sql_varchar">
 			</cfquery>
 
-			<cfloop query="getUsersAndDOB">
+			<cfloop query="local.getUsersAndDOB">
 				<cfif Day(dob) EQ Day(Now()) AND Month(dob) EQ Month(Now())>
 					<cfmail from="test@test.com" to="#email#" subject="Birthday Wishes">
 						Good Morning #title# #firstname# #lastname#,
