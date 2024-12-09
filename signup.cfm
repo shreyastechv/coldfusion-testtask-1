@@ -12,12 +12,12 @@
 
     <body>
         <header class="header d-flex align-items-center justify-content-between fixed-top px-5">
-            <a class="d-flex align-items-center text-decoration-none" href="#">
+            <a class="d-flex align-items-center text-decoration-none" href="/">
                 <img class="logo" src="./assets/images/logo.png" alt="Logo Image">
                 <div class="text-white">ADDRESS BOOK</div>
             </a>
             <nav class="d-flex align-items-center gap-4">
-                <a class="text-white text-decoration-none" href="#">
+                <a class="text-white text-decoration-none" href="/">
                     <i class="fa-solid fa-user"></i>
                     Sign Up
                 </a>
@@ -40,15 +40,15 @@
                         </div>
                         <form id="signupForm" name="signupForm" method="post" enctype="multipart/form-data">
                             <div class="mb-3">
-                                <input type="text" class="inputBox" id="fullname" name="fullname" placeholder="Full Name">
+                                <input type="text" class="inputBox" id="fullname" name="fullname" placeholder="Full Name" maxlength="40">
                                 <div class="text-danger" id="fullnameError"></div>
                             </div>
                             <div class="mb-3">
-                                <input type="email" class="inputBox" id="email" name="email" placeholder="Email ID" autocomplete="username">
+                                <input type="email" class="inputBox" id="email" name="email" placeholder="Email ID" autocomplete="username" maxlength="40">
                                 <div class="text-danger" id="emailError"></div>
                             </div>
                             <div class="mb-3">
-                                <input type="text" class="inputBox" id="username" name="username" placeholder="Username" autocomplete="username">
+                                <input type="text" class="inputBox" id="username" name="username" placeholder="Username" autocomplete="username" maxlength="40">
                                 <div class="text-danger" id="usernameError"></div>
                             </div>
                             <div class="mb-3">

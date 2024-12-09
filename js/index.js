@@ -17,6 +17,7 @@ $("#loginForm").submit(function(event) {
 	const submitMsgSection = $("#submitMsgSection");
 	const thisForm = $(this)[0];
 	const formData = new FormData(thisForm);
+
 	$.ajax({
 		type: "POST",
 		url: "./components/addressbook.cfc?method=logIn",

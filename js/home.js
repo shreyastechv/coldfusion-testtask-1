@@ -38,7 +38,6 @@ function viewContact(event) {
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
 			const { title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone } = responseJSON;
-			const convertedDOB = new Date(dob);
 			const formattedDOB = new Date(dob).toLocaleDateString('en-US', {
 				year: "numeric",
 				month: "long",
@@ -94,7 +93,7 @@ function editContact(event) {
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
 			const { contactid, title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone } = responseJSON;
-			const formattedDOB = new Date(dob).toLocaleDateString('fr-ca')
+			const formattedDOB = new Date(dob).toLocaleDateString('fr-ca');
 
 			$("#editContactId").val(contactid);
 			$("#editContactTitle").val(title);
@@ -132,12 +131,14 @@ function validateContactForm() {
         { id: "editContactPincode", errorId: "pincodeError", message: "Please enter your pin", regex: /^\d{6}$/, customError: "Pincode should be six digits" },
         { id: "editContactEmail", errorId: "emailError", message: "Please enter your mail", regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
         { id: "editContactPhone", errorId: "phoneError", message: "Please enter your contact number", regex: /^\d{10}$/, customError: "Phone number should be 10 characters long and contain only digits" },
+        { id: "editContactRole", errorId: "roleError", message: "Please select atleast one user role", regex: null },
     ];
 
     let valid = true;
 
     fields.forEach(field => {
-        const value = $(`#${field.id}`).val().trim();
+		const fieldValue = $(`#${field.id}`).val();
+        const value = Array.isArray(fieldValue) ? fieldValue.toString() : fieldValue.trim();
 
         if (value === "" || (field.regex && !field.regex.test(value))) {
             const errorMessage = value === "" ? field.message : field.customError || field.message;
@@ -231,11 +232,6 @@ $(document).ready(function(){
 			}
 		}
 	});
-
-	// Set max of dob input to current date
-	$("#editContactDOB").attr({
-		"max": new Date().toLocaleDateString('fr-ca')
-	})
 });
 
 function toggleBdayEmailSchedule() {
