@@ -30,6 +30,7 @@ function viewContact(event) {
 	const viewContactEmail = $("#viewContactEmail");
 	const viewContactPhone = $("#viewContactPhone");
 	const viewContactPicture = $("#viewContactPicture");
+	const viewContactRoles = $("#viewContactRoles");
 
 	$.ajax({
 		type: "POST",
@@ -37,7 +38,7 @@ function viewContact(event) {
 		data: { contactId: event.target.value },
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
-			const { title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone } = responseJSON;
+			const { title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone, contactRoles } = responseJSON;
 			const formattedDOB = new Date(dob).toLocaleDateString('en-US', {
 				year: "numeric",
 				month: "long",
@@ -51,7 +52,8 @@ function viewContact(event) {
 			viewContactPincode.text(pincode);
 			viewContactEmail.text(email);
 			viewContactPhone.text(phone);
-			viewContactPicture.attr("src", `./assets/contactImages/${contactpicture}`);
+			viewContactPicture.attr("selected", true);
+			viewContactRoles.text(contactRoles.join(", "));
 			$('#viewContactModal').modal('show');
 		}
 	});
@@ -92,7 +94,7 @@ function editContact(event) {
 		data: { contactId: event.target.value },
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
-			const { contactid, title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone } = responseJSON;
+			const { contactid, title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone, contactRoles } = responseJSON;
 			const formattedDOB = new Date(dob).toLocaleDateString('fr-ca');
 
 			$("#editContactId").val(contactid);
@@ -111,6 +113,8 @@ function editContact(event) {
 			$("#editContactPincode").val(pincode);
 			$("#editContactEmail").val(email);
 			$("#editContactPhone").val(phone);
+			$("#editContactRole").val(contactRoles);
+			$("#editContactRole").attr("defaultValue", contactRoles);
 			$('#contactManagementModal').modal('show');
 		}
 	});
@@ -156,6 +160,8 @@ $("#contactManagement").submit(function(event) {
 	const contactManagementMsgSection = $("#contactManagementMsgSection");
 	const thisForm = $(this)[0];
 	const formData = new FormData(thisForm);
+	const contactPreviousRoles = $("#editContactRole").attr("defaultValue");
+	console.log(contactPreviousRoles);
 
 	event.preventDefault();
 	$("#contactManagementMsgSection").text("");
