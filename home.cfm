@@ -165,6 +165,11 @@
 											<td class="text-primary fw-semibold">:</td>
 											<td id="viewContactPhone">9876567487</td>
 										</tr>
+										<tr>
+											<td class="text-primary fw-semibold">Roles</td>
+											<td class="text-primary fw-semibold">:</td>
+											<td id="viewContactRoles"></td>
+										</tr>
 									</tbody>
 								</table>
 							</div>
@@ -294,10 +299,10 @@
 										<div class="col-md-6 d-flex flex-column">
 											<label class="contactManagementLabel" for="editContactRole">Role *</label>
 											<select class="contactManagementInput py-1 mt-1" id="editContactRole" name="editContactRole" multiple>
-												<option>Viewer</option>
-												<option>Editor</option>
-												<option>Owner</option>
-												<option>Admin</option>
+												<option value="1">Viewer</option>
+												<option value="2">Editor</option>
+												<option value="3">Owner</option>
+												<option value="4">Admin</option>
 											</select>
 											<div class="error text-danger" id="roleError"></div>
 										</div>

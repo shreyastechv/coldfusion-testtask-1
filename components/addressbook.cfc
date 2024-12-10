@@ -93,6 +93,7 @@
     <cffunction name="getContactById" returnType="struct" returnFormat="json" access="remote">
         <cfargument required="true" name="contactId" type="string">
 		<cfset local.contactStruct = StructNew()>
+		<cfset local.contactStruct["contactRoles"] = ArrayNew(1)>
 		<cfset local.columnList = [
 			"contactid",
 			"title",
@@ -121,6 +122,16 @@
 			<cfset local.contactStruct[columnName] = local.getContactById[columnName]>
 		</cfloop>
 
+		<cfquery name="local.getContactRoles">
+			SELECT roleName
+			FROM contactRoles
+			WHERE contactId = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
+		</cfquery>
+
+		<cfloop query="local.getContactRoles">
+			<cfset ArrayAppend(local.contactStruct["contactRoles"], local.getContactRoles.roleName)>
+		</cfloop>
+
         <cfreturn local.contactStruct>
     </cffunction>
 
@@ -129,8 +140,12 @@
         <cfset local.response = StructNew()>
 
         <cfif StructKeyExists(session, "isLoggedIn")>
-            <cfquery name="local.deleteContactQuery">
-                UPDATE contactDetails
+            <cfquery name="local.deleteRoleQuery">
+                DELETE FROM contactRoles
+				WHERE contactId = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
+            </cfquery>
+			<cfquery name="local.deleteContactQuery">
+            	UPDATE contactDetails
 				SET active = 0
 				WHERE contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
             </cfquery>
@@ -159,7 +174,7 @@
         <cfargument required="true" name="editContactPincode" type="string">
         <cfargument required="true" name="editContactEmail" type="string">
         <cfargument required="true" name="editContactPhone" type="string">
-        <cfargument required="true" name="editContactRole" type="array">
+        <cfargument required="true" name="editContactRole" type="string">
         <cfset local.response = StructNew()>
         <cfset local.contactImage = "demo-contact-image.png">
 
@@ -201,6 +216,7 @@
 							phone,
 							createdBy
 						)
+						OUTPUT INSERTED.contactid
 						VALUES (
 							<cfqueryparam value = "#arguments.editContactTitle#" cfsqltype = "cf_sql_varchar">,
 							<cfqueryparam value = "#arguments.editContactFirstName#" cfsqltype = "cf_sql_varchar">,
@@ -219,15 +235,15 @@
 							<cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
 						);
 					</cfquery>
-					<cfloop array="#arguments.editContactRole#" item="local.userRole">
+					<cfloop list="#arguments.editContactRole#" item="local.userRole">
 						<cfquery name="local.addRolesQuery">
 							INSERT INTO contactRoles(
 								contactId,
-								role
+								roleName
 							)
 							VALUES (
-								<cfqueryparam value = "#arguments.editContactEmail#" cfsqltype = "cf_sql_varchar">,
-								<cfqueryparam value = "#arguments.editContactPhone#" cfsqltype = "cf_sql_varchar">
+								<cfqueryparam value = "#local.insertContactsQuery.contactid#" cfsqltype = "cf_sql_varchar">,
+								<cfqueryparam value = "#local.userRole#" cfsqltype = "cf_sql_varchar">
 							)
 						</cfquery>
 					</cfloop>
@@ -254,6 +270,10 @@
 							</cfif>
 							updatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
 						WHERE contactid = <cfqueryparam value = "#arguments.editContactId#" cfsqltype = "cf_sql_varchar">
+					</cfquery>
+					<cfquery name="local.deleteRoleQuery">
+						DELETE FROM contactRoles
+						WHERE contactId = <cfqueryparam value = "#arguments.editContactId#" cfsqltype = "cf_sql_varchar">
 					</cfquery>
 					<cfset local.response["statusCode"] = 200>
 					<cfset local.response["message"] = "Contact Updated Successfully">
