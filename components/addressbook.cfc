@@ -114,51 +114,34 @@
 
     <cffunction name="getContactById" returnType="struct" returnFormat="json" access="remote">
         <cfargument required="true" name="contactId" type="string">
-		<cfset local.contactStruct = StructNew()>
-		<cfset local.contactStruct["contactRoles"] = ArrayNew(1)>
-		<cfset local.contactStruct["contactRoleIds"] = ArrayNew(1)>
-		<cfset local.columnList = [
-			"contactid",
-			"title",
-			"firstname",
-			"lastname",
-			"gender",
-			"dob",
-			"contactpicture",
-			"address",
-			"street",
-			"district",
-			"state",
-			"country",
-			"pincode",
-			"email",
-			"phone"
-		]>
 
-        <cfquery name="local.getContactById">
-            SELECT #ArrayToList(local.columnList)#
-			FROM contactDetails
+		<cfquery name="local.getContactByIdQuery">
+            SELECT contactid,
+				title,
+				firstname,
+				lastname,
+				gender,
+				dob,
+				contactpicture,
+				address,
+				street,
+				district,
+				state,
+				country,
+				pincode,
+				email,
+				phone
+			FROM contactDetails AS cd
+			LEFT JOIN contactRoles AS cr
+			ON
+			JOIN
 			WHERE contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
         </cfquery>
+		<cfset local.result = {}>
+		<cfloop query ="local.getContactByIdQuery">
+		  <cfset local.result["contactid"] = local.getContactByIdQuery.contactid>
 
-		<cfloop array="#local.columnList#" item="columnName">
-			<cfset local.contactStruct[columnName] = local.getContactById[columnName]>
 		</cfloop>
-
-		<cfquery name="local.getContactRolesQuery">
-			SELECT r.roleId, d.roleName
-			FROM contactRoles AS r
-			RIGHT JOIN roleDetails AS d
-			ON r.roleId = d.roleId
-			WHERE contactId = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
-		</cfquery>
-
-		<cfloop query="local.getContactRolesQuery">
-			<cfset ArrayAppend(local.contactStruct["contactRoleIds"], local.getContactRolesQuery.roleId)>
-			<cfset ArrayAppend(local.contactStruct["contactRoles"], local.getContactRolesQuery.roleName)>
-		</cfloop>
-
-        <cfreturn local.contactStruct>
     </cffunction>
 
     <cffunction name="deleteContact" returnType="struct" returnFormat="json" access="remote">
@@ -224,7 +207,7 @@
 					<cfset local.contactImage = cffile.serverFile>
 				</cfif>
 				<cfif len(trim(arguments.editContactId)) EQ 0>
-					<cfquery name="local.insertContactsQuery">
+					<cfquery name="local.insertContactsQuery" result="local.insertContactsResult">
 						INSERT INTO contactDetails (
 							title,
 							firstname,
@@ -242,7 +225,6 @@
 							phone,
 							createdBy
 						)
-						OUTPUT INSERTED.contactid
 						VALUES (
 							<cfqueryparam value = "#arguments.editContactTitle#" cfsqltype = "cf_sql_varchar">,
 							<cfqueryparam value = "#arguments.editContactFirstName#" cfsqltype = "cf_sql_varchar">,
@@ -268,7 +250,7 @@
 								roleId
 							)
 							VALUES (
-								<cfqueryparam value = "#local.insertContactsQuery.contactid#" cfsqltype = "cf_sql_varchar">,
+								<cfqueryparam value = "#insertContactsResult.GENERATEDKEY#" cfsqltype = "cf_sql_varchar">,
 								<cfqueryparam value = "#local.userRole#" cfsqltype = "cf_sql_integer">
 							)
 						</cfquery>
