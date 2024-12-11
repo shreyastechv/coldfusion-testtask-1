@@ -302,6 +302,15 @@
         <cfreturn local.response>
     </cffunction>
 
+	<cffunction  name="getRoleDetails" returnType="query" access="public">
+		<cfquery name="local.getContactRoleDetailsQuery">
+			SELECT roleId, roleName
+			FROM roleDetails
+		</cfquery>
+
+		<cfreturn local.getContactRoleDetailsQuery>
+	</cffunction>
+
 	<cffunction  name="getContactRolesAsArray" returnType="array" access="private">
 		<cfset local.contacts = entityLoad("contactDetailsORM", {createdBy = session.userId, active = 1})>
 		<cfset local.contactsQuery = EntityToQuery(local.contacts)>

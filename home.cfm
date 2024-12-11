@@ -13,6 +13,7 @@
     <body>
 		<cfset ormReload()>
 		<cfset contacts = entityLoad("contactDetailsORM", {createdBy = session.userId, active = 1})>
+		<cfset roleDetails = application.addressbookObject.getRoleDetails()>
 		<cfoutput>
 			<!--- Navbar --->
 			<nav class="navbar navbar-expand-lg shadow-sm customNavbar px-2">
@@ -299,10 +300,9 @@
 										<div class="col-md-6 d-flex flex-column">
 											<label class="contactManagementLabel" for="editContactRole">Role *</label>
 											<select class="contactManagementInput py-1 mt-1" id="editContactRole" name="editContactRole" multiple>
-												<option value="1">Driver</option>
-												<option value="2">Cleaner</option>
-												<option value="3">Coder</option>
-												<option value="4">Gardener</option>
+												<cfloop query="roleDetails">
+													<option value="#roleDetails.roleId#">#roleDetails.roleName#</option>
+												</cfloop>
 											</select>
 											<div class="error text-danger" id="roleError"></div>
 										</div>
