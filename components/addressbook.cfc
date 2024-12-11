@@ -117,7 +117,8 @@
 		<cfset local.result = {}>
 
 		<cfquery name="local.getContactByIdQuery">
-			SELECT cd.title,
+			SELECT cd.contactid,
+				cd.title,
 				cd.firstname,
 				cd.lastname,
 				cd.gender,
@@ -139,7 +140,8 @@
 			LEFT JOIN roleDetails rd
 			ON cr.roleId = rd.roleId
 			WHERE cd.contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
-			GROUP BY cd.title,
+			GROUP BY cd.contactid,
+				cd.title,
 				cd.firstname,
 				cd.lastname,
 				cd.gender,
@@ -156,6 +158,7 @@
         </cfquery>
 		<cfloop query ="local.getContactByIdQuery">
 			<cfset local.result = {
+				"contactid" = local.getContactByIdQuery.contactid,
 				"title" = local.getContactByIdQuery.title,
 				"firstname" = local.getContactByIdQuery.firstname,
 				"lastname" = local.getContactByIdQuery.lastname,
