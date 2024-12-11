@@ -114,34 +114,68 @@
 
     <cffunction name="getContactById" returnType="struct" returnFormat="json" access="remote">
         <cfargument required="true" name="contactId" type="string">
+		<cfset local.result = {}>
 
 		<cfquery name="local.getContactByIdQuery">
-            SELECT contactid,
-				title,
-				firstname,
-				lastname,
-				gender,
-				dob,
-				contactpicture,
-				address,
-				street,
-				district,
-				state,
-				country,
-				pincode,
-				email,
-				phone
-			FROM contactDetails AS cd
-			LEFT JOIN contactRoles AS cr
-			ON
-			JOIN
-			WHERE contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
+			SELECT cd.title,
+				cd.firstname,
+				cd.lastname,
+				cd.gender,
+				cd.dob,
+				cd.contactpicture,
+				cd.address,
+				cd.street,
+				cd.district,
+				cd.state,
+				cd.country,
+				cd.pincode,
+				cd.email,
+				cd.phone,
+				STRING_AGG(CONVERT(VARCHAR(36), cr.roleId), ',') AS roleIds,
+				STRING_AGG(rd.roleName, ',') AS roleNames
+			FROM contactDetails cd
+			LEFT JOIN contactRoles cr
+			ON cd.contactid = cr.contactId
+			LEFT JOIN roleDetails rd
+			ON cr.roleId = rd.roleId
+			WHERE cd.contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
+			GROUP BY cd.title,
+				cd.firstname,
+				cd.lastname,
+				cd.gender,
+				cd.dob,
+				cd.contactpicture,
+				cd.address,
+				cd.street,
+				cd.district,
+				cd.state,
+				cd.country,
+				cd.pincode,
+				cd.email,
+				cd.phone
         </cfquery>
-		<cfset local.result = {}>
 		<cfloop query ="local.getContactByIdQuery">
-		  <cfset local.result["contactid"] = local.getContactByIdQuery.contactid>
-
+			<cfset local.result = {
+				"title" = local.getContactByIdQuery.title,
+				"firstname" = local.getContactByIdQuery.firstname,
+				"lastname" = local.getContactByIdQuery.lastname,
+				"gender" = local.getContactByIdQuery.gender,
+				"dob" = local.getContactByIdQuery.dob,
+				"contactPicture" = local.getContactByIdQuery.contactpicture,
+				"address" = local.getContactByIdQuery.address,
+				"street" = local.getContactByIdQuery.street,
+				"district" = local.getContactByIdQuery.district,
+				"state" = local.getContactByIdQuery.state,
+				"country" = local.getContactByIdQuery.country,
+				"pincode" = local.getContactByIdQuery.pincode,
+				"email" = local.getContactByIdQuery.email,
+				"phone" = local.getContactByIdQuery.phone,
+				"roleIds" = ListToArray(local.getContactByIdQuery.roleIds),
+				"roleNames" = ListToArray(local.getContactByIdQuery.roleNames)
+			}>
 		</cfloop>
+
+		<cfreturn local.result>
     </cffunction>
 
     <cffunction name="deleteContact" returnType="struct" returnFormat="json" access="remote">
@@ -225,6 +259,7 @@
 							phone,
 							createdBy
 						)
+						OUTPUT INSERTED.contactid
 						VALUES (
 							<cfqueryparam value = "#arguments.editContactTitle#" cfsqltype = "cf_sql_varchar">,
 							<cfqueryparam value = "#arguments.editContactFirstName#" cfsqltype = "cf_sql_varchar">,
@@ -250,7 +285,7 @@
 								roleId
 							)
 							VALUES (
-								<cfqueryparam value = "#insertContactsResult.GENERATEDKEY#" cfsqltype = "cf_sql_varchar">,
+								<cfqueryparam value = "#local.insertContactsQuery.contactid#" cfsqltype = "cf_sql_varchar">,
 								<cfqueryparam value = "#local.userRole#" cfsqltype = "cf_sql_integer">
 							)
 						</cfquery>

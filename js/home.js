@@ -38,7 +38,7 @@ function viewContact(event) {
 		data: { contactId: event.target.value },
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
-			const { title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone, contactRoles, contactRoleIds } = responseJSON;
+			const { title, firstname, lastname, gender, dob, contactPicture, address, street, district, state, country, pincode, email, phone, roleNames } = responseJSON;
 			const formattedDOB = new Date(dob).toLocaleDateString('en-US', {
 				year: "numeric",
 				month: "long",
@@ -52,8 +52,8 @@ function viewContact(event) {
 			viewContactPincode.text(pincode);
 			viewContactEmail.text(email);
 			viewContactPhone.text(phone);
-			viewContactPicture.attr("src", `./assets/contactImages/${contactpicture}`);
-			viewContactRoles.text(contactRoles);
+			viewContactPicture.attr("src", `./assets/contactImages/${contactPicture}`);
+			viewContactRoles.text(roleNames);
 			$('#viewContactModal').modal('show');
 		}
 	});
@@ -95,7 +95,7 @@ function editContact(event) {
 		data: { contactId: event.target.value },
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
-			const { contactid, title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone, contactRoleIds } = responseJSON;
+			const { contactid, title, firstname, lastname, gender, dob, contactPicture, address, street, district, state, country, pincode, email, phone, roleIds, roleNames } = responseJSON;
 			const formattedDOB = new Date(dob).toLocaleDateString('fr-ca');
 
 			$("#editContactId").val(contactid);
@@ -105,7 +105,7 @@ function editContact(event) {
 			$("#editContactGender").val(gender);
 			$("#editContactDOB").val(formattedDOB);
 			$("#editContactImage").val("");
-			$("#editContactPicture").attr("src", `./assets/contactImages/${contactpicture}`);
+			$("#editContactPicture").attr("src", `./assets/contactImages/${contactPicture}`);
 			$("#editContactAddress").val(address);
 			$("#editContactStreet").val(street);
 			$("#editContactDistrict").val(district);
@@ -114,8 +114,8 @@ function editContact(event) {
 			$("#editContactPincode").val(pincode);
 			$("#editContactEmail").val(email);
 			$("#editContactPhone").val(phone);
-			$("#editContactRole").val(contactRoleIds);
-			$("#editContactRole").attr("defaultValue", contactRoleIds);
+			$("#editContactRole").val(roleIds);
+			$("#editContactRole").attr("defaultValue", roleIds);
 			$('#contactManagementModal').modal('show');
 		}
 	});
