@@ -52,7 +52,7 @@ function viewContact(event) {
 			viewContactPincode.text(pincode);
 			viewContactEmail.text(email);
 			viewContactPhone.text(phone);
-			viewContactPicture.attr("selected", true);
+			viewContactPicture.attr("src", `./assets/contactImages/${contactpicture}`);
 			viewContactRoles.text(contactRoles);
 			$('#viewContactModal').modal('show');
 		}
@@ -68,7 +68,7 @@ function deleteContact(event) {
 			success: function(response) {
 				const responseJSON = JSON.parse(response);
 				if (responseJSON.statusCode === 200) {
-					location.reload();
+					event.target.parentNode.parentNode.remove();
 				}
 			}
 		});
@@ -87,6 +87,7 @@ function createContact() {
 function editContact(event) {
 	$("#contactManagementHeading").text("EDIT CONTACT");
 	$(".error").text("");
+	$("#contactManagementMsgSection").text("");
 
 	$.ajax({
 		type: "POST",
@@ -176,7 +177,10 @@ $("#contactManagement").submit(function(event) {
 			const responseJSON = JSON.parse(response);
 			if (responseJSON.statusCode === 200) {
 				contactManagementMsgSection.css("color", "green");
-				location.reload();
+				loadHomePageData();
+				if ($("#editContactId").val() === "") {
+					thisForm.reset();
+				}
 			}
 			else {
 				contactManagementMsgSection.css("color", "red");
@@ -219,6 +223,95 @@ function createPdf() {
 	});
 }
 
+function loadDataFromContactsArray(contactsArray) {
+	const tableBody = document.getElementById('contactTableBody');
+	tableBody.innerHTML = ''; // Clear any existing rows
+
+	contactsArray.forEach(contact => {
+		const row = document.createElement('tr');
+
+		// Create and append image cell
+		const imageCell = document.createElement('td');
+		const img = document.createElement('img');
+		img.classList.add('contactImage', 'p-2', 'rounded-4');
+		img.src = `./assets/contactImages/${contact[3]}`;
+		img.alt = 'Contact Image';
+		imageCell.appendChild(img);
+		row.appendChild(imageCell);
+
+		// Create and append name cell
+		const nameCell = document.createElement('td');
+		nameCell.textContent = `${contact[1]} ${contact[2]}`;
+		row.appendChild(nameCell);
+
+		// Create and append email cell
+		const emailCell = document.createElement('td');
+		emailCell.textContent = contact[4];
+		row.appendChild(emailCell);
+
+		// Create and append phone cell
+		const phoneCell = document.createElement('td');
+		phoneCell.textContent = contact[5];
+		row.appendChild(phoneCell);
+
+		// Create and append Edit button cell
+		const editButtonCell = document.createElement('td');
+		editButtonCell.classList.add('d-print-none');
+		const editButton = document.createElement('button');
+		editButton.classList.add('actionBtn', 'btn', 'btn-outline-primary', 'rounded-pill', 'px-3');
+		editButton.value = contact[0];
+		editButton.setAttribute('onclick', 'editContact(event)');
+		editButton.innerHTML = `
+		<span class="d-none d-lg-inline pe-none">EDIT</span>
+		<i class="fa-solid fa-pen-to-square d-lg-none pe-none"></i>
+		`;
+		editButtonCell.appendChild(editButton);
+		row.appendChild(editButtonCell);
+
+		// Create and append Delete button cell
+		const deleteButtonCell = document.createElement('td');
+		deleteButtonCell.classList.add('d-print-none');
+		const deleteButton = document.createElement('button');
+		deleteButton.classList.add('actionBtn', 'btn', 'btn-outline-danger', 'rounded-pill', 'px-3');
+		deleteButton.value = contact[0];
+		deleteButton.setAttribute('onclick', 'deleteContact(event)');
+		deleteButton.innerHTML = `
+		<span class="d-none d-lg-inline pe-none">DELETE</span>
+		<i class="fa-solid fa-trash d-lg-none pe-none"></i>
+		`;
+		deleteButtonCell.appendChild(deleteButton);
+		row.appendChild(deleteButtonCell);
+
+		// Create and append View button cell
+		const viewButtonCell = document.createElement('td');
+		viewButtonCell.classList.add('d-print-none');
+		const viewButton = document.createElement('button');
+		viewButton.classList.add('actionBtn', 'btn', 'btn-outline-info', 'rounded-pill', 'px-3');
+		viewButton.value = contact[0];
+		viewButton.setAttribute('onclick', 'viewContact(event)');
+		viewButton.innerHTML = `
+		<span class="d-none d-lg-inline pe-none">VIEW</span>
+		<i class="fa-solid fa-eye d-lg-none pe-none"></i>
+		`;
+		viewButtonCell.appendChild(viewButton);
+		row.appendChild(viewButtonCell);
+
+		// Append the row to the table body
+		tableBody.appendChild(row);
+	});
+}
+
+function loadHomePageData() {
+	$.ajax({
+		type: "POST",
+		url: "./components/addressbook.cfc?method=getContacts",
+		success: function(response) {
+			const responseJSON = JSON.parse(response);
+			loadDataFromContactsArray(responseJSON.DATA);
+		}
+	});
+}
+
 $(document).ready(function(){
 	$.ajax({
 		type: "POST",
@@ -237,6 +330,8 @@ $(document).ready(function(){
 			}
 		}
 	});
+
+	loadHomePageData();
 });
 
 function toggleBdayEmailSchedule() {

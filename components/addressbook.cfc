@@ -90,6 +90,28 @@
         <cfreturn local.response>
     </cffunction>
 
+	<cffunction name="getContacts" returnType="query" returnFormat="json" access="remote">
+		<cfset local.contactDetails = ArrayNew(1)>
+		<cfset local.columnList = [
+			"contactid",
+			"firstname",
+			"lastname",
+			"contactpicture",
+			"email",
+			"phone"
+		]>
+
+        <cfquery name="local.getContactRolesQuery">
+            SELECT #ArrayToList(local.columnList)#
+            FROM contactDetails
+            WHERE createdBy = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_varchar">
+            AND active = 1;
+        </cfquery>
+
+
+        <cfreturn local.getContactRolesQuery>
+    </cffunction>
+
     <cffunction name="getContactById" returnType="struct" returnFormat="json" access="remote">
         <cfargument required="true" name="contactId" type="string">
 		<cfset local.contactStruct = StructNew()>
@@ -193,7 +215,7 @@
 					)
 					AND active = 1
 			</cfquery>
-			<cfif local.getEmailPhoneQuery.RecordCount NEQ 0 AND local.getEmailPhoneQuery.contactid NEQ arguments.editContactId>
+			<cfif local.getEmailPhoneQuery.RecordCount AND local.getEmailPhoneQuery.contactid NEQ arguments.editContactId>
                 <cfset local.response["statusCode"] = 409>
                 <cfset local.response["message"] = "Email id or Phone number already exists">
 			<cfelse>

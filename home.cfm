@@ -65,7 +65,7 @@
 					</div>
 					<!--- Right Section --->
 					<div class="col-lg-9 col-md-8 col-12 mainContent bg-white d-flex align-items-center justify-content-around">
-						<cfif arrayLen(contacts)>
+						<!---<cfif arrayLen(contacts)>--->
 							<div class="table-responsive w-100">
 								<table class="table table-hover align-middle">
 									<thead>
@@ -79,8 +79,8 @@
 											<th class="d-print-none"></th>
 										</tr>
 									</thead>
-									<tbody>
-										<cfloop array="#contacts#" item="contactItem">
+									<tbody id="contactTableBody">
+										<!---<cfloop array="#contacts#" item="contactItem">
 											<tr>
 												<td>
 													<img class="contactImage p-2 rounded-4" src="./assets/contactImages/#contactItem.getContactpicture()#" alt="Contact Image">
@@ -107,13 +107,13 @@
 													</button>
 												</td>
 											</tr>
-										</cfloop>
+										</cfloop>--->
 									</tbody>
 								</table>
 							</div>
-						<cfelse>
+						<!---<cfelse>
 							<div class="d-flex fs-5 text-info justify-content-center">No contacts to display.</div>
-						</cfif>
+						</cfif>--->
 					</div>
 				</div>
 			</div>
