@@ -13,6 +13,7 @@
     <body>
 		<cfset ormReload()>
 		<cfset contacts = entityLoad("contactDetailsORM", {createdBy = session.userId, active = 1})>
+		<cfset roleDetails = application.addressbookObject.getRoleDetails()>
 		<cfoutput>
 			<!--- Navbar --->
 			<nav class="navbar navbar-expand-lg shadow-sm customNavbar px-2">
@@ -64,7 +65,7 @@
 					</div>
 					<!--- Right Section --->
 					<div class="col-lg-9 col-md-8 col-12 mainContent bg-white d-flex align-items-center justify-content-around">
-						<cfif arrayLen(contacts)>
+						<!---<cfif arrayLen(contacts)>--->
 							<div class="table-responsive w-100">
 								<table class="table table-hover align-middle">
 									<thead>
@@ -78,8 +79,8 @@
 											<th class="d-print-none"></th>
 										</tr>
 									</thead>
-									<tbody>
-										<cfloop array="#contacts#" item="contactItem">
+									<tbody id="contactTableBody">
+										<!---<cfloop array="#contacts#" item="contactItem">
 											<tr>
 												<td>
 													<img class="contactImage p-2 rounded-4" src="./assets/contactImages/#contactItem.getContactpicture()#" alt="Contact Image">
@@ -106,13 +107,13 @@
 													</button>
 												</td>
 											</tr>
-										</cfloop>
+										</cfloop>--->
 									</tbody>
 								</table>
 							</div>
-						<cfelse>
+						<!---<cfelse>
 							<div class="d-flex fs-5 text-info justify-content-center">No contacts to display.</div>
-						</cfif>
+						</cfif>--->
 					</div>
 				</div>
 			</div>
@@ -299,10 +300,9 @@
 										<div class="col-md-6 d-flex flex-column">
 											<label class="contactManagementLabel" for="editContactRole">Role *</label>
 											<select class="contactManagementInput py-1 mt-1" id="editContactRole" name="editContactRole" multiple>
-												<option value="1">Viewer</option>
-												<option value="2">Editor</option>
-												<option value="3">Owner</option>
-												<option value="4">Admin</option>
+												<cfloop query="roleDetails">
+													<option value="#roleDetails.roleId#">#roleDetails.roleName#</option>
+												</cfloop>
 											</select>
 											<div class="error text-danger" id="roleError"></div>
 										</div>
