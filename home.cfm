@@ -213,13 +213,13 @@
 											<div class="error text-danger" id="titleError"></div>
 										</div>
 										<div class="col-md-4">
-											<label class="contactManagementLabel" for="editContactFirstname">First Name *</label>
-											<input class="contactManagementInput py-1 mt-1 w-100" type="text" id="editContactFirstname" name="editContactFirstname" placeholder="Enter First Name" maxlength="30">
+											<label class="contactManagementLabel" for="editContactFirstName">First Name *</label>
+											<input class="contactManagementInput py-1 mt-1 w-100" type="text" id="editContactFirstName" name="editContactFirstName" placeholder="Enter First Name" maxlength="30">
 											<div class="error text-danger" id="firstNameError"></div>
 										</div>
 										<div class="col-md-4">
-											<label class="contactManagementLabel" for="editContactLastname">Last Name *</label>
-											<input class="contactManagementInput py-1 mt-1 w-100" type="text" id="editContactLastname" name="editContactLastname" placeholder="Enter Last Name" maxlength="30">
+											<label class="contactManagementLabel" for="editContactLastName">Last Name *</label>
+											<input class="contactManagementInput py-1 mt-1 w-100" type="text" id="editContactLastName" name="editContactLastName" placeholder="Enter Last Name" maxlength="30">
 											<div class="error text-danger" id="lastNameError"></div>
 										</div>
 									</div>

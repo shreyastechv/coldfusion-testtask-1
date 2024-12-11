@@ -81,6 +81,7 @@ function createContact() {
 	$("#contactManagement")[0].reset();
 	$("#editContactId").val("");
 	$("#contactManagementMsgSection").text("");
+	$("#editContactRole").attr("defaultValue", []);
 	$('#contactManagementModal').modal('show');
 }
 
@@ -100,8 +101,8 @@ function editContact(event) {
 
 			$("#editContactId").val(contactid);
 			$("#editContactTitle").val(title);
-			$("#editContactFirstname").val(firstname);
-			$("#editContactLastname").val(lastname);
+			$("#editContactFirstName").val(firstname);
+			$("#editContactLastName").val(lastname);
 			$("#editContactGender").val(gender);
 			$("#editContactDOB").val(formattedDOB);
 			$("#editContactImage").val("");
@@ -124,8 +125,8 @@ function editContact(event) {
 function validateContactForm() {
     const fields = [
         { id: "editContactTitle", errorId: "titleError", message: "Please select one option", regex: null },
-        { id: "editContactFirstname", errorId: "firstNameError", message: "Please enter your First name", regex: /^[a-zA-Z ]+$/ },
-        { id: "editContactLastname", errorId: "lastNameError", message: "Please enter your Last name", regex: /^[a-zA-Z ]+$/ },
+        { id: "editContactFirstName", errorId: "firstNameError", message: "Please enter your First name", regex: /^[a-zA-Z ]+$/ },
+        { id: "editContactLastName", errorId: "lastNameError", message: "Please enter your Last name", regex: /^[a-zA-Z ]+$/ },
         { id: "editContactGender", errorId: "genderError", message: "Please select one option", regex: null },
         { id: "editContactDOB", errorId: "dobError", message: "Please select your DOB", regex: null },
         { id: "editContactAddress", errorId: "addressError", message: "Please enter your address", regex: null },
@@ -158,21 +159,36 @@ function validateContactForm() {
 }
 
 $("#contactManagement").submit(function(event) {
-	const contactManagementMsgSection = $("#contactManagementMsgSection");
-	const thisForm = $(this)[0];
-	const formData = new FormData(thisForm);
-	const contactPreviousRoles = $("#editContactRole").attr("defaultValue");
-
 	event.preventDefault();
+	const contactManagementMsgSection = $("#contactManagementMsgSection");
+	const currentContactRoles = $("#editContactRole").val();
+	const previousContactRoles = $("#editContactRole").attr("defaultValue").split(",");
+	const contactData = {
+		contactId: $("#editContactId").val(),
+        contactTitle: $("#editContactTitle").val(),
+        contactFirstName: $("#editContactFirstName").val(),
+        contactLastName: $("#editContactLastName").val(),
+        contactGender: $("#editContactGender").val(),
+        contactDOB: $("#editContactDOB").val(),
+        contactImage: $("#editContactImage").val(),
+        contactAddress: $("#editContactAddress").val(),
+        contactStreet: $("#editContactStreet").val(),
+        contactDistrict: $("#editContactDistrict").val(),
+        contactState: $("#editContactState").val(),
+        contactCountry: $("#editContactCountry").val(),
+        contactPincode: $("#editContactPincode").val(),
+        contactEmail: $("#editContactEmail").val(),
+        contactPhone: $("#editContactPhone").val(),
+		roleIdsToInsert: currentContactRoles.filter(element => !previousContactRoles.includes(element)),
+		roleIdsToDelete: previousContactRoles.filter(element => !currentContactRoles.includes(element))
+	};
+	console.log(contactData);
 	$("#contactManagementMsgSection").text("");
 	if (!validateContactForm()) return;
 	$.ajax({
 		type: "POST",
 		url: "./components/addressbook.cfc?method=modifyContacts",
-		data: formData,
-		enctype: 'multipart/form-data',
-		processData: false,
-		contentType: false,
+		data: contactData,
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
 			if (responseJSON.statusCode === 200) {
