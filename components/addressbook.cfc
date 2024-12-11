@@ -94,6 +94,7 @@
         <cfargument required="true" name="contactId" type="string">
 		<cfset local.contactStruct = StructNew()>
 		<cfset local.contactStruct["contactRoles"] = ArrayNew(1)>
+		<cfset local.contactStruct["contactRoleIds"] = ArrayNew(1)>
 		<cfset local.columnList = [
 			"contactid",
 			"title",
@@ -122,14 +123,17 @@
 			<cfset local.contactStruct[columnName] = local.getContactById[columnName]>
 		</cfloop>
 
-		<cfquery name="local.getContactRoles">
-			SELECT roleName
-			FROM contactRoles
+		<cfquery name="local.getContactRolesQuery">
+			SELECT r.roleId, d.roleName
+			FROM contactRoles AS r
+			RIGHT JOIN roleDetails AS d
+			ON r.roleId = d.roleId
 			WHERE contactId = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
 		</cfquery>
 
-		<cfloop query="local.getContactRoles">
-			<cfset ArrayAppend(local.contactStruct["contactRoles"], local.getContactRoles.roleName)>
+		<cfloop query="local.getContactRolesQuery">
+			<cfset ArrayAppend(local.contactStruct["contactRoleIds"], local.getContactRolesQuery.roleId)>
+			<cfset ArrayAppend(local.contactStruct["contactRoles"], local.getContactRolesQuery.roleName)>
 		</cfloop>
 
         <cfreturn local.contactStruct>
@@ -239,11 +243,11 @@
 						<cfquery name="local.addRolesQuery">
 							INSERT INTO contactRoles(
 								contactId,
-								roleName
+								roleId
 							)
 							VALUES (
 								<cfqueryparam value = "#local.insertContactsQuery.contactid#" cfsqltype = "cf_sql_varchar">,
-								<cfqueryparam value = "#local.userRole#" cfsqltype = "cf_sql_varchar">
+								<cfqueryparam value = "#local.userRole#" cfsqltype = "cf_sql_integer">
 							)
 						</cfquery>
 					</cfloop>
@@ -275,6 +279,18 @@
 						DELETE FROM contactRoles
 						WHERE contactId = <cfqueryparam value = "#arguments.editContactId#" cfsqltype = "cf_sql_varchar">
 					</cfquery>
+					<cfloop list="#arguments.editContactRole#" item="local.userRole">
+						<cfquery name="local.addRolesQuery">
+							INSERT INTO contactRoles(
+								contactId,
+								roleId
+							)
+							VALUES (
+								<cfqueryparam value = "#arguments.editContactId#" cfsqltype = "cf_sql_varchar">,
+								<cfqueryparam value = "#local.userRole#" cfsqltype = "cf_sql_integer">
+							)
+						</cfquery>
+					</cfloop>
 					<cfset local.response["statusCode"] = 200>
 					<cfset local.response["message"] = "Contact Updated Successfully">
 				</cfif>
@@ -286,12 +302,32 @@
         <cfreturn local.response>
     </cffunction>
 
+	<cffunction  name="getContactRolesAsArray" returnType="array" access="private">
+		<cfset local.contacts = entityLoad("contactDetailsORM", {createdBy = session.userId, active = 1})>
+		<cfset local.contactsQuery = EntityToQuery(local.contacts)>
+		<cfset local.contactRoles = ArrayNew(1)>
+		<cfloop query="local.contactsQuery">
+			<cfquery name="local.getContactRolesQuery">
+				SELECT d.roleName
+				FROM contactRoles AS r
+				RIGHT JOIN roleDetails AS d
+				ON r.roleId = d.roleId
+				WHERE contactId = <cfqueryparam value = "#local.contactsQuery.contactId#" cfsqltype = "cf_sql_varchar">
+			</cfquery>
+			<cfset ArrayAppend(local.contactRoles, ArrayToList(valueArray(local.getContactRolesQuery, "roleName")))>
+		</cfloop>
+
+		<cfreturn local.contactRoles>
+	</cffunction>
+
     <cffunction name="createExcel" returnType="struct" returnFormat="json" access="remote">
 		<cfset local.response = StructNew()>
 		<cfset local.spreadsheetName = CreateUUID() & ".xlsx">
 		<cfset local.response["data"] = local.spreadsheetName>
 		<cfset local.contacts = entityLoad("contactDetailsORM", {createdBy = session.userId, active = 1})>
 		<cfset local.createExcelQuery = EntityToQuery(local.contacts)>
+		<cfset local.contactRoles = getContactRolesAsArray()>
+		<cfset QueryAddColumn(local.createExcelQuery, "roles", local.contactRoles)>
 
         <cfspreadsheet action="write" filename="../assets/spreadsheets/#local.spreadsheetName#" query="local.createExcelQuery" sheetname="contacts" overwrite=true>
 		<cfreturn local.response>
@@ -303,6 +339,8 @@
 		<cfset local.response["data"] = local.pdfName>
 		<cfset local.contacts = entityLoad("contactDetailsORM", {createdBy = session.userId, active = 1})>
 		<cfset local.createPdfQuery = EntityToQuery(local.contacts)>
+		<cfset local.contactRoles = getContactRolesAsArray()>
+		<cfset QueryAddColumn(local.createPdfQuery, "roles", local.contactRoles)>
 
         <cfdocument format="pdf" filename="../assets/pdfs/#local.pdfName#" overwrite="true">
             <cfoutput>
@@ -322,6 +360,7 @@
                             <th>PINCODE</th>
                             <th>EMAIL ID</th>
                             <th>PHONE NUMBER</th>
+							<th>ROLES</th>
                             <th>CONTACTPICTURE</th>
                         </tr>
                     </thead>
@@ -341,6 +380,7 @@
                                 <td>#pincode#</td>
                                 <td>#email#</td>
                                 <td>#phone#</td>
+                                <td>#roles#</td>
                                 <td>
                                     <img class="img" height="50" src="../assets/contactImages/#contactpicture#" alt="Contact Image">
                                 </td>

@@ -38,7 +38,7 @@ function viewContact(event) {
 		data: { contactId: event.target.value },
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
-			const { title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone, contactRoles } = responseJSON;
+			const { title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone, contactRoles, contactRoleIds } = responseJSON;
 			const formattedDOB = new Date(dob).toLocaleDateString('en-US', {
 				year: "numeric",
 				month: "long",
@@ -53,7 +53,7 @@ function viewContact(event) {
 			viewContactEmail.text(email);
 			viewContactPhone.text(phone);
 			viewContactPicture.attr("selected", true);
-			viewContactRoles.text(contactRoles.join(", "));
+			viewContactRoles.text(contactRoles);
 			$('#viewContactModal').modal('show');
 		}
 	});
@@ -94,7 +94,7 @@ function editContact(event) {
 		data: { contactId: event.target.value },
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
-			const { contactid, title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone, contactRoles } = responseJSON;
+			const { contactid, title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone, contactRoleIds } = responseJSON;
 			const formattedDOB = new Date(dob).toLocaleDateString('fr-ca');
 
 			$("#editContactId").val(contactid);
@@ -113,8 +113,8 @@ function editContact(event) {
 			$("#editContactPincode").val(pincode);
 			$("#editContactEmail").val(email);
 			$("#editContactPhone").val(phone);
-			$("#editContactRole").val(contactRoles);
-			$("#editContactRole").attr("defaultValue", contactRoles);
+			$("#editContactRole").val(contactRoleIds);
+			$("#editContactRole").attr("defaultValue", contactRoleIds);
 			$('#contactManagementModal').modal('show');
 		}
 	});
@@ -161,7 +161,6 @@ $("#contactManagement").submit(function(event) {
 	const thisForm = $(this)[0];
 	const formData = new FormData(thisForm);
 	const contactPreviousRoles = $("#editContactRole").attr("defaultValue");
-	console.log(contactPreviousRoles);
 
 	event.preventDefault();
 	$("#contactManagementMsgSection").text("");

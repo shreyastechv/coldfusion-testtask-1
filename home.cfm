@@ -299,10 +299,10 @@
 										<div class="col-md-6 d-flex flex-column">
 											<label class="contactManagementLabel" for="editContactRole">Role *</label>
 											<select class="contactManagementInput py-1 mt-1" id="editContactRole" name="editContactRole" multiple>
-												<option value="1">Viewer</option>
-												<option value="2">Editor</option>
-												<option value="3">Owner</option>
-												<option value="4">Admin</option>
+												<option value="1">Driver</option>
+												<option value="2">Cleaner</option>
+												<option value="3">Coder</option>
+												<option value="4">Gardener</option>
 											</select>
 											<div class="error text-danger" id="roleError"></div>
 										</div>
