@@ -114,34 +114,71 @@
 
     <cffunction name="getContactById" returnType="struct" returnFormat="json" access="remote">
         <cfargument required="true" name="contactId" type="string">
+		<cfset local.result = {}>
 
 		<cfquery name="local.getContactByIdQuery">
-            SELECT contactid,
-				title,
-				firstname,
-				lastname,
-				gender,
-				dob,
-				contactpicture,
-				address,
-				street,
-				district,
-				state,
-				country,
-				pincode,
-				email,
-				phone
-			FROM contactDetails AS cd
-			LEFT JOIN contactRoles AS cr
-			ON
-			JOIN
-			WHERE contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
+			SELECT cd.contactid,
+				cd.title,
+				cd.firstname,
+				cd.lastname,
+				cd.gender,
+				cd.dob,
+				cd.contactpicture,
+				cd.address,
+				cd.street,
+				cd.district,
+				cd.state,
+				cd.country,
+				cd.pincode,
+				cd.email,
+				cd.phone,
+				STRING_AGG(CONVERT(VARCHAR(36), cr.roleId), ',') AS roleIds,
+				STRING_AGG(rd.roleName, ',') AS roleNames
+			FROM contactDetails cd
+			LEFT JOIN contactRoles cr
+			ON cd.contactid = cr.contactId
+			LEFT JOIN roleDetails rd
+			ON cr.roleId = rd.roleId
+			WHERE cd.contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
+			GROUP BY cd.contactid,
+				cd.title,
+				cd.firstname,
+				cd.lastname,
+				cd.gender,
+				cd.dob,
+				cd.contactpicture,
+				cd.address,
+				cd.street,
+				cd.district,
+				cd.state,
+				cd.country,
+				cd.pincode,
+				cd.email,
+				cd.phone
         </cfquery>
-		<cfset local.result = {}>
 		<cfloop query ="local.getContactByIdQuery">
-		  <cfset local.result["contactid"] = local.getContactByIdQuery.contactid>
-
+			<cfset local.result = {
+				"contactid" = local.getContactByIdQuery.contactid,
+				"title" = local.getContactByIdQuery.title,
+				"firstname" = local.getContactByIdQuery.firstname,
+				"lastname" = local.getContactByIdQuery.lastname,
+				"gender" = local.getContactByIdQuery.gender,
+				"dob" = local.getContactByIdQuery.dob,
+				"contactPicture" = local.getContactByIdQuery.contactpicture,
+				"address" = local.getContactByIdQuery.address,
+				"street" = local.getContactByIdQuery.street,
+				"district" = local.getContactByIdQuery.district,
+				"state" = local.getContactByIdQuery.state,
+				"country" = local.getContactByIdQuery.country,
+				"pincode" = local.getContactByIdQuery.pincode,
+				"email" = local.getContactByIdQuery.email,
+				"phone" = local.getContactByIdQuery.phone,
+				"roleIds" = ListToArray(local.getContactByIdQuery.roleIds),
+				"roleNames" = ListToArray(local.getContactByIdQuery.roleNames)
+			}>
 		</cfloop>
+
+		<cfreturn local.result>
     </cffunction>
 
     <cffunction name="deleteContact" returnType="struct" returnFormat="json" access="remote">
@@ -168,22 +205,23 @@
     </cffunction>
 
     <cffunction name="modifyContacts" returnType="struct" returnFormat="json" access="remote">
-        <cfargument required="true" name="editContactId" type="string">
-        <cfargument required="true" name="editContactTitle" type="string">
-        <cfargument required="true" name="editContactFirstName" type="string">
-        <cfargument required="true" name="editContactLastName" type="string">
-        <cfargument required="true" name="editContactGender" type="string">
-        <cfargument required="true" name="editContactDOB" type="string">
-        <cfargument required="true" name="editContactImage" type="string">
-        <cfargument required="true" name="editContactAddress" type="string">
-        <cfargument required="true" name="editContactStreet" type="string">
-        <cfargument required="true" name="editContactDistrict" type="string">
-        <cfargument required="true" name="editContactState" type="string">
-        <cfargument required="true" name="editContactCountry" type="string">
-        <cfargument required="true" name="editContactPincode" type="string">
-        <cfargument required="true" name="editContactEmail" type="string">
-        <cfargument required="true" name="editContactPhone" type="string">
-        <cfargument required="true" name="editContactRole" type="string">
+        <cfargument required="true" name="contactId" type="string">
+        <cfargument required="true" name="contactTitle" type="string">
+        <cfargument required="true" name="contactFirstName" type="string">
+        <cfargument required="true" name="contactLastName" type="string">
+        <cfargument required="true" name="contactGender" type="string">
+        <cfargument required="true" name="contactDOB" type="string">
+        <cfargument required="true" name="contactImage" type="string">
+        <cfargument required="true" name="contactAddress" type="string">
+        <cfargument required="true" name="contactStreet" type="string">
+        <cfargument required="true" name="contactDistrict" type="string">
+        <cfargument required="true" name="contactState" type="string">
+        <cfargument required="true" name="contactCountry" type="string">
+        <cfargument required="true" name="contactPincode" type="string">
+        <cfargument required="true" name="contactEmail" type="string">
+        <cfargument required="true" name="contactPhone" type="string">
+        <cfargument required="true" name="roleIdsToInsert" type="string">
+        <cfargument required="true" name="roleIdsToDelete" type="string">
         <cfset local.response = StructNew()>
         <cfset local.contactImage = "demo-contact-image.png">
 
@@ -193,20 +231,20 @@
 				FROM contactDetails
 				WHERE createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
 					AND (
-						email = <cfqueryparam value = "#arguments.editContactEmail#" cfsqltype = "cf_sql_varchar">
-						OR phone = <cfqueryparam value = "#arguments.editContactPhone#" cfsqltype = "cf_sql_varchar">
+						email = <cfqueryparam value = "#arguments.contactEmail#" cfsqltype = "cf_sql_varchar">
+						OR phone = <cfqueryparam value = "#arguments.contactPhone#" cfsqltype = "cf_sql_varchar">
 					)
 					AND active = 1
 			</cfquery>
-			<cfif local.getEmailPhoneQuery.RecordCount AND local.getEmailPhoneQuery.contactid NEQ arguments.editContactId>
+			<cfif local.getEmailPhoneQuery.RecordCount AND local.getEmailPhoneQuery.contactid NEQ arguments.contactId>
                 <cfset local.response["statusCode"] = 409>
                 <cfset local.response["message"] = "Email id or Phone number already exists">
 			<cfelse>
-				<cfif arguments.editContactImage NEQ "">
-					<cffile action="upload" destination="#expandpath("../assets/contactImages")#" fileField="form.editContactImage" nameconflict="MakeUnique">
+				<cfif arguments.contactImage NEQ "">
+					<cffile action="upload" destination="#expandpath("../assets/contactImages")#" fileField="form.contactImage" nameconflict="MakeUnique">
 					<cfset local.contactImage = cffile.serverFile>
 				</cfif>
-				<cfif len(trim(arguments.editContactId)) EQ 0>
+				<cfif len(trim(arguments.contactId)) EQ 0>
 					<cfquery name="local.insertContactsQuery" result="local.insertContactsResult">
 						INSERT INTO contactDetails (
 							title,
@@ -225,33 +263,34 @@
 							phone,
 							createdBy
 						)
+						OUTPUT INSERTED.contactid
 						VALUES (
-							<cfqueryparam value = "#arguments.editContactTitle#" cfsqltype = "cf_sql_varchar">,
-							<cfqueryparam value = "#arguments.editContactFirstName#" cfsqltype = "cf_sql_varchar">,
-							<cfqueryparam value = "#arguments.editContactLastName#" cfsqltype = "cf_sql_varchar">,
-							<cfqueryparam value = "#arguments.editContactGender#" cfsqltype = "cf_sql_varchar">,
-							<cfqueryparam value = "#arguments.editContactDOB#" cfsqltype = "cf_sql_date">,
+							<cfqueryparam value = "#arguments.contactTitle#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#arguments.contactFirstName#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#arguments.contactLastName#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#arguments.contactGender#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#arguments.contactDOB#" cfsqltype = "cf_sql_date">,
 							<cfqueryparam value = "#local.contactImage#" cfsqltype = "cf_sql_varchar">,
-							<cfqueryparam value = "#arguments.editContactAddress#" cfsqltype = "cf_sql_varchar">,
-							<cfqueryparam value = "#arguments.editContactStreet#" cfsqltype = "cf_sql_varchar">,
-							<cfqueryparam value = "#arguments.editContactDistrict#" cfsqltype = "cf_sql_varchar">,
-							<cfqueryparam value = "#arguments.editContactState#" cfsqltype = "cf_sql_varchar">,
-							<cfqueryparam value = "#arguments.editContactCountry#" cfsqltype = "cf_sql_varchar">,
-							<cfqueryparam value = "#arguments.editContactPincode#" cfsqltype = "cf_sql_char">,
-							<cfqueryparam value = "#arguments.editContactEmail#" cfsqltype = "cf_sql_varchar">,
-							<cfqueryparam value = "#arguments.editContactPhone#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#arguments.contactAddress#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#arguments.contactStreet#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#arguments.contactDistrict#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#arguments.contactState#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#arguments.contactCountry#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#arguments.contactPincode#" cfsqltype = "cf_sql_char">,
+							<cfqueryparam value = "#arguments.contactEmail#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#arguments.contactPhone#" cfsqltype = "cf_sql_varchar">,
 							<cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
 						);
 					</cfquery>
-					<cfloop list="#arguments.editContactRole#" item="local.userRole">
+					<cfloop list="#arguments.roleIdsToInsert#" item="local.roleToInsert">
 						<cfquery name="local.addRolesQuery">
 							INSERT INTO contactRoles(
 								contactId,
 								roleId
 							)
 							VALUES (
-								<cfqueryparam value = "#insertContactsResult.GENERATEDKEY#" cfsqltype = "cf_sql_varchar">,
-								<cfqueryparam value = "#local.userRole#" cfsqltype = "cf_sql_integer">
+								<cfqueryparam value = "#local.insertContactsQuery.contactid#" cfsqltype = "cf_sql_varchar">,
+								<cfqueryparam value = "#local.roleToInsert#" cfsqltype = "cf_sql_integer">
 							)
 						</cfquery>
 					</cfloop>
@@ -260,38 +299,44 @@
 				<cfelse>
 					<cfquery name="local.updateContactDetailsQuery">
 						UPDATE contactDetails
-						SET title = <cfqueryparam value = "#arguments.editContactTitle#" cfsqltype = "cf_sql_varchar">,
-							firstName = <cfqueryparam value = "#arguments.editContactFirstName#" cfsqltype = "cf_sql_varchar">,
-							lastName = <cfqueryparam value = "#arguments.editContactLastName#" cfsqltype = "cf_sql_varchar">,
-							gender = <cfqueryparam value = "#arguments.editContactGender#" cfsqltype = "cf_sql_varchar">,
-							dob = <cfqueryparam value = "#arguments.editContactDOB#" cfsqltype = "cf_sql_date">,
-							address = <cfqueryparam value = "#arguments.editContactAddress#" cfsqltype = "cf_sql_varchar">,
-							street = <cfqueryparam value = "#arguments.editContactStreet#" cfsqltype = "cf_sql_varchar">,
-							district = <cfqueryparam value = "#arguments.editContactDistrict#" cfsqltype = "cf_sql_varchar">,
-							STATE = <cfqueryparam value = "#arguments.editContactState#" cfsqltype = "cf_sql_varchar">,
-							country = <cfqueryparam value = "#arguments.editContactCountry#" cfsqltype = "cf_sql_varchar">,
-							pincode = <cfqueryparam value = "#arguments.editContactPincode#" cfsqltype = "cf_sql_varchar">,
-							email = <cfqueryparam value = "#arguments.editContactEmail#" cfsqltype = "cf_sql_varchar">,
-							phone = <cfqueryparam value = "#arguments.editContactPhone#" cfsqltype = "cf_sql_varchar">,
-							<cfif arguments.editContactImage NEQ "">
+						SET title = <cfqueryparam value = "#arguments.contactTitle#" cfsqltype = "cf_sql_varchar">,
+							firstName = <cfqueryparam value = "#arguments.contactFirstName#" cfsqltype = "cf_sql_varchar">,
+							lastName = <cfqueryparam value = "#arguments.contactLastName#" cfsqltype = "cf_sql_varchar">,
+							gender = <cfqueryparam value = "#arguments.contactGender#" cfsqltype = "cf_sql_varchar">,
+							dob = <cfqueryparam value = "#arguments.contactDOB#" cfsqltype = "cf_sql_date">,
+							address = <cfqueryparam value = "#arguments.contactAddress#" cfsqltype = "cf_sql_varchar">,
+							street = <cfqueryparam value = "#arguments.contactStreet#" cfsqltype = "cf_sql_varchar">,
+							district = <cfqueryparam value = "#arguments.contactDistrict#" cfsqltype = "cf_sql_varchar">,
+							STATE = <cfqueryparam value = "#arguments.contactState#" cfsqltype = "cf_sql_varchar">,
+							country = <cfqueryparam value = "#arguments.contactCountry#" cfsqltype = "cf_sql_varchar">,
+							pincode = <cfqueryparam value = "#arguments.contactPincode#" cfsqltype = "cf_sql_varchar">,
+							email = <cfqueryparam value = "#arguments.contactEmail#" cfsqltype = "cf_sql_varchar">,
+							phone = <cfqueryparam value = "#arguments.contactPhone#" cfsqltype = "cf_sql_varchar">,
+							<cfif arguments.contactImage NEQ "">
 								contactpicture = <cfqueryparam value = "#local.contactImage#" cfsqltype = "cf_sql_varchar">,
 							</cfif>
 							updatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
-						WHERE contactid = <cfqueryparam value = "#arguments.editContactId#" cfsqltype = "cf_sql_varchar">
+						WHERE contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
 					</cfquery>
-					<cfquery name="local.deleteRoleQuery">
-						DELETE FROM contactRoles
-						WHERE contactId = <cfqueryparam value = "#arguments.editContactId#" cfsqltype = "cf_sql_varchar">
-					</cfquery>
-					<cfloop list="#arguments.editContactRole#" item="local.userRole">
+					<cfloop list="#arguments.roleIdsToDelete#" item="local.roleToDelete">
+						<cfquery name="local.addRolesQuery">
+							<cfquery name="local.deleteRoleQuery">
+								DELETE FROM contactRoles
+								WHERE contactId = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
+									AND roleId = <cfqueryparam value = "#local.roleToDelete#" cfsqltype = "cf_sql_varchar">
+							</cfquery>
+						</cfquery>
+					</cfloop>
+
+					<cfloop list="#arguments.roleIdsToInsert#" item="local.roleToInsert">
 						<cfquery name="local.addRolesQuery">
 							INSERT INTO contactRoles(
 								contactId,
 								roleId
 							)
 							VALUES (
-								<cfqueryparam value = "#arguments.editContactId#" cfsqltype = "cf_sql_varchar">,
-								<cfqueryparam value = "#local.userRole#" cfsqltype = "cf_sql_integer">
+								<cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">,
+								<cfqueryparam value = "#local.roleToInsert#" cfsqltype = "cf_sql_integer">
 							)
 						</cfquery>
 					</cfloop>
@@ -335,7 +380,8 @@
 
     <cffunction name="createExcel" returnType="struct" returnFormat="json" access="remote">
 		<cfset local.response = StructNew()>
-		<cfset local.spreadsheetName = CreateUUID() & ".xlsx">
+		<cfset local.timestamp = DateFormat(Now(), "yyyy-mm-dd") & "-" & TimeFormat(Now(), "HH-mm-ss")>
+		<cfset local.spreadsheetName = "#session.fullName#-#local.timestamp#.xlsx">
 		<cfset local.response["data"] = local.spreadsheetName>
 		<cfset local.contacts = entityLoad("contactDetailsORM", {createdBy = session.userId, active = 1})>
 		<cfset local.createExcelQuery = EntityToQuery(local.contacts)>
@@ -348,7 +394,8 @@
 
     <cffunction name="createPdf" returnType="struct" returnFormat="json" access="remote">
 		<cfset local.response = StructNew()>
-		<cfset local.pdfName = CreateUUID() & ".pdf">
+		<cfset local.timestamp = DateFormat(Now(), "yyyy-mm-dd") & "-" & TimeFormat(Now(), "HH-mm-ss")>
+		<cfset local.pdfName = "#session.fullName#-#local.timestamp#.pdf">
 		<cfset local.response["data"] = local.pdfName>
 		<cfset local.contacts = entityLoad("contactDetailsORM", {createdBy = session.userId, active = 1})>
 		<cfset local.createPdfQuery = EntityToQuery(local.contacts)>

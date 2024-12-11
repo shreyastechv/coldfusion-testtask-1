@@ -38,7 +38,7 @@ function viewContact(event) {
 		data: { contactId: event.target.value },
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
-			const { title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone, contactRoles, contactRoleIds } = responseJSON;
+			const { title, firstname, lastname, gender, dob, contactPicture, address, street, district, state, country, pincode, email, phone, roleNames } = responseJSON;
 			const formattedDOB = new Date(dob).toLocaleDateString('en-US', {
 				year: "numeric",
 				month: "long",
@@ -52,8 +52,8 @@ function viewContact(event) {
 			viewContactPincode.text(pincode);
 			viewContactEmail.text(email);
 			viewContactPhone.text(phone);
-			viewContactPicture.attr("src", `./assets/contactImages/${contactpicture}`);
-			viewContactRoles.text(contactRoles);
+			viewContactPicture.attr("src", `./assets/contactImages/${contactPicture}`);
+			viewContactRoles.text(roleNames);
 			$('#viewContactModal').modal('show');
 		}
 	});
@@ -81,6 +81,7 @@ function createContact() {
 	$("#contactManagement")[0].reset();
 	$("#editContactId").val("");
 	$("#contactManagementMsgSection").text("");
+	$("#editContactRole").attr("defaultValue", []);
 	$('#contactManagementModal').modal('show');
 }
 
@@ -95,17 +96,17 @@ function editContact(event) {
 		data: { contactId: event.target.value },
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
-			const { contactid, title, firstname, lastname, gender, dob, contactpicture, address, street, district, state, country, pincode, email, phone, contactRoleIds } = responseJSON;
+			const { contactid, title, firstname, lastname, gender, dob, contactPicture, address, street, district, state, country, pincode, email, phone, roleIds, roleNames } = responseJSON;
 			const formattedDOB = new Date(dob).toLocaleDateString('fr-ca');
 
 			$("#editContactId").val(contactid);
 			$("#editContactTitle").val(title);
-			$("#editContactFirstname").val(firstname);
-			$("#editContactLastname").val(lastname);
+			$("#editContactFirstName").val(firstname);
+			$("#editContactLastName").val(lastname);
 			$("#editContactGender").val(gender);
 			$("#editContactDOB").val(formattedDOB);
 			$("#editContactImage").val("");
-			$("#editContactPicture").attr("src", `./assets/contactImages/${contactpicture}`);
+			$("#editContactPicture").attr("src", `./assets/contactImages/${contactPicture}`);
 			$("#editContactAddress").val(address);
 			$("#editContactStreet").val(street);
 			$("#editContactDistrict").val(district);
@@ -114,8 +115,8 @@ function editContact(event) {
 			$("#editContactPincode").val(pincode);
 			$("#editContactEmail").val(email);
 			$("#editContactPhone").val(phone);
-			$("#editContactRole").val(contactRoleIds);
-			$("#editContactRole").attr("defaultValue", contactRoleIds);
+			$("#editContactRole").val(roleIds);
+			$("#editContactRole").attr("defaultValue", roleIds);
 			$('#contactManagementModal').modal('show');
 		}
 	});
@@ -124,8 +125,8 @@ function editContact(event) {
 function validateContactForm() {
     const fields = [
         { id: "editContactTitle", errorId: "titleError", message: "Please select one option", regex: null },
-        { id: "editContactFirstname", errorId: "firstNameError", message: "Please enter your First name", regex: /^[a-zA-Z ]+$/ },
-        { id: "editContactLastname", errorId: "lastNameError", message: "Please enter your Last name", regex: /^[a-zA-Z ]+$/ },
+        { id: "editContactFirstName", errorId: "firstNameError", message: "Please enter your First name", regex: /^[a-zA-Z ]+$/ },
+        { id: "editContactLastName", errorId: "lastNameError", message: "Please enter your Last name", regex: /^[a-zA-Z ]+$/ },
         { id: "editContactGender", errorId: "genderError", message: "Please select one option", regex: null },
         { id: "editContactDOB", errorId: "dobError", message: "Please select your DOB", regex: null },
         { id: "editContactAddress", errorId: "addressError", message: "Please enter your address", regex: null },
@@ -158,21 +159,36 @@ function validateContactForm() {
 }
 
 $("#contactManagement").submit(function(event) {
-	const contactManagementMsgSection = $("#contactManagementMsgSection");
-	const thisForm = $(this)[0];
-	const formData = new FormData(thisForm);
-	const contactPreviousRoles = $("#editContactRole").attr("defaultValue");
-
 	event.preventDefault();
+	const contactManagementMsgSection = $("#contactManagementMsgSection");
+	const currentContactRoles = $("#editContactRole").val();
+	const previousContactRoles = $("#editContactRole").attr("defaultValue").split(",");
+	const contactData = {
+		contactId: $("#editContactId").val(),
+        contactTitle: $("#editContactTitle").val(),
+        contactFirstName: $("#editContactFirstName").val(),
+        contactLastName: $("#editContactLastName").val(),
+        contactGender: $("#editContactGender").val(),
+        contactDOB: $("#editContactDOB").val(),
+        contactImage: $("#editContactImage").val(),
+        contactAddress: $("#editContactAddress").val(),
+        contactStreet: $("#editContactStreet").val(),
+        contactDistrict: $("#editContactDistrict").val(),
+        contactState: $("#editContactState").val(),
+        contactCountry: $("#editContactCountry").val(),
+        contactPincode: $("#editContactPincode").val(),
+        contactEmail: $("#editContactEmail").val(),
+        contactPhone: $("#editContactPhone").val(),
+		roleIdsToInsert: currentContactRoles.filter(element => !previousContactRoles.includes(element)),
+		roleIdsToDelete: previousContactRoles.filter(element => !currentContactRoles.includes(element))
+	};
+	console.log(contactData);
 	$("#contactManagementMsgSection").text("");
 	if (!validateContactForm()) return;
 	$.ajax({
 		type: "POST",
 		url: "./components/addressbook.cfc?method=modifyContacts",
-		data: formData,
-		enctype: 'multipart/form-data',
-		processData: false,
-		contentType: false,
+		data: contactData,
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
 			if (responseJSON.statusCode === 200) {
@@ -207,7 +223,7 @@ function createExcel() {
 		url: "./components/addressbook.cfc?method=createExcel",
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
-			downloadURI(`./assets/spreadsheets/${responseJSON.data}`, "contact-details.xlsx");
+			downloadURI(`./assets/spreadsheets/${responseJSON.data}`, responseJSON.data);
 		}
 	});
 }
@@ -218,7 +234,7 @@ function createPdf() {
 		url: "./components/addressbook.cfc?method=createPdf",
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
-			downloadURI(`./assets/pdfs/${responseJSON.data}`, "contact-details.pdf");
+			downloadURI(`./assets/pdfs/${responseJSON.data}`, responseJSON.data);
 		}
 	});
 }
