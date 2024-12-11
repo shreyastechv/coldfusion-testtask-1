@@ -207,7 +207,7 @@ function createExcel() {
 		url: "./components/addressbook.cfc?method=createExcel",
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
-			downloadURI(`./assets/spreadsheets/${responseJSON.data}`, "contact-details.xlsx");
+			downloadURI(`./assets/spreadsheets/${responseJSON.data}`, responseJSON.data);
 		}
 	});
 }
@@ -218,7 +218,7 @@ function createPdf() {
 		url: "./components/addressbook.cfc?method=createPdf",
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
-			downloadURI(`./assets/pdfs/${responseJSON.data}`, "contact-details.pdf");
+			downloadURI(`./assets/pdfs/${responseJSON.data}`, responseJSON.data);
 		}
 	});
 }

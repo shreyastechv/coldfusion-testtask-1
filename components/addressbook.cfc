@@ -335,7 +335,8 @@
 
     <cffunction name="createExcel" returnType="struct" returnFormat="json" access="remote">
 		<cfset local.response = StructNew()>
-		<cfset local.spreadsheetName = CreateUUID() & ".xlsx">
+		<cfset local.timestamp = DateFormat(Now(), "yyyy-mm-dd") & "-" & TimeFormat(Now(), "HH-mm-ss")>
+		<cfset local.spreadsheetName = "#session.fullName#-#local.timestamp#.xlsx">
 		<cfset local.response["data"] = local.spreadsheetName>
 		<cfset local.contacts = entityLoad("contactDetailsORM", {createdBy = session.userId, active = 1})>
 		<cfset local.createExcelQuery = EntityToQuery(local.contacts)>
@@ -348,7 +349,8 @@
 
     <cffunction name="createPdf" returnType="struct" returnFormat="json" access="remote">
 		<cfset local.response = StructNew()>
-		<cfset local.pdfName = CreateUUID() & ".pdf">
+		<cfset local.timestamp = DateFormat(Now(), "yyyy-mm-dd") & "-" & TimeFormat(Now(), "HH-mm-ss")>
+		<cfset local.pdfName = "#session.fullName#-#local.timestamp#.pdf">
 		<cfset local.response["data"] = local.pdfName>
 		<cfset local.contacts = entityLoad("contactDetailsORM", {createdBy = session.userId, active = 1})>
 		<cfset local.createPdfQuery = EntityToQuery(local.contacts)>
