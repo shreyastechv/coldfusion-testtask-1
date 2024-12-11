@@ -119,7 +119,7 @@
 			</div>
 
 			<!--- View Contact Modal --->
-			<div class="modal fade" id="viewContactModal" tabindex="-1" aria-labelledby="viewContactModalLabel" aria-hidden="true">
+			<div class="modal fade" id="viewContactModal" tabindex="-1">
 				<div class="modal-dialog">
 					<div class="modal-content rounded-0 d-flex flex-row justify-content-around">
 						<div>
@@ -186,7 +186,7 @@
 			</div>
 
 			<!--- Contact Management Modal --->
-			<div class="modal fade" id="contactManagementModal" tabindex="-1" aria-labelledby="contactManagementModalLabel" aria-hidden="true">
+			<div class="modal fade" id="contactManagementModal" tabindex="-1">
 				<div class="modal-dialog">
 					<div class="modal-content rounded-0 d-flex flex-row justify-content-around">
 						<div>
