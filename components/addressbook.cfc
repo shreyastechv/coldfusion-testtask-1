@@ -91,7 +91,7 @@
     </cffunction>
 
 	<cffunction name="getContacts" returnType="query" returnFormat="json" access="remote">
-        <cfquery name="local.getContactRolesQuery">
+        <cfquery name="local.getContactsQuery">
             SELECT contactid,
 				firstname,
 				lastname,
@@ -103,7 +103,50 @@
             AND active = 1;
         </cfquery>
 
-        <cfreturn local.getContactRolesQuery>
+        <cfreturn local.getContactsQuery>
+    </cffunction>
+
+	<cffunction name="getFullContacts" returnType="query" returnFormat="json" access="remote">
+        <cfquery name="local.getFullContactsQuery">
+            SELECT cd.title,
+				cd.firstname,
+				cd.lastname,
+				cd.gender,
+				cd.dob,
+				cd.address,
+				cd.street,
+				cd.district,
+				cd.state,
+				cd.country,
+				cd.pincode,
+				cd.email,
+				cd.phone,
+				STRING_AGG(rd.roleName, ', ') AS roles,
+				cd.contactpicture
+			FROM contactDetails cd
+			LEFT JOIN contactRoles cr
+			ON cd.contactid = cr.contactId
+			LEFT JOIN roleDetails rd
+			ON cr.roleId = rd.roleId
+			WHERE createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
+				AND active = 1
+			GROUP BY cd.title,
+				cd.firstname,
+				cd.lastname,
+				cd.gender,
+				cd.dob,
+				cd.contactpicture,
+				cd.address,
+				cd.street,
+				cd.district,
+				cd.state,
+				cd.country,
+				cd.pincode,
+				cd.email,
+				cd.phone
+        </cfquery>
+
+        <cfreturn local.getFullContactsQuery>
     </cffunction>
 
     <cffunction name="getContactById" returnType="struct" returnFormat="json" access="remote">
@@ -380,10 +423,7 @@
 		<cfset local.timestamp = DateFormat(Now(), "yyyy-mm-dd") & "-" & TimeFormat(Now(), "HH-mm-ss")>
 		<cfset local.fileName = "#session.fullName#-#local.timestamp#">
 		<cfset local.response["data"] = local.fileName>
-		<cfset local.contacts = entityLoad("contactDetailsORM", {createdBy = session.userId, active = 1})>
-		<cfset local.createFileQuery = EntityToQuery(local.contacts)>
-		<cfset local.contactRoles = getContactRolesAsArray()>
-		<cfset QueryAddColumn(local.createFileQuery, "roles", local.contactRoles)>
+		<cfset local.createFileQuery = getFullContacts()>
 
 		<cfif arguments.fileType EQ "pdf">
 			<cfdocument format="pdf" filename="../assets/pdfs/#local.fileName#.pdf" overwrite="true">
