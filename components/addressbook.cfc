@@ -318,13 +318,12 @@
 							updatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
 						WHERE contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
 					</cfquery>
+
 					<cfloop list="#arguments.roleIdsToDelete#" item="local.roleToDelete">
-						<cfquery name="local.addRolesQuery">
-							<cfquery name="local.deleteRoleQuery">
-								DELETE FROM contactRoles
-								WHERE contactId = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
-									AND roleId = <cfqueryparam value = "#local.roleToDelete#" cfsqltype = "cf_sql_varchar">
-							</cfquery>
+						<cfquery name="local.deleteRoleQuery">
+							DELETE FROM contactRoles
+							WHERE contactId = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
+								AND roleId = <cfqueryparam value = "#local.roleToDelete#" cfsqltype = "cf_sql_varchar">
 						</cfquery>
 					</cfloop>
 
