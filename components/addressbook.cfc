@@ -91,23 +91,17 @@
     </cffunction>
 
 	<cffunction name="getContacts" returnType="query" returnFormat="json" access="remote">
-		<cfset local.contactDetails = ArrayNew(1)>
-		<cfset local.columnList = [
-			"contactid",
-			"firstname",
-			"lastname",
-			"contactpicture",
-			"email",
-			"phone"
-		]>
-
         <cfquery name="local.getContactRolesQuery">
-            SELECT #ArrayToList(local.columnList)#
+            SELECT contactid,
+				firstname,
+				lastname,
+				contactpicture,
+				email,
+				phone
             FROM contactDetails
             WHERE createdBy = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_varchar">
             AND active = 1;
         </cfquery>
-
 
         <cfreturn local.getContactRolesQuery>
     </cffunction>
