@@ -375,81 +375,71 @@
 		<cfreturn local.contactRoles>
 	</cffunction>
 
-    <cffunction name="createExcel" returnType="struct" returnFormat="json" access="remote">
-		<cfset local.response = StructNew()>
+    <cffunction name="createContactsFile" returnType="string" returnFormat="json" access="remote">
+		<cfargument required="true" name="fileType" type="string" default="">
 		<cfset local.timestamp = DateFormat(Now(), "yyyy-mm-dd") & "-" & TimeFormat(Now(), "HH-mm-ss")>
-		<cfset local.spreadsheetName = "#session.fullName#-#local.timestamp#.xlsx">
-		<cfset local.response["data"] = local.spreadsheetName>
+		<cfset local.fileName = "#session.fullName#-#local.timestamp#">
+		<cfset local.response["data"] = local.fileName>
 		<cfset local.contacts = entityLoad("contactDetailsORM", {createdBy = session.userId, active = 1})>
-		<cfset local.createExcelQuery = EntityToQuery(local.contacts)>
+		<cfset local.createFileQuery = EntityToQuery(local.contacts)>
 		<cfset local.contactRoles = getContactRolesAsArray()>
-		<cfset QueryAddColumn(local.createExcelQuery, "roles", local.contactRoles)>
+		<cfset QueryAddColumn(local.createFileQuery, "roles", local.contactRoles)>
 
-        <cfspreadsheet action="write" filename="../assets/spreadsheets/#local.spreadsheetName#" query="local.createExcelQuery" sheetname="contacts" overwrite=true>
-		<cfreturn local.response>
-    </cffunction>
+		<cfif arguments.fileType EQ "pdf">
+			<cfdocument format="pdf" filename="../assets/pdfs/#local.fileName#.pdf" overwrite="true">
+				<cfoutput>
+					<table border="1" cellpadding="0" cellspacing="0">
+						<thead>
+							<tr>
+								<th>TITLE</th>
+								<th>FIRSTNAME</th>
+								<th>LASTNAME</th>
+								<th>GENDER</th>
+								<th>DOB</th>
+								<th>ADDRESS</th>
+								<th>STREET</th>
+								<th>DISTRICT</th>
+								<th>STATE</th>
+								<th>COUNTRY</th>
+								<th>PINCODE</th>
+								<th>EMAIL ID</th>
+								<th>PHONE NUMBER</th>
+								<th>ROLES</th>
+								<th>CONTACTPICTURE</th>
+							</tr>
+						</thead>
+						<tbody>
+							<cfloop query="local.createFileQuery">
+								<tr>
+									<td>#title#</td>
+									<td>#firstname#</td>
+									<td>#lastname#</td>
+									<td>#gender#</td>
+									<td>#dob#</td>
+									<td>#address#</td>
+									<td>#street#</td>
+									<td>#district#</td>
+									<td>#state#</td>
+									<td>#country#</td>
+									<td>#pincode#</td>
+									<td>#email#</td>
+									<td>#phone#</td>
+									<td>#roles#</td>
+									<td>
+										<img class="img" height="50" src="../assets/contactImages/#contactpicture#" alt="Contact Image">
+									</td>
+								</tr>
+							</cfloop>
+						</tbody>
+					</table>
+				</cfoutput>
+			</cfdocument>
+		<cfelse>
+		    <cfspreadsheet action="write" filename="../assets/spreadsheets/#local.fileName#.xlsx" query="local.createFileQuery" sheetname="contacts" overwrite=true>
+		</cfif>
 
-    <cffunction name="createPdf" returnType="struct" returnFormat="json" access="remote">
-		<cfset local.response = StructNew()>
-		<cfset local.timestamp = DateFormat(Now(), "yyyy-mm-dd") & "-" & TimeFormat(Now(), "HH-mm-ss")>
-		<cfset local.pdfName = "#session.fullName#-#local.timestamp#.pdf">
-		<cfset local.response["data"] = local.pdfName>
-		<cfset local.contacts = entityLoad("contactDetailsORM", {createdBy = session.userId, active = 1})>
-		<cfset local.createPdfQuery = EntityToQuery(local.contacts)>
-		<cfset local.contactRoles = getContactRolesAsArray()>
-		<cfset QueryAddColumn(local.createPdfQuery, "roles", local.contactRoles)>
-
-        <cfdocument format="pdf" filename="../assets/pdfs/#local.pdfName#" overwrite="true">
-            <cfoutput>
-                <table border="1" cellpadding="0" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>TITLE</th>
-                            <th>FIRSTNAME</th>
-                            <th>LASTNAME</th>
-                            <th>GENDER</th>
-                            <th>DOB</th>
-                            <th>ADDRESS</th>
-                            <th>STREET</th>
-                            <th>DISTRICT</th>
-                            <th>STATE</th>
-                            <th>COUNTRY</th>
-                            <th>PINCODE</th>
-                            <th>EMAIL ID</th>
-                            <th>PHONE NUMBER</th>
-							<th>ROLES</th>
-                            <th>CONTACTPICTURE</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <cfloop query="local.createPdfQuery">
-                            <tr>
-                                <td>#title#</td>
-                                <td>#firstname#</td>
-                                <td>#lastname#</td>
-                                <td>#gender#</td>
-                                <td>#dob#</td>
-                                <td>#address#</td>
-                                <td>#street#</td>
-                                <td>#district#</td>
-                                <td>#state#</td>
-                                <td>#country#</td>
-                                <td>#pincode#</td>
-                                <td>#email#</td>
-                                <td>#phone#</td>
-                                <td>#roles#</td>
-                                <td>
-                                    <img class="img" height="50" src="../assets/contactImages/#contactpicture#" alt="Contact Image">
-                                </td>
-                            </tr>
-                        </cfloop>
-                    </tbody>
-                </table>
-            </cfoutput>
-        </cfdocument>
-
-		<cfreturn local.response>
-    </cffunction>
+		<cfreturn local.fileName>
+	</cffunction>
 
 	<cffunction name="googleSSOLogin" returnType="void" access="public">
 		<cfquery name="local.checkEmailQuery">
