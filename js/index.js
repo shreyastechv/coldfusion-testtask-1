@@ -27,7 +27,6 @@ $("#loginForm").submit(function(event) {
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
 			if (responseJSON.statusCode === 200) {
-				this.reset();
 				location.reload();
 			}
 			else {

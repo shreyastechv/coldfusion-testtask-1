@@ -479,7 +479,6 @@
 		<cfset session.isLoggedIn = true>
 		<cfset session.fullName = session.googleData.name>
 		<cfset session.profilePicture = session.googleData.other.picture>
-		<cflocation url="/" addToken="no">
 	</cffunction>
 
 	<cffunction name="getTaskStatus" returnType="struct" returnFormat="json" access="remote">
