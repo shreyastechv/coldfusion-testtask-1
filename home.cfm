@@ -33,10 +33,10 @@
 			<div class="container-fluid contentSection">
 				<!--- Toolbar --->
 				<div class="toolbar d-flex justify-content-end d-print-none">
-					<button onclick="createPdf()" class="btn" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Create PDF from contact list">
+					<button onclick="createContactsFile('pdf')" class="btn" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Create PDF from contact list">
 						<img class="toolbarIcon p-1" src="./assets/images/pdficon.png" alt="PDF Icon">
 					</button>
-					<button onclick="createExcel()" class="btn" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Create Spreadsheet from contact list">
+					<button onclick="createContactsFile('excel')" class="btn" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Create Spreadsheet from contact list">
 						<img class="toolbarIcon" src="./assets/images/excelicon.png" alt="Excel Icon">
 					</button>
 					<button onclick="window.print()" class="btn" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Print the page">

@@ -163,14 +163,14 @@ $("#contactManagement").submit(function(event) {
 	const contactManagementMsgSection = $("#contactManagementMsgSection");
 	const currentContactRoles = $("#editContactRole").val();
 	const previousContactRoles = $("#editContactRole").attr("defaultValue").split(",");
-	const contactData = {
+	const contactDataObj = {
 		contactId: $("#editContactId").val(),
         contactTitle: $("#editContactTitle").val(),
         contactFirstName: $("#editContactFirstName").val(),
         contactLastName: $("#editContactLastName").val(),
         contactGender: $("#editContactGender").val(),
         contactDOB: $("#editContactDOB").val(),
-        contactImage: $("#editContactImage").val(),
+		contactImage: $("#editContactImage")[0].files[0] || "",
         contactAddress: $("#editContactAddress").val(),
         contactStreet: $("#editContactStreet").val(),
         contactDistrict: $("#editContactDistrict").val(),
@@ -182,19 +182,28 @@ $("#contactManagement").submit(function(event) {
 		roleIdsToInsert: currentContactRoles.filter(element => !previousContactRoles.includes(element)).join(","),
 		roleIdsToDelete: previousContactRoles.filter(element => !currentContactRoles.includes(element)).join(",")
 	};
+	const contactData = new FormData();
+
+	Object.keys(contactDataObj).forEach(key => {
+		contactData.append(key, contactDataObj[key]);
+	});
+
 	$("#contactManagementMsgSection").text("");
 	if (!validateContactForm()) return;
 	$.ajax({
 		type: "POST",
 		url: "./components/addressbook.cfc?method=modifyContacts",
 		data: contactData,
+		enctype: 'multipart/form-data',
+		processData: false,
+		contentType: false,
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
 			if (responseJSON.statusCode === 200) {
 				contactManagementMsgSection.css("color", "green");
 				loadHomePageData();
 				if ($("#editContactId").val() === "") {
-					thisForm.reset();
+					this.reset();
 				}
 			}
 			else {
@@ -216,24 +225,20 @@ function downloadURI(uri, name) {
 	link.remove();
 }
 
-function createExcel() {
+function createContactsFile(fileType) {
 	$.ajax({
 		type: "POST",
-		url: "./components/addressbook.cfc?method=createExcel",
+		url: "./components/addressbook.cfc?method=createContactsFile",
+		data: {
+			fileType: fileType
+		},
 		success: function(response) {
-			const responseJSON = JSON.parse(response);
-			downloadURI(`./assets/spreadsheets/${responseJSON.data}`, responseJSON.data);
-		}
-	});
-}
-
-function createPdf() {
-	$.ajax({
-		type: "POST",
-		url: "./components/addressbook.cfc?method=createPdf",
-		success: function(response) {
-			const responseJSON = JSON.parse(response);
-			downloadURI(`./assets/pdfs/${responseJSON.data}`, responseJSON.data);
+			const fileName = JSON.parse(response);
+			if (fileType == "pdf") {
+				downloadURI(`./assets/pdfs/${fileName}.pdf`, `${fileName}.pdf`);
+			} else {
+				downloadURI(`./assets/spreadsheets/${fileName}.xlsx`, `${fileName}.xlsx`);
+			}
 		}
 	});
 }

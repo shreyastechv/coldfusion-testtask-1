@@ -15,8 +15,7 @@ $("#username").change(toggleBtnState);
 $("#loginForm").submit(function(event) {
 	event.preventDefault();
 	const submitMsgSection = $("#submitMsgSection");
-	const thisForm = $(this)[0];
-	const formData = new FormData(thisForm);
+	const formData = new FormData(this);
 
 	$.ajax({
 		type: "POST",
@@ -28,7 +27,6 @@ $("#loginForm").submit(function(event) {
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
 			if (responseJSON.statusCode === 200) {
-				thisForm.reset();
 				location.reload();
 			}
 			else {
