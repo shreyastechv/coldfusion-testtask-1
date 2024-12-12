@@ -286,7 +286,7 @@
 						VALUES
 						<cfloop list="#arguments.roleIdsToInsert#" index="local.i" item="local.roleId">
 							(
-								<cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_varchar">,
+								<cfqueryparam value="#local.insertContactsQuery.contactId#" cfsqltype="cf_sql_varchar">,
 								<cfqueryparam value="#local.roleId#" cfsqltype="cf_sql_integer">
 							)
 							<cfif local.i LT listLen(arguments.roleIdsToInsert)>,</cfif>
