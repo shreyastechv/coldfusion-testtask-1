@@ -99,7 +99,7 @@
 				email,
 				phone
             FROM contactDetails
-            WHERE createdBy = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_varchar">
+            WHERE createdBy = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_integer">
             AND active = 1;
         </cfquery>
 
@@ -452,13 +452,13 @@
     </cffunction>
 
 	<cffunction name="googleSSOLogin" returnType="void" access="public">
-		<cfquery name="checkEmailQuery">
-			SELECT email
+		<cfquery name="local.checkEmailQuery">
+			SELECT userid
 			FROM users
 			WHERE email = <cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">
 		</cfquery>
-		<cfif checkEmailQuery.RecordCount EQ 0>
-			<cfquery name="insertUserDataQuery">
+		<cfif local.checkEmailQuery.RecordCount EQ 0>
+			<cfquery name="insertUserDataQuery" result="local.insertUserDataResult">
 				INSERT INTO users (
 					fullname,
 					email,
@@ -472,14 +472,11 @@
 					<cfqueryparam value = "#session.googleData.other.picture#" cfsqltype = "cf_sql_varchar">
 				);
 			</cfquery>
+			<cfset session.userId = local.insertUserDataResult.userid>
+		<cfelse>
+			<cfset session.userId = local.checkEmailQuery.userid>
 		</cfif>
-		<cfquery name="local.getUserIdQuery">
-			SELECT userid
-			FROM users
-			WHERE email = <cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">
-		</cfquery>
 		<cfset session.isLoggedIn = true>
-		<cfset session.userId = local.getUserIdQuery.userid>
 		<cfset session.fullName = session.googleData.name>
 		<cfset session.profilePicture = session.googleData.other.picture>
 		<cflocation url="/" addToken="no">
