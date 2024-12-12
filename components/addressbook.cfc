@@ -241,7 +241,7 @@
                 <cfset local.response["message"] = "Email id or Phone number already exists">
 			<cfelse>
 				<cfif arguments.contactImage NEQ "">
-					<cffile action="upload" destination="#expandpath("../assets/contactImages")#" fileField="form.contactImage" nameconflict="MakeUnique">
+					<cffile action="upload" destination="#expandpath("../assets/contactImages")#" fileField="contactImage" nameconflict="MakeUnique">
 					<cfset local.contactImage = cffile.serverFile>
 				</cfif>
 				<cfif len(trim(arguments.contactId)) EQ 0>
