@@ -179,10 +179,9 @@ $("#contactManagement").submit(function(event) {
         contactPincode: $("#editContactPincode").val(),
         contactEmail: $("#editContactEmail").val(),
         contactPhone: $("#editContactPhone").val(),
-		roleIdsToInsert: currentContactRoles.filter(element => !previousContactRoles.includes(element)),
-		roleIdsToDelete: previousContactRoles.filter(element => !currentContactRoles.includes(element))
+		roleIdsToInsert: currentContactRoles.filter(element => !previousContactRoles.includes(element)).join(","),
+		roleIdsToDelete: previousContactRoles.filter(element => !currentContactRoles.includes(element)).join(",")
 	};
-	console.log(contactData);
 	$("#contactManagementMsgSection").text("");
 	if (!validateContactForm()) return;
 	$.ajax({
