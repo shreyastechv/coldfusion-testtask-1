@@ -170,7 +170,7 @@ $("#contactManagement").submit(function(event) {
         contactLastName: $("#editContactLastName").val(),
         contactGender: $("#editContactGender").val(),
         contactDOB: $("#editContactDOB").val(),
-		contactImage: $("#editContactImage")[0].files[0],
+		contactImage: $("#editContactImage")[0].files[0] || "",
         contactAddress: $("#editContactAddress").val(),
         contactStreet: $("#editContactStreet").val(),
         contactDistrict: $("#editContactDistrict").val(),

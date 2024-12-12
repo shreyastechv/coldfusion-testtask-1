@@ -282,18 +282,17 @@
 							<cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
 						);
 					</cfquery>
-					<cfloop list="#arguments.roleIdsToInsert#" item="local.roleToInsert">
-						<cfquery name="local.addRolesQuery">
-							INSERT INTO contactRoles(
-								contactId,
-								roleId
+					<cfquery name="local.addRolesQuery">
+						INSERT INTO contactRoles (contactId, roleId)
+						VALUES
+						<cfloop list="#arguments.roleIdsToInsert#" index="local.i" item="local.roleId">
+							(
+								<cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_varchar">,
+								<cfqueryparam value="#local.roleId#" cfsqltype="cf_sql_integer">
 							)
-							VALUES (
-								<cfqueryparam value = "#local.insertContactsQuery.contactid#" cfsqltype = "cf_sql_varchar">,
-								<cfqueryparam value = "#local.roleToInsert#" cfsqltype = "cf_sql_integer">
-							)
-						</cfquery>
-					</cfloop>
+							<cfif local.i LT listLen(arguments.roleIdsToInsert)>,</cfif>
+						</cfloop>
+					</cfquery>
 					<cfset local.response["statusCode"] = 200>
 					<cfset local.response["message"] = "Contact Added Successfully">
 				<cfelse>
@@ -319,26 +318,26 @@
 						WHERE contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
 					</cfquery>
 
-					<cfloop list="#arguments.roleIdsToDelete#" item="local.roleToDelete">
-						<cfquery name="local.deleteRoleQuery">
-							DELETE FROM contactRoles
-							WHERE contactId = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
-								AND roleId = <cfqueryparam value = "#local.roleToDelete#" cfsqltype = "cf_sql_varchar">
-						</cfquery>
-					</cfloop>
+					<cfquery name="local.deleteRoleQuery">
+						DELETE FROM contactRoles
+						WHERE contactId = <cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_varchar">
+						AND roleId IN (
+							<cfqueryparam value="#arguments.roleIdsToDelete#" cfsqltype="cf_sql_varchar" list="true">
+						)
+					</cfquery>
 
-					<cfloop list="#arguments.roleIdsToInsert#" item="local.roleToInsert">
-						<cfquery name="local.addRolesQuery">
-							INSERT INTO contactRoles(
-								contactId,
-								roleId
+					<cfquery name="local.addRolesQuery">
+						INSERT INTO contactRoles (contactId, roleId)
+						VALUES
+						<cfloop list="#arguments.roleIdsToInsert#" index="local.i" item="local.roleId">
+							(
+								<cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_varchar">,
+								<cfqueryparam value="#local.roleId#" cfsqltype="cf_sql_integer">
 							)
-							VALUES (
-								<cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">,
-								<cfqueryparam value = "#local.roleToInsert#" cfsqltype = "cf_sql_integer">
-							)
-						</cfquery>
-					</cfloop>
+							<cfif local.i LT listLen(arguments.roleIdsToInsert)>,</cfif>
+						</cfloop>
+					</cfquery>
+
 					<cfset local.response["statusCode"] = 200>
 					<cfset local.response["message"] = "Contact Updated Successfully">
 				</cfif>
