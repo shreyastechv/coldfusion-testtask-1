@@ -180,14 +180,19 @@
         <cfset local.response = StructNew()>
 
         <cfif StructKeyExists(session, "isLoggedIn")>
-            <cfquery name="local.deleteRoleQuery">
-                DELETE FROM contactRoles
-				WHERE contactId = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
-            </cfquery>
 			<cfquery name="local.deleteContactQuery">
-            	UPDATE contactDetails
+            	BEGIN TRANSACTION;
+
+				-- Delete from contactRoles
+				DELETE FROM contactRoles
+				WHERE contactId = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">;
+
+				-- Update contactDetails
+				UPDATE contactDetails
 				SET active = 0
-				WHERE contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
+				WHERE contactId = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">;
+
+				COMMIT;
             </cfquery>
 
             <cfset local.response["statusCode"] = 200>
