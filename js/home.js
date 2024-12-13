@@ -160,6 +160,7 @@ function validateContactForm() {
 
 $("#contactManagement").submit(function(event) {
 	event.preventDefault();
+	const thisForm = this;
 	const contactManagementMsgSection = $("#contactManagementMsgSection");
 	const currentContactRoles = $("#editContactRole").val();
 	const previousContactRoles = $("#editContactRole").attr("defaultValue").split(",");
@@ -203,7 +204,7 @@ $("#contactManagement").submit(function(event) {
 				contactManagementMsgSection.css("color", "green");
 				loadHomePageData();
 				if ($("#editContactId").val() === "") {
-					this.reset();
+					thisForm.reset();
 				}
 			}
 			else {
