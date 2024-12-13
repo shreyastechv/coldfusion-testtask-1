@@ -400,24 +400,6 @@
 		<cfreturn local.getContactRoleDetailsQuery>
 	</cffunction>
 
-	<cffunction  name="getContactRolesAsArray" returnType="array" access="private">
-		<cfset local.contacts = entityLoad("contactDetailsORM", {createdBy = session.userId, active = 1})>
-		<cfset local.contactsQuery = EntityToQuery(local.contacts)>
-		<cfset local.contactRoles = ArrayNew(1)>
-		<cfloop query="local.contactsQuery">
-			<cfquery name="local.getContactRolesQuery">
-				SELECT d.roleName
-				FROM contactRoles AS r
-				RIGHT JOIN roleDetails AS d
-				ON r.roleId = d.roleId
-				WHERE contactId = <cfqueryparam value = "#local.contactsQuery.contactId#" cfsqltype = "cf_sql_varchar">
-			</cfquery>
-			<cfset ArrayAppend(local.contactRoles, ArrayToList(valueArray(local.getContactRolesQuery, "roleName")))>
-		</cfloop>
-
-		<cfreturn local.contactRoles>
-	</cffunction>
-
     <cffunction name="createContactsFile" returnType="string" returnFormat="json" access="remote">
 		<cfargument required="true" name="fileType" type="string" default="">
 		<cfset local.timestamp = DateFormat(Now(), "yyyy-mm-dd") & "-" & TimeFormat(Now(), "HH-mm-ss")>
