@@ -554,19 +554,23 @@
 		<cfif cgi.HTTP_USER_AGENT EQ "CFSCHEDULE">
 			<cfquery name="local.getUsersAndDOB">
 				SELECT title,
-				firstname,
-				lastname,
-				dob,
-				email
-				FROM contactDetails
+					cd.firstname,
+					cd.lastname,
+					cd.dob,
+					cd.email,
+					u.fullname as createdUser
+				FROM contactDetails cd
+				JOIN users u
+				ON cd.createdBy = u.userid
 				WHERE createdBy = <cfqueryparam value = "#arguments.userId#" cfsqltype = "cf_sql_varchar">
+					AND active = 1
 			</cfquery>
 
 			<cfloop query="local.getUsersAndDOB">
 				<cfif Day(dob) EQ Day(Now()) AND Month(dob) EQ Month(Now())>
-					<cfmail from="test@test.com" to="#email#" subject="Birthday Wishes">
-						Good Morning #title# #firstname# #lastname#,
-						We are wishing you a happy birthday and many more happy returns of the day.
+					<cfmail from="test@test.com" to="#local.getUsersAndDOB.email#" subject="Birthday Wishes">
+						Good Morning #local.getUsersAndDOB.title# #local.getUsersAndDOB.firstname# #local.getUsersAndDOB.lastname#,
+						On behalf of #local.getUsersAndDOB.createdUser#, we are wishing you a happy birthday and many more happy returns of the day.
 					</cfmail>
 				</cfif>
 			</cfloop>
