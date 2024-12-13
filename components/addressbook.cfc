@@ -368,17 +368,19 @@
 						)
 					</cfquery>
 
-					<cfquery name="local.addRolesQuery">
-						INSERT INTO contactRoles (contactId, roleId)
-						VALUES
-						<cfloop list="#arguments.roleIdsToInsert#" index="local.i" item="local.roleId">
-							(
-								<cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_varchar">,
-								<cfqueryparam value="#local.roleId#" cfsqltype="cf_sql_integer">
-							)
-							<cfif local.i LT listLen(arguments.roleIdsToInsert)>,</cfif>
-						</cfloop>
-					</cfquery>
+					<cfif len(trim(arguments.roleIdsToInsert))>
+						<cfquery name="local.addRolesQuery">
+							INSERT INTO contactRoles (contactId, roleId)
+							VALUES
+							<cfloop list="#arguments.roleIdsToInsert#" index="local.i" item="local.roleId">
+								(
+									<cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_varchar">,
+									<cfqueryparam value="#local.roleId#" cfsqltype="cf_sql_integer">
+								)
+								<cfif local.i LT listLen(arguments.roleIdsToInsert)>,</cfif>
+							</cfloop>
+						</cfquery>
+					</cfif>
 
 					<cfset local.response["statusCode"] = 200>
 					<cfset local.response["message"] = "Contact Updated Successfully">
