@@ -111,7 +111,8 @@ $("#signupForm").submit(function(event) {
 	}
 
 	if (valid) {
-		const formData = new FormData(this);
+		const thisForm = this;
+		const formData = new FormData(thisForm);
 		$.ajax({
 			type: "POST",
 			url: "./components/addressbook.cfc?method=signUp",
@@ -124,7 +125,7 @@ $("#signupForm").submit(function(event) {
 				if (responseJSON.statusCode === 200) {
 					submitMsgSection.css("color", "green");
 					submitMsgSection.html("Account created successfully. <a class='text-decoration-none text-primary' href='index.cfm'>Login</a> to continue.");
-					this.reset();
+					thisForm.reset();
 				}
 				else {
 					submitMsgSection.css("color", "red");

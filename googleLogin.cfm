@@ -9,7 +9,6 @@
 
 	<cfif structKeyExists(session, "googleData")>
 		<cfset application.addressbookObject.googleSSOLogin()>
-	<cfelse>
 		<cflocation  url="/" addToken="No">
 	</cfif>
 </cfif>

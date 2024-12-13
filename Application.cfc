@@ -2,10 +2,6 @@
 	<cfset this.name = "Address Book">
 	<cfset this.sessionManagement = true>
 	<cfset this.ormEnabled = true>
-	<cfset this.ormSettings = {
-        cfclocation = "orm",
-		dbcreate = "update"
-	}>
 	<cfset this.sessiontimeout = CreateTimeSpan(0, 1, 0, 0)>
 	<cfset this.dataSource = "addressbookdatasource">
 
