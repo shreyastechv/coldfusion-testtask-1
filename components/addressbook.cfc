@@ -495,7 +495,7 @@
 					<cfqueryparam value = "#session.googleData.other.picture#" cfsqltype = "cf_sql_varchar">
 				);
 			</cfquery>
-			<cfset session.userId = local.insertUserDataResult.userid>
+			<cfset session.userId = local.insertUserDataResult.GENERATEDKEY>
 		<cfelse>
 			<cfset session.userId = local.checkEmailQuery.userid>
 		</cfif>
