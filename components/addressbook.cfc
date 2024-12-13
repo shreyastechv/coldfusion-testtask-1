@@ -177,7 +177,7 @@
 			ON cd.contactid = cr.contactId
 			LEFT JOIN roleDetails rd
 			ON cr.roleId = rd.roleId
-			WHERE cd.contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
+			WHERE cd.contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_integer">
 				AND cr.active = 1
 			GROUP BY cd.contactid,
 				cd.title,
@@ -232,13 +232,13 @@
 				UPDATE contactRoles
 				SET active = 0,
 					deletedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
-				WHERE contactId = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">;
+				WHERE contactId = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_integer">;
 
 				-- Update contactDetails
 				UPDATE contactDetails
 				SET active = 0,
 					deletedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
-				WHERE contactId = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">;
+				WHERE contactId = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_integer">;
 
 				COMMIT;
             </cfquery>
@@ -335,7 +335,7 @@
 						VALUES
 						<cfloop list="#arguments.roleIdsToInsert#" index="local.i" item="local.roleId">
 							(
-								<cfqueryparam value="#local.insertContactsQuery.contactId#" cfsqltype="cf_sql_varchar">,
+								<cfqueryparam value="#local.insertContactsQuery.contactId#" cfsqltype="cf_sql_integer">,
 								<cfqueryparam value="#local.roleId#" cfsqltype="cf_sql_integer">
 							)
 							<cfif local.i LT listLen(arguments.roleIdsToInsert)>,</cfif>
@@ -364,14 +364,14 @@
 								contactpicture = <cfqueryparam value = "#local.contactImage#" cfsqltype = "cf_sql_varchar">,
 							</cfif>
 							updatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
-						WHERE contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
+						WHERE contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_integer">
 					</cfquery>
 
 					<cfquery name="local.deleteRoleQuery">
 						UPDATE contactRoles
 						SET active = 0,
 							deletedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
-						WHERE contactId = <cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_varchar">
+						WHERE contactId = <cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_integer">
 						AND roleId IN (
 							<cfqueryparam value="#arguments.roleIdsToDelete#" cfsqltype="cf_sql_varchar" list="true">
 						)
@@ -383,7 +383,7 @@
 							VALUES
 							<cfloop list="#arguments.roleIdsToInsert#" index="local.i" item="local.roleId">
 								(
-									<cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_varchar">,
+									<cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_integer">,
 									<cfqueryparam value="#local.roleId#" cfsqltype="cf_sql_integer">
 								)
 								<cfif local.i LT listLen(arguments.roleIdsToInsert)>,</cfif>
