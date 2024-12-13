@@ -229,12 +229,15 @@
             	BEGIN TRANSACTION;
 
 				-- Delete from contactRoles
-				DELETE FROM contactRoles
+				UPDATE contactRoles
+				SET active = 0,
+					deletedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
 				WHERE contactId = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">;
 
 				-- Update contactDetails
 				UPDATE contactDetails
-				SET active = 0
+				SET active = 0,
+					deletedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
 				WHERE contactId = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">;
 
 				COMMIT;
@@ -366,7 +369,8 @@
 
 					<cfquery name="local.deleteRoleQuery">
 						UPDATE contactRoles
-						SET active = 0
+						SET active = 0,
+							deletedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
 						WHERE contactId = <cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_varchar">
 						AND roleId IN (
 							<cfqueryparam value="#arguments.roleIdsToDelete#" cfsqltype="cf_sql_varchar" list="true">
