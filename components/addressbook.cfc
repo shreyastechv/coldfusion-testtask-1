@@ -310,7 +310,6 @@
 							phone,
 							createdBy
 						)
-						OUTPUT INSERTED.contactid
 						VALUES (
 							<cfqueryparam value = "#arguments.contactTitle#" cfsqltype = "cf_sql_varchar">,
 							<cfqueryparam value = "#arguments.contactFirstName#" cfsqltype = "cf_sql_varchar">,
@@ -335,7 +334,7 @@
 						VALUES
 						<cfloop list="#arguments.roleIdsToInsert#" index="local.i" item="local.roleId">
 							(
-								<cfqueryparam value="#local.insertContactsQuery.contactId#" cfsqltype="cf_sql_integer">,
+								<cfqueryparam value="#local.insertContactsResult.GENERATEDKEY#" cfsqltype="cf_sql_integer">,
 								<cfqueryparam value="#local.roleId#" cfsqltype="cf_sql_integer">
 							)
 							<cfif local.i LT listLen(arguments.roleIdsToInsert)>,</cfif>
