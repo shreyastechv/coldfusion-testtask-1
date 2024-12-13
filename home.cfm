@@ -11,8 +11,8 @@
     </head>
 
     <body>
-		<cfset ormReload()>
-		<cfset contacts = entityLoad("contactDetailsORM", {createdBy = session.userId, active = 1})>
+		<!---<cfset ormReload()>
+		<cfset contacts = entityLoad("contactDetailsORM", {createdBy = session.userId, active = 1})>--->
 		<cfset roleDetails = application.addressbookObject.getRoleDetails()>
 		<cfoutput>
 			<!--- Navbar --->
