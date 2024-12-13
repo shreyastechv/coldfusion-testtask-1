@@ -128,8 +128,9 @@
 			ON cd.contactid = cr.contactId
 			LEFT JOIN roleDetails rd
 			ON cr.roleId = rd.roleId
-			WHERE createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
-				AND active = 1
+			WHERE cd.createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
+				AND cd.active = 1
+				AND cr.active = 1
 			GROUP BY cd.title,
 				cd.firstname,
 				cd.lastname,
@@ -177,6 +178,7 @@
 			LEFT JOIN roleDetails rd
 			ON cr.roleId = rd.roleId
 			WHERE cd.contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
+				AND cr.active = 1
 			GROUP BY cd.contactid,
 				cd.title,
 				cd.firstname,
@@ -324,6 +326,7 @@
 							<cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
 						);
 					</cfquery>
+
 					<cfquery name="local.addRolesQuery">
 						INSERT INTO contactRoles (contactId, roleId)
 						VALUES
@@ -335,6 +338,7 @@
 							<cfif local.i LT listLen(arguments.roleIdsToInsert)>,</cfif>
 						</cfloop>
 					</cfquery>
+
 					<cfset local.response["statusCode"] = 200>
 					<cfset local.response["message"] = "Contact Added Successfully">
 				<cfelse>
@@ -361,7 +365,8 @@
 					</cfquery>
 
 					<cfquery name="local.deleteRoleQuery">
-						DELETE FROM contactRoles
+						UPDATE contactRoles
+						SET active = 0
 						WHERE contactId = <cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_varchar">
 						AND roleId IN (
 							<cfqueryparam value="#arguments.roleIdsToDelete#" cfsqltype="cf_sql_varchar" list="true">
