@@ -235,9 +235,9 @@ function createContactsFile(fileType) {
 		success: function(response) {
 			const fileName = JSON.parse(response);
 			if (fileType == "pdf") {
-				downloadURI(`./assets/pdfs/${fileName}.pdf`, `${fileName}.pdf`);
+				downloadURI(`./assets/pdfs/${fileName}`, `${fileName}`);
 			} else {
-				downloadURI(`./assets/spreadsheets/${fileName}.xlsx`, `${fileName}.xlsx`);
+				downloadURI(`./assets/spreadsheets/${fileName}`, `${fileName}`);
 			}
 		}
 	});

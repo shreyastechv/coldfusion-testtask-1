@@ -402,13 +402,12 @@
 
     <cffunction name="createContactsFile" returnType="string" returnFormat="json" access="remote">
 		<cfargument required="true" name="fileType" type="string" default="">
-		<cfset local.timestamp = DateFormat(Now(), "yyyy-mm-dd") & "-" & TimeFormat(Now(), "HH-mm-ss")>
-		<cfset local.fileName = "#session.fullName#-#local.timestamp#">
-		<cfset local.response["data"] = local.fileName>
+		<cfset local.fileName = "#session.fullName#-#DateTimeFormat(Now(), "yyyy-mm-dd-HH-nn-ss")#">
 		<cfset local.createFileQuery = getFullContacts()>
 
 		<cfif arguments.fileType EQ "pdf">
-			<cfdocument format="pdf" filename="../assets/pdfs/#local.fileName#.pdf" overwrite="true">
+			<cfset local.fileName = local.fileName & ".pdf">
+			<cfdocument format="pdf" filename="../assets/pdfs/#local.fileName#" overwrite="true">
 				<cfoutput>
 					<table border="1" cellpadding="0" cellspacing="0">
 						<thead>
@@ -457,7 +456,8 @@
 				</cfoutput>
 			</cfdocument>
 		<cfelse>
-		    <cfspreadsheet action="write" filename="../assets/spreadsheets/#local.fileName#.xlsx" query="local.createFileQuery" sheetname="contacts" overwrite=true>
+			<cfset local.fileName = local.fileName & ".xlsx">
+		    <cfspreadsheet action="write" filename="../assets/spreadsheets/#local.fileName#" query="local.createFileQuery" sheetname="contacts" overwrite=true>
 		</cfif>
 
 		<cfreturn local.fileName>
