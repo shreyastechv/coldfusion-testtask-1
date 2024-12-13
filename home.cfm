@@ -59,6 +59,7 @@
 							</cfif>
 							<button class="btn bg-primary text-white rounded-pill d-print-none" onclick="createContact()">CREATE CONTACT</button>
 							<button id="scheduleBdayEmailBtn" class="btn bg-secondary text-white rounded-pill d-print-none" onclick="toggleBdayEmailSchedule()">SCHEDULE BDAY MAILS</button>
+							<button class="btn bg-info text-white rounded-pill d-print-none" data-bs-toggle="modal" data-bs-target="##uploadContactModal">UPLOAD CONTACTS</button>
 						</div>
 					</div>
 					<!--- Right Section --->
@@ -318,6 +319,31 @@
 						</div>
 						<div class="contactImageEnlarged d-flex align-items-center justify-content-end p-4">
 							<img id="editContactPicture" src="./assets/profilePictures/demo-profilepicture.png" alt="Contact Image Enlarged">
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!--- Upload Contact Modal --->
+			<div class="modal fade" id="uploadContactModal" tabindex="-1">
+				<div class="modal-dialog">
+					<div class="modal-content rounded-0 d-flex flex-row justify-content-around">
+						<div>
+							<form id="contactUpload" name="contactUpload" method="post" enctype="multipart/form-data">
+								<div class="modal-header d-flex justify-content-around border-bottom-0">
+
+								</div>
+								<div class="modal-body d-flex flex-column">
+									<h4>Upload Excel File</h4>
+									<hr>
+									<label for="uploadExcel">Role *</label>
+									<input id="uploadExcel" name="uploadExcel" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+								</div>
+								<div class="modal-footer d-flex justify-content-around border-top-0">
+									<button type="submit" class="btn text-white bg-customDarkBlue rounded-pill py-1 px-4">SUBMIT</button>
+									<button type="button" class="btn customDarkBlue rounded-pill py-1 px-4" data-bs-dismiss="modal">CLOSE</button>
+								</div>
+							</form>
 						</div>
 					</div>
 				</div>
