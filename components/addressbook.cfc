@@ -83,6 +83,40 @@
         <cfreturn local.response>
     </cffunction>
 
+	<cffunction name="googleSSOLogin" returnType="void" access="public">
+		<cfquery name="local.checkEmailQuery">
+			SELECT
+				userid
+			FROM
+				users
+			WHERE
+				email = <cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">
+		</cfquery>
+		<cfif local.checkEmailQuery.RecordCount EQ 0>
+			<cfquery name="insertUserDataQuery" result="local.insertUserDataResult">
+				INSERT INTO
+					users (
+						fullname,
+						email,
+						username,
+						profilePicture
+					)
+				VALUES (
+					<cfqueryparam value = "#session.googleData.name#" cfsqltype = "cf_sql_varchar">,
+					<cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">,
+					<cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">,
+					<cfqueryparam value = "#session.googleData.other.picture#" cfsqltype = "cf_sql_varchar">
+				);
+			</cfquery>
+			<cfset session.userId = local.insertUserDataResult.GENERATEDKEY>
+		<cfelse>
+			<cfset session.userId = local.checkEmailQuery.userid>
+		</cfif>
+		<cfset session.isLoggedIn = true>
+		<cfset session.fullName = session.googleData.name>
+		<cfset session.profilePicture = session.googleData.other.picture>
+	</cffunction>
+
     <cffunction name="logOut" returnType="struct" returnFormat="json" access="remote">
         <cfset local.response = StructNew()>
         <cfset local.response["statusCode"] = 200>
@@ -524,40 +558,6 @@
 		</cfif>
 
 		<cfreturn local.fileName>
-	</cffunction>
-
-	<cffunction name="googleSSOLogin" returnType="void" access="public">
-		<cfquery name="local.checkEmailQuery">
-			SELECT
-				userid
-			FROM
-				users
-			WHERE
-				email = <cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">
-		</cfquery>
-		<cfif local.checkEmailQuery.RecordCount EQ 0>
-			<cfquery name="insertUserDataQuery" result="local.insertUserDataResult">
-				INSERT INTO
-					users (
-						fullname,
-						email,
-						username,
-						profilePicture
-					)
-				VALUES (
-					<cfqueryparam value = "#session.googleData.name#" cfsqltype = "cf_sql_varchar">,
-					<cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">,
-					<cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">,
-					<cfqueryparam value = "#session.googleData.other.picture#" cfsqltype = "cf_sql_varchar">
-				);
-			</cfquery>
-			<cfset session.userId = local.insertUserDataResult.GENERATEDKEY>
-		<cfelse>
-			<cfset session.userId = local.checkEmailQuery.userid>
-		</cfif>
-		<cfset session.isLoggedIn = true>
-		<cfset session.fullName = session.googleData.name>
-		<cfset session.profilePicture = session.googleData.other.picture>
 	</cffunction>
 
 	<cffunction name="getTaskStatus" returnType="struct" returnFormat="json" access="remote">
