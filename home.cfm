@@ -337,7 +337,7 @@
 								<h4 class="customDarkBlue mb-0">Upload Excel File</h4>
 								<hr class="mt-0">
 								<label class="contactUploadLabel" for="uploadExcel">Upload Excel*</label>
-								<input id="uploadExcel" name="uploadExcel" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+								<input id="uploadExcel" name="uploadExcel" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
 							</div>
 							<div class="modal-footer d-flex justify-content-start border-top-0">
 								<button type="submit" class="btn text-white bg-customDarkBlue rounded-pill py-1 px-4">SUBMIT</button>

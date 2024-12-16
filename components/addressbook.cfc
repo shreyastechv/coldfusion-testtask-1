@@ -300,15 +300,12 @@
 					contactDetails
 				WHERE
 					createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
-					AND (
-						email = <cfqueryparam value = "#arguments.contactEmail#" cfsqltype = "cf_sql_varchar">
-						OR phone = <cfqueryparam value = "#arguments.contactPhone#" cfsqltype = "cf_sql_varchar">
-					)
+					AND email = <cfqueryparam value = "#arguments.contactEmail#" cfsqltype = "cf_sql_varchar">
 					AND active = 1
 			</cfquery>
 			<cfif local.getEmailPhoneQuery.RecordCount AND local.getEmailPhoneQuery.contactid NEQ arguments.contactId>
                 <cfset local.response["statusCode"] = 409>
-                <cfset local.response["message"] = "Email id or Phone number already exists">
+                <cfset local.response["message"] = "Email id already exists">
 			<cfelse>
 				<cfif arguments.contactImage NEQ "">
 					<cffile action="upload" destination="#expandpath("../assets/contactImages")#" fileField="contactImage" nameconflict="MakeUnique">
