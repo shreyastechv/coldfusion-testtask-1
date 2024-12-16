@@ -330,8 +330,8 @@
 					<div class="modal-content rounded-0 d-flex flex-row justify-content-around p-4">
 						<form class="w-100" id="contactUpload" name="contactUpload" method="post" enctype="multipart/form-data">
 							<div class="modal-header d-flex justify-content-end border-bottom-0 gap-2">
-								<button type="button" class="btn btn-primary btn-sm rounded-1 TemplateWithDataBtn">Template with data</button>
-								<button type="button" class="btn btn-success btn-sm rounded-1 plainTemplateBtn">Plain Template</button>
+								<button type="button" class="btn btn-primary btn-sm rounded-1 TemplateWithDataBtn" onclick="createContactsFile('excelTemplateWithData')">Template with data</button>
+								<button type="button" class="btn btn-success btn-sm rounded-1 plainTemplateBtn" onclick="createContactsFile('excelTemplate')">Plain Template</button>
 							</div>
 							<div class="modal-body d-flex flex-column">
 								<h4 class="customDarkBlue mb-0">Upload Excel File</h4>

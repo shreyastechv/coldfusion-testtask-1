@@ -117,8 +117,12 @@
     </cffunction>
 
 	<cffunction name="getFullContacts" returnType="query" returnFormat="json" access="remote">
+		<cfargument required="false" name="usage" type="string" default="">
         <cfquery name="local.getFullContactsQuery">
             SELECT
+				<cfif arguments.usage EQ "excelTempate">
+					TOP 0
+				</cfif>
 				cd.title,
 				cd.firstname,
 				cd.lastname,
@@ -449,11 +453,11 @@
 	</cffunction>
 
     <cffunction name="createContactsFile" returnType="string" returnFormat="json" access="remote">
-		<cfargument required="true" name="fileType" type="string" default="">
+		<cfargument required="true" name="file" type="string" default="">
 		<cfset local.fileName = "#session.fullName#-#DateTimeFormat(Now(), "yyyy-mm-dd-HH-nn-ss")#">
-		<cfset local.createFileQuery = getFullContacts()>
 
-		<cfif arguments.fileType EQ "pdf">
+		<cfif arguments.file EQ "pdf">
+			<cfset local.createFileQuery = getFullContacts()>
 			<cfset local.fileName = local.fileName & ".pdf">
 			<cfdocument format="pdf" filename="../assets/pdfs/#local.fileName#" overwrite="true">
 				<cfoutput>
@@ -503,7 +507,18 @@
 					</table>
 				</cfoutput>
 			</cfdocument>
-		<cfelse>
+		<cfelseif arguments.file EQ "excel">
+			<cfset local.createFileQuery = getFullContacts()>
+			<cfset local.fileName = local.fileName & ".xlsx">
+		    <cfspreadsheet action="write" filename="../assets/spreadsheets/#local.fileName#" query="local.createFileQuery" sheetname="contacts" overwrite=true>
+		<cfelseif arguments.file EQ "excelTemplate">
+			<cfset local.createFileQuery = getFullContacts(usage = "excelTempate")>
+			<cfset QueryDeleteColumn(local.createFileQuery, "contactpicture")>
+			<cfset local.fileName = "Plain_Template.xlsx">
+		    <cfspreadsheet action="write" filename="../assets/spreadsheets/#local.fileName#" query="local.createFileQuery" sheetname="contacts" overwrite=true>
+		<cfelseif arguments.file EQ "excelTemplateWithData">
+			<cfset local.createFileQuery = getFullContacts()>
+			<cfset QueryDeleteColumn(local.createFileQuery, "contactpicture")>
 			<cfset local.fileName = local.fileName & ".xlsx">
 		    <cfspreadsheet action="write" filename="../assets/spreadsheets/#local.fileName#" query="local.createFileQuery" sheetname="contacts" overwrite=true>
 		</cfif>

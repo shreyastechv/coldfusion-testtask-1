@@ -226,19 +226,28 @@ function downloadURI(uri, name) {
 	link.remove();
 }
 
-function createContactsFile(fileType) {
+function createContactsFile(file) {
 	$.ajax({
 		type: "POST",
 		url: "./components/addressbook.cfc?method=createContactsFile",
 		data: {
-			fileType: fileType
+			file: file
 		},
 		success: function(response) {
 			const fileName = JSON.parse(response);
-			if (fileType == "pdf") {
-				downloadURI(`./assets/pdfs/${fileName}`, `${fileName}`);
-			} else {
-				downloadURI(`./assets/spreadsheets/${fileName}`, `${fileName}`);
+			switch(file) {
+				case "pdf":
+					downloadURI(`./assets/pdfs/${fileName}`, `${fileName}`);
+					break;
+				case "excel":
+					downloadURI(`./assets/spreadsheets/${fileName}`, `${fileName}`);
+				  	break;
+				case "excelTemplate":
+					downloadURI(`./assets/spreadsheets/${fileName}`, "Plain_Template.xlsx");
+				  	break;
+				case "excelTemplateWithData":
+					downloadURI(`./assets/spreadsheets/${fileName}`, "Template_with_data.xlsx");
+					break;
 			}
 		}
 	});
