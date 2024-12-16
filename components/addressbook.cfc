@@ -83,6 +83,40 @@
         <cfreturn local.response>
     </cffunction>
 
+	<cffunction name="googleSSOLogin" returnType="void" access="public">
+		<cfquery name="local.checkEmailQuery">
+			SELECT
+				userid
+			FROM
+				users
+			WHERE
+				email = <cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">
+		</cfquery>
+		<cfif local.checkEmailQuery.RecordCount EQ 0>
+			<cfquery name="insertUserDataQuery" result="local.insertUserDataResult">
+				INSERT INTO
+					users (
+						fullname,
+						email,
+						username,
+						profilePicture
+					)
+				VALUES (
+					<cfqueryparam value = "#session.googleData.name#" cfsqltype = "cf_sql_varchar">,
+					<cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">,
+					<cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">,
+					<cfqueryparam value = "#session.googleData.other.picture#" cfsqltype = "cf_sql_varchar">
+				);
+			</cfquery>
+			<cfset session.userId = local.insertUserDataResult.GENERATEDKEY>
+		<cfelse>
+			<cfset session.userId = local.checkEmailQuery.userid>
+		</cfif>
+		<cfset session.isLoggedIn = true>
+		<cfset session.fullName = session.googleData.name>
+		<cfset session.profilePicture = session.googleData.other.picture>
+	</cffunction>
+
     <cffunction name="logOut" returnType="struct" returnFormat="json" access="remote">
         <cfset local.response = StructNew()>
         <cfset local.response["statusCode"] = 200>
@@ -117,8 +151,12 @@
     </cffunction>
 
 	<cffunction name="getFullContacts" returnType="query" returnFormat="json" access="remote">
+		<cfargument required="false" name="usage" type="string" default="">
         <cfquery name="local.getFullContactsQuery">
             SELECT
+				<cfif arguments.usage EQ "excelTempate">
+					TOP 0
+				</cfif>
 				cd.title,
 				cd.firstname,
 				cd.lastname,
@@ -132,7 +170,7 @@
 				cd.pincode,
 				cd.email,
 				cd.phone,
-				STRING_AGG(rd.roleName, ', ') AS roles,
+				STRING_AGG(rd.roleName, ',') AS roles,
 				cd.contactpicture
 			FROM
 				contactDetails cd
@@ -300,15 +338,12 @@
 					contactDetails
 				WHERE
 					createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
-					AND (
-						email = <cfqueryparam value = "#arguments.contactEmail#" cfsqltype = "cf_sql_varchar">
-						OR phone = <cfqueryparam value = "#arguments.contactPhone#" cfsqltype = "cf_sql_varchar">
-					)
+					AND email = <cfqueryparam value = "#arguments.contactEmail#" cfsqltype = "cf_sql_varchar">
 					AND active = 1
 			</cfquery>
 			<cfif local.getEmailPhoneQuery.RecordCount AND local.getEmailPhoneQuery.contactid NEQ arguments.contactId>
                 <cfset local.response["statusCode"] = 409>
-                <cfset local.response["message"] = "Email id or Phone number already exists">
+                <cfset local.response["message"] = "Email id already exists">
 			<cfelse>
 				<cfif arguments.contactImage NEQ "">
 					<cffile action="upload" destination="#expandpath("../assets/contactImages")#" fileField="contactImage" nameconflict="MakeUnique">
@@ -452,11 +487,11 @@
 	</cffunction>
 
     <cffunction name="createContactsFile" returnType="string" returnFormat="json" access="remote">
-		<cfargument required="true" name="fileType" type="string" default="">
+		<cfargument required="true" name="file" type="string" default="">
 		<cfset local.fileName = "#session.fullName#-#DateTimeFormat(Now(), "yyyy-mm-dd-HH-nn-ss")#">
-		<cfset local.createFileQuery = getFullContacts()>
 
-		<cfif arguments.fileType EQ "pdf">
+		<cfif arguments.file EQ "pdf">
+			<cfset local.createFileQuery = getFullContacts()>
 			<cfset local.fileName = local.fileName & ".pdf">
 			<cfdocument format="pdf" filename="../assets/pdfs/#local.fileName#" overwrite="true">
 				<cfoutput>
@@ -506,7 +541,18 @@
 					</table>
 				</cfoutput>
 			</cfdocument>
-		<cfelse>
+		<cfelseif arguments.file EQ "excel">
+			<cfset local.createFileQuery = getFullContacts()>
+			<cfset local.fileName = local.fileName & ".xlsx">
+		    <cfspreadsheet action="write" filename="../assets/spreadsheets/#local.fileName#" query="local.createFileQuery" sheetname="contacts" overwrite=true>
+		<cfelseif arguments.file EQ "excelTemplate">
+			<cfset local.createFileQuery = getFullContacts(usage = "excelTempate")>
+			<cfset QueryDeleteColumn(local.createFileQuery, "contactpicture")>
+			<cfset local.fileName = "Plain_Template.xlsx">
+		    <cfspreadsheet action="write" filename="../assets/spreadsheets/#local.fileName#" query="local.createFileQuery" sheetname="contacts" overwrite=true>
+		<cfelseif arguments.file EQ "excelTemplateWithData">
+			<cfset local.createFileQuery = getFullContacts()>
+			<cfset QueryDeleteColumn(local.createFileQuery, "contactpicture")>
 			<cfset local.fileName = local.fileName & ".xlsx">
 		    <cfspreadsheet action="write" filename="../assets/spreadsheets/#local.fileName#" query="local.createFileQuery" sheetname="contacts" overwrite=true>
 		</cfif>
@@ -514,38 +560,14 @@
 		<cfreturn local.fileName>
 	</cffunction>
 
-	<cffunction name="googleSSOLogin" returnType="void" access="public">
-		<cfquery name="local.checkEmailQuery">
-			SELECT
-				userid
-			FROM
-				users
-			WHERE
-				email = <cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">
-		</cfquery>
-		<cfif local.checkEmailQuery.RecordCount EQ 0>
-			<cfquery name="insertUserDataQuery" result="local.insertUserDataResult">
-				INSERT INTO
-					users (
-						fullname,
-						email,
-						username,
-						profilePicture
-					)
-				VALUES (
-					<cfqueryparam value = "#session.googleData.name#" cfsqltype = "cf_sql_varchar">,
-					<cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">,
-					<cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">,
-					<cfqueryparam value = "#session.googleData.other.picture#" cfsqltype = "cf_sql_varchar">
-				);
-			</cfquery>
-			<cfset session.userId = local.insertUserDataResult.GENERATEDKEY>
-		<cfelse>
-			<cfset session.userId = local.checkEmailQuery.userid>
-		</cfif>
-		<cfset session.isLoggedIn = true>
-		<cfset session.fullName = session.googleData.name>
-		<cfset session.profilePicture = session.googleData.other.picture>
+	<cffunction name="uploadExcel" returnType="struct" returnFormat="json" access="remote">
+		<cfargument name="uploadExcel" type="string" required="true">
+		<cfset local.response = StructNew()>
+		<cfset local.response["statusCode"] = 200>
+		<cfset local.response["fileName"] = "test.xlsx">
+
+		<cfspreadsheet action="read" src="#arguments.uploadExcel#" query="session.testExcel" headerrow="1" excludeHeaderRow=true>
+		<cfreturn local.response>
 	</cffunction>
 
 	<cffunction name="getTaskStatus" returnType="struct" returnFormat="json" access="remote">

@@ -83,6 +83,20 @@ body {
     font-size: 13px;
 }
 
+.contactUploadLabel {
+    font-size: 14px;
+    color: #0d71c1;
+    font-weight: 500;
+}
+
+.TemplateWithDataBtn {
+	background-color: #56a7f8;
+}
+
+.plainTemplateBtn {
+	background-color: #6cc3b2;
+}
+
 .error {
     font-size: 12px;
 }

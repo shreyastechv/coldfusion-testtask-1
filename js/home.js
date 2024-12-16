@@ -189,7 +189,7 @@ $("#contactManagement").submit(function(event) {
 		contactData.append(key, contactDataObj[key]);
 	});
 
-	$("#contactManagementMsgSection").text("");
+	contactManagementMsgSection.text("");
 	if (!validateContactForm()) return;
 	$.ajax({
 		type: "POST",
@@ -226,19 +226,28 @@ function downloadURI(uri, name) {
 	link.remove();
 }
 
-function createContactsFile(fileType) {
+function createContactsFile(file) {
 	$.ajax({
 		type: "POST",
 		url: "./components/addressbook.cfc?method=createContactsFile",
 		data: {
-			fileType: fileType
+			file: file
 		},
 		success: function(response) {
 			const fileName = JSON.parse(response);
-			if (fileType == "pdf") {
-				downloadURI(`./assets/pdfs/${fileName}`, `${fileName}`);
-			} else {
-				downloadURI(`./assets/spreadsheets/${fileName}`, `${fileName}`);
+			switch(file) {
+				case "pdf":
+					downloadURI(`./assets/pdfs/${fileName}`, `${fileName}`);
+					break;
+				case "excel":
+					downloadURI(`./assets/spreadsheets/${fileName}`, `${fileName}`);
+				  	break;
+				case "excelTemplate":
+					downloadURI(`./assets/spreadsheets/${fileName}`, "Plain_Template.xlsx");
+				  	break;
+				case "excelTemplateWithData":
+					downloadURI(`./assets/spreadsheets/${fileName}`, "Template_with_data.xlsx");
+					break;
 			}
 		}
 	});
@@ -287,3 +296,46 @@ function toggleBdayEmailSchedule() {
 		}
 	});
 }
+
+$("#contactUpload").submit(function(event) {
+	event.preventDefault();
+	const thisForm = this;
+	const contactUploadMsgSection = $("#contactUploadMsgSection");
+	const uploadExcelInput = $("#uploadExcel");
+	const uploadExcelError = $("#uploadExcelError");
+	const contactData = new FormData(thisForm);
+
+	$(".error").text("");
+
+	if (uploadExcelInput.val() == "") {
+		uploadExcelError.text("Select a file");
+		return;
+	}
+	else if (uploadExcelInput[0].files[0].type != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+		uploadExcelError.text("Only excel files are allowed");
+		return;
+	}
+
+	$.ajax({
+		type: "POST",
+		url: "./components/addressbook.cfc?method=uploadExcel",
+		data: contactData,
+		enctype: 'multipart/form-data',
+		processData: false,
+		contentType: false,
+		success: function(response) {
+			const responseJSON = JSON.parse(response);
+			console.log(responseJSON);
+			//downloadURI(`./assets/spreadsheets/${responseJSON.fileName}`, `${fileName}`);
+			if (responseJSON.statusCode === 200) {
+				contactUploadMsgSection.css("color", "green");
+				loadHomePageData();
+				contactUploadMsgSection.text("Contacts Uploaded Successfully. Check the downloaded file for more details.");
+			}
+			else {
+				contactUploadMsgSection.css("color", "red");
+				contactUploadMsgSection.text("There were some errors. Check the downloaded file for more details.");
+			}
+		}
+	});
+});
