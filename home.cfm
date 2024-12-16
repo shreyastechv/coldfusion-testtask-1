@@ -326,25 +326,24 @@
 
 			<!--- Upload Contact Modal --->
 			<div class="modal fade" id="uploadContactModal" tabindex="-1">
-				<div class="modal-dialog">
-					<div class="modal-content rounded-0 d-flex flex-row justify-content-around">
-						<div>
-							<form id="contactUpload" name="contactUpload" method="post" enctype="multipart/form-data">
-								<div class="modal-header d-flex justify-content-around border-bottom-0">
-
-								</div>
-								<div class="modal-body d-flex flex-column">
-									<h4>Upload Excel File</h4>
-									<hr>
-									<label for="uploadExcel">Role *</label>
-									<input id="uploadExcel" name="uploadExcel" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
-								</div>
-								<div class="modal-footer d-flex justify-content-around border-top-0">
-									<button type="submit" class="btn text-white bg-customDarkBlue rounded-pill py-1 px-4">SUBMIT</button>
-									<button type="button" class="btn customDarkBlue rounded-pill py-1 px-4" data-bs-dismiss="modal">CLOSE</button>
-								</div>
-							</form>
-						</div>
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content rounded-0 d-flex flex-row justify-content-around p-4">
+						<form class="w-100" id="contactUpload" name="contactUpload" method="post" enctype="multipart/form-data">
+							<div class="modal-header d-flex justify-content-end border-bottom-0 gap-2">
+								<button type="button" class="btn btn-primary btn-sm rounded-1 TemplateWithDataBtn">Template with data</button>
+								<button type="button" class="btn btn-success btn-sm rounded-1 plainTemplateBtn">Plain Template</button>
+							</div>
+							<div class="modal-body d-flex flex-column">
+								<h4 class="customDarkBlue mb-0">Upload Excel File</h4>
+								<hr class="mt-0">
+								<label class="contactUploadLabel" for="uploadExcel">Upload Excel*</label>
+								<input id="uploadExcel" name="uploadExcel" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+							</div>
+							<div class="modal-footer d-flex justify-content-start border-top-0">
+								<button type="submit" class="btn text-white bg-customDarkBlue rounded-pill py-1 px-4">SUBMIT</button>
+								<button type="button" class="btn btn-outline-secondary customDarkBlue rounded-pill py-1 px-4" data-bs-dismiss="modal">CLOSE</button>
+							</div>
+						</form>
 					</div>
 				</div>
 			</div>
