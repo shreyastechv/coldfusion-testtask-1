@@ -170,7 +170,7 @@
 				cd.pincode,
 				cd.email,
 				cd.phone,
-				STRING_AGG(rd.roleName, ', ') AS roles,
+				STRING_AGG(rd.roleName, ',') AS roles,
 				cd.contactpicture
 			FROM
 				contactDetails cd
@@ -558,6 +558,16 @@
 		</cfif>
 
 		<cfreturn local.fileName>
+	</cffunction>
+
+	<cffunction name="uploadExcel" returnType="struct" returnFormat="json" access="remote">
+		<cfargument name="uploadExcel" type="string" required="true">
+		<cfset local.response = StructNew()>
+		<cfset local.response["statusCode"] = 200>
+		<cfset local.response["fileName"] = "test.xlsx">
+
+		<cfspreadsheet action="read" src="#arguments.uploadExcel#" query="session.testExcel" headerrow="1" excludeHeaderRow=true>
+		<cfreturn local.response>
 	</cffunction>
 
 	<cffunction name="getTaskStatus" returnType="struct" returnFormat="json" access="remote">

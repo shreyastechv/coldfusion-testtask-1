@@ -337,9 +337,11 @@
 								<h4 class="customDarkBlue mb-0">Upload Excel File</h4>
 								<hr class="mt-0">
 								<label class="contactUploadLabel" for="uploadExcel">Upload Excel*</label>
-								<input id="uploadExcel" name="uploadExcel" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
+								<input id="uploadExcel" name="uploadExcel" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+								<div class="error text-danger" id="uploadExcelError"></div>
 							</div>
-							<div class="modal-footer d-flex justify-content-start border-top-0">
+								<div id="contactUploadMsgSection" class="text-center p-2 error"></div>
+								<div class="modal-footer d-flex justify-content-start border-top-0">
 								<button type="submit" class="btn text-white bg-customDarkBlue rounded-pill py-1 px-4">SUBMIT</button>
 								<button type="button" class="btn btn-outline-secondary customDarkBlue rounded-pill py-1 px-4" data-bs-dismiss="modal">CLOSE</button>
 							</div>
@@ -350,5 +352,33 @@
 		</cfoutput>
 		<script src="./js/bootstrap.bundle.min.js"></script>
 		<script src="./js/home.js"></script>
+		<cfdump var="#session.testExcel#">
+		<cfset local.columnNames = [
+			"title",
+			"firstname",
+			"lastname",
+			"gender",
+			"dob",
+			"address",
+			"street",
+			"district",
+			"state",
+			"country",
+			"pincode",
+			"email",
+			"phone",
+			"roles"
+		]>
+		<cfset local.resultColumnValues = []>
+		<cfloop query="session.testExcel">
+			<cfset local.missingColumnNames = []>
+			<cfloop array="#local.columnNames#" item="local.columnName">
+				<cfif session.testExcel[local.columnName].toString() == "">
+					<cfset ArrayAppend(local.missingColumnNames, local.columnName)>
+				</cfif>
+			</cfloop>
+			<cfdump var = "#local.missingColumnNames#">
+			<>
+		</cfloop>
     </body>
 </html>
