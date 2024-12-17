@@ -353,32 +353,92 @@
 		<script src="./js/bootstrap.bundle.min.js"></script>
 		<script src="./js/home.js"></script>
 		<cfdump var="#session.testExcel#">
-		<cfset local.columnNames = [
-			"title",
-			"firstname",
-			"lastname",
-			"gender",
-			"dob",
-			"address",
-			"street",
-			"district",
-			"state",
-			"country",
-			"pincode",
-			"email",
-			"phone",
-			"roles"
-		]>
+		<cfset local.resultExcelQuery = session.testExcel>
 		<cfset local.resultColumnValues = []>
 		<cfloop query="session.testExcel">
 			<cfset local.missingColumnNames = []>
-			<cfloop array="#local.columnNames#" item="local.columnName">
+			<cfloop list="#session.testExcel.columnList#" item="local.columnName">
 				<cfif session.testExcel[local.columnName].toString() == "">
 					<cfset ArrayAppend(local.missingColumnNames, local.columnName)>
 				</cfif>
 			</cfloop>
 			<cfdump var = "#local.missingColumnNames#">
-			<>
+			<cfif ArrayLen(local.missingColumnNames)>
+				<cfset ArrayAppend(local.resultColumnValues, ArrayToList(local.missingColumnNames) & " Missing")>
+			<cfelse>
+				<cfquery name="local.checkEmailQuery">
+					SELECT
+						email
+					FROM
+						contactDetails
+					WHERE
+						email = <cfqueryparam value="#session.testExcel.email#" cfsqltype="cf_sql_varchar">
+						AND active = 1
+				</cfquery>
+
+				<cfif QueryRecordCount(local.checkEmailQuery)>
+					<cfquery name="local.updateContactQuery">
+					</cfquery>
+					<cfset ArrayAppend(local.resultColumnValues, "Updated")>
+				<cfelse>
+					<cfquery name="local.insertContactQuery" result="local.insertContactResult">
+						INSERT INTO
+							contactDetails (
+								title,
+								firstname,
+								lastname,
+								gender,
+								dob,
+								contactpicture,
+								address,
+								street,
+								district,
+								state,
+								country,
+								pincode,
+								email,
+								phone,
+								createdBy
+							)
+						VALUES (
+							<cfqueryparam value = "#session.testExcel.title#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#session.testExcel.firstname#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#session.testExcel.lastname#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#session.testExcel.gender#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#session.testExcel.dob#" cfsqltype = "cf_sql_date">,
+							<cfqueryparam value = "demo-contact-image.png" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#session.testExcel.address#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#session.testExcel.street#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#session.testExcel.district#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#session.testExcel.state#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#session.testExcel.country#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#session.testExcel.contactPincode#" cfsqltype = "cf_sql_char">,
+							<cfqueryparam value = "#session.testExcel.contactEmail#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#session.testExcel.contactPhone#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
+						);
+					</cfquery>
+
+					<cfquery name="local.addRolesQuery">
+						INSERT INTO
+							contactRoles (
+								contactId,
+								roleId
+							)
+						VALUES
+						<cfloop list="#session.testExcel.roles#" index="local.i" item="local.roleId">
+							(
+								<cfqueryparam value="#local.insertContactResult.GENERATEDKEY#" cfsqltype="cf_sql_integer">,
+								<cfqueryparam value="#local.roleId#" cfsqltype="cf_sql_integer">
+							)
+							<cfif local.i LT listLen(session.testExcel.role)>,</cfif>
+						</cfloop>
+					</cfquery>
+					<cfset ArrayAppend(local.resultColumnValues, "Added")>
+				</cfif>
+			</cfif>
 		</cfloop>
+		<cfset QueryAddColumn(local.resultExcelQuery, "Result", local.resultColumnValues)>
+		<cfdump var = "#local.resultExcelQuery#">
     </body>
 </html>
