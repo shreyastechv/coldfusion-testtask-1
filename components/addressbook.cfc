@@ -584,12 +584,16 @@
 			<cfelse>
 				<cfquery name="local.checkEmailQuery">
 					SELECT
-						contactid
+						cd.contactid,
+						ISNULL(STRING_AGG(CONVERT(VARCHAR(36), cr.roleId), ','), '') AS roleIds
 					FROM
-						contactDetails
+						contactDetails cd LEFT JOIN contactRoles cr ON cd.contactid = cr.contactId
 					WHERE
-						email = <cfqueryparam value="#local.excelUploadDataQuery.email#" cfsqltype="cf_sql_varchar">
-						AND active = 1
+						cd.email = <cfqueryparam value="#local.excelUploadDataQuery.email#" cfsqltype="cf_sql_varchar">
+						AND cd.active = 1
+						AND cr.active = 1
+					GROUP BY
+						cd.contactid
 				</cfquery>
 
 				<cfset local.roleDetailsQuery = getRoleDetails()>
@@ -619,8 +623,12 @@
 						contactPincode = local.excelUploadDataQuery.pincode,
 						contactEmail = local.excelUploadDataQuery.email,
 						contactPhone = local.excelUploadDataQuery.phone,
-						roleIdsToInsert = local.roleIds,
-						roleIdsToDelete = ValueList(local.roleDetailsQuery.roleId)
+						roleIdsToInsert = ListFilter(local.roleIds, function(roleId) {
+							return NOT ListFind(checkEmailQuery.roleIds, roleId)
+						}),
+						roleIdsToDelete = ListFilter(local.checkEmailQuery.roleIds, function(roleId) {
+							return NOT ListFind(roleIds, roleId)
+						})
 					)>
 					<cfset ArrayAppend(local.resultColumnValues, "Updated")>
 				<cfelse>
