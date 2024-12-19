@@ -205,47 +205,46 @@
 		<cfset local.result = {}>
 
 		<cfquery name="local.getContactByIdQuery">
-			SELECT
-				cd.contactid,
-				cd.title,
-				cd.firstname,
-				cd.lastname,
-				cd.gender,
-				cd.dob,
-				cd.contactpicture,
-				cd.address,
-				cd.street,
-				cd.district,
-				cd.state,
-				cd.country,
-				cd.pincode,
-				cd.email,
-				cd.phone,
-				STRING_AGG(CONVERT(VARCHAR(36), cr.roleId), ',') AS roleIds,
-				STRING_AGG(rd.roleName, ',') AS roleNames
-			FROM
-				contactDetails cd
-				LEFT JOIN contactRoles cr ON cd.contactid = cr.contactId
-				LEFT JOIN roleDetails rd ON cr.roleId = rd.roleId
-			WHERE
-				cd.contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_integer">
-				AND cr.active = 1
-			GROUP BY
-				cd.contactid,
-				cd.title,
-				cd.firstname,
-				cd.lastname,
-				cd.gender,
-				cd.dob,
-				cd.contactpicture,
-				cd.address,
-				cd.street,
-				cd.district,
-				cd.state,
-				cd.country,
-				cd.pincode,
-				cd.email,
-				cd.phone
+		SELECT
+			cd.contactid,
+			cd.title,
+			cd.firstname,
+			cd.lastname,
+			cd.gender,
+			cd.dob,
+			cd.contactpicture,
+			cd.address,
+			cd.street,
+			cd.district,
+			cd.state,
+			cd.country,
+			cd.pincode,
+			cd.email,
+			cd.phone,
+			ISNULL(STRING_AGG(CONVERT(VARCHAR(36), cr.roleId), ','), '') AS roleIds,
+			ISNULL(STRING_AGG(rd.roleName, ','), '') AS roleNames
+		FROM
+			contactDetails cd
+			LEFT JOIN contactRoles cr ON cd.contactid = cr.contactId AND cr.active = 1
+			LEFT JOIN roleDetails rd ON cr.roleId = rd.roleId
+		WHERE
+			cd.contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_integer">
+		GROUP BY
+			cd.contactid,
+			cd.title,
+			cd.firstname,
+			cd.lastname,
+			cd.gender,
+			cd.dob,
+			cd.contactpicture,
+			cd.address,
+			cd.street,
+			cd.district,
+			cd.state,
+			cd.country,
+			cd.pincode,
+			cd.email,
+			cd.phone
         </cfquery>
 		<cfloop query ="local.getContactByIdQuery">
 			<cfset local.result = {
@@ -388,21 +387,23 @@
 						);
 					</cfquery>
 
-					<cfquery name="local.addRolesQuery">
-						INSERT INTO
-							contactRoles (
-								contactId,
-								roleId
-							)
-						VALUES
-						<cfloop list="#arguments.roleIdsToInsert#" index="local.i" item="local.roleId">
-							(
-								<cfqueryparam value="#local.insertContactsResult.GENERATEDKEY#" cfsqltype="cf_sql_integer">,
-								<cfqueryparam value="#local.roleId#" cfsqltype="cf_sql_integer">
-							)
-							<cfif local.i LT listLen(arguments.roleIdsToInsert)>,</cfif>
-						</cfloop>
-					</cfquery>
+					<cfif len(trim(arguments.roleIdsToInsert))>
+						<cfquery name="local.addRolesQuery">
+							INSERT INTO
+								contactRoles (
+									contactId,
+									roleId
+								)
+							VALUES
+							<cfloop list="#arguments.roleIdsToInsert#" index="local.i" item="local.roleId">
+								(
+									<cfqueryparam value="#local.insertContactsResult.GENERATEDKEY#" cfsqltype="cf_sql_integer">,
+									<cfqueryparam value="#local.roleId#" cfsqltype="cf_sql_integer">
+								)
+								<cfif local.i LT listLen(arguments.roleIdsToInsert)>,</cfif>
+							</cfloop>
+						</cfquery>
+					</cfif>
 
 					<cfset local.response["statusCode"] = 200>
 					<cfset local.response["message"] = "Contact Added Successfully">
@@ -591,16 +592,10 @@
 						AND active = 1
 				</cfquery>
 
-				<cfquery name="local.getRoleDetailsQuery">
-					SELECT
-						roleId,
-						roleName
-					FROM
-						roleDetails
-				</cfquery>
+				<cfset local.roleDetailsQuery = getRoleDetails()>
 				<cfset local.roleNameToId = {}>
-				<cfloop query="local.getRoleDetailsQuery">
-					<cfset local.roleNameToId[local.getRoleDetailsQuery.roleName] = local.getRoleDetailsQuery.roleId>
+				<cfloop query="local.roleDetailsQuery">
+					<cfset local.roleNameToId[local.roleDetailsQuery.roleName] = local.roleDetailsQuery.roleId>
 				</cfloop>
 				<cfset local.roleIds = "">
 				<cfloop list="#local.excelUploadDataQuery.roles#" item="local.roleName">
@@ -625,7 +620,7 @@
 						contactEmail = local.excelUploadDataQuery.email,
 						contactPhone = local.excelUploadDataQuery.phone,
 						roleIdsToInsert = local.roleIds,
-						roleIdsToDelete = local.roleIds
+						roleIdsToDelete = ValueList(local.roleDetailsQuery.roleId)
 					)>
 					<cfset ArrayAppend(local.resultColumnValues, "Updated")>
 				<cfelse>
