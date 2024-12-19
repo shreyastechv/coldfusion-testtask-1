@@ -564,9 +564,157 @@
 		<cfargument name="uploadExcel" type="string" required="true">
 		<cfset local.response = StructNew()>
 		<cfset local.response["statusCode"] = 200>
-		<cfset local.response["fileName"] = "test.xlsx">
+		<cfset local.response["fileName"] = "#session.fullName#-contactsUploadResult-#DateTimeFormat(Now(), "yyyy-mm-dd-HH-nn-ss")#.xlsx">
 
-		<cfspreadsheet action="read" src="#arguments.uploadExcel#" query="session.testExcel" headerrow="1" excludeHeaderRow=true>
+		<cfspreadsheet action="read" src="#arguments.uploadExcel#" query="local.excelUploadDataQuery" headerrow="1" excludeHeaderRow=true>
+		<cfset local.resultExcelQuery = Duplicate(local.excelUploadDataQuery)>
+
+		<cfset local.resultColumnValues = []>
+		<cfloop query="local.excelUploadDataQuery">
+			<cfset local.missingColumnNames = []>
+			<cfloop list="#local.excelUploadDataQuery.columnList#" item="local.columnName">
+				<cfif local.excelUploadDataQuery[local.columnName].toString() == "">
+					<cfset ArrayAppend(local.missingColumnNames, local.columnName)>
+				</cfif>
+			</cfloop>
+			<cfif ArrayLen(local.missingColumnNames)>
+				<cfset local.response["statusCode"] = 422>
+				<cfset ArrayAppend(local.resultColumnValues, ArrayToList(local.missingColumnNames) & " Missing")>
+			<cfelse>
+				<cfquery name="local.getRoleDetailsQuery">
+					SELECT
+						roleId,
+						roleName
+					FROM
+						roleDetails
+				</cfquery>
+
+				<cfset local.roleNameToId = {}>
+				<cfloop query="local.getRoleDetailsQuery">
+					<cfset local.roleNameToId[local.getRoleDetailsQuery.roleName] = local.getRoleDetailsQuery.roleId>
+				</cfloop>
+
+				<cfquery name="local.checkEmailQuery">
+					SELECT
+						contactid
+					FROM
+						contactDetails
+					WHERE
+						email = <cfqueryparam value="#local.excelUploadDataQuery.email#" cfsqltype="cf_sql_varchar">
+						AND active = 1
+				</cfquery>
+
+				<cfif QueryRecordCount(local.checkEmailQuery)>
+					<cfquery name="local.updateContactQuery">
+						UPDATE
+							contactDetails
+						SET
+							title = <cfqueryparam value = "#local.excelUploadDataQuery.title#" cfsqltype = "cf_sql_varchar">,
+							firstName = <cfqueryparam value = "#local.excelUploadDataQuery.firstname#" cfsqltype = "cf_sql_varchar">,
+							lastName = <cfqueryparam value = "#local.excelUploadDataQuery.lastname#" cfsqltype = "cf_sql_varchar">,
+							gender = <cfqueryparam value = "#local.excelUploadDataQuery.gender#" cfsqltype = "cf_sql_varchar">,
+							dob = <cfqueryparam value = "#local.excelUploadDataQuery.dob#" cfsqltype = "cf_sql_date">,
+							address = <cfqueryparam value = "#local.excelUploadDataQuery.address#" cfsqltype = "cf_sql_varchar">,
+							street = <cfqueryparam value = "#local.excelUploadDataQuery.street#" cfsqltype = "cf_sql_varchar">,
+							district = <cfqueryparam value = "#local.excelUploadDataQuery.district#" cfsqltype = "cf_sql_varchar">,
+							STATE = <cfqueryparam value = "#local.excelUploadDataQuery.state#" cfsqltype = "cf_sql_varchar">,
+							country = <cfqueryparam value = "#local.excelUploadDataQuery.country#" cfsqltype = "cf_sql_varchar">,
+							pincode = <cfqueryparam value = "#local.excelUploadDataQuery.pincode#" cfsqltype = "cf_sql_varchar">,
+							email = <cfqueryparam value = "#local.excelUploadDataQuery.email#" cfsqltype = "cf_sql_varchar">,
+							phone = <cfqueryparam value = "#local.excelUploadDataQuery.phone#" cfsqltype = "cf_sql_varchar">,
+							updatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
+						WHERE
+							contactid = <cfqueryparam value = "#local.checkEmailQuery.contactId#" cfsqltype = "cf_sql_integer">
+					</cfquery>
+
+					<cfquery name="local.deleteRoleQuery">
+						UPDATE
+							contactRoles
+						SET
+							active = 0,
+							deletedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_varchar">
+						WHERE
+							contactId = <cfqueryparam value="#local.checkEmailQuery.contactId#" cfsqltype="cf_sql_integer">
+					</cfquery>
+
+					<cfif len(trim(local.excelUploadDataQuery.roles))>
+						<cfquery name="local.addRolesQuery">
+							INSERT INTO
+								contactRoles (
+									contactId,
+									roleId
+								)
+							VALUES
+							<cfloop list="#local.excelUploadDataQuery.roles#" index="local.i" item="local.roleName">
+								(
+									<cfqueryparam value="#local.checkEmailQuery.contactId#" cfsqltype="cf_sql_integer">,
+									<cfqueryparam value="#local.roleNameToId[local.roleName]#" cfsqltype="cf_sql_integer">
+								)
+								<cfif local.i LT listLen(local.excelUploadDataQuery.roles)>,</cfif>
+							</cfloop>
+						</cfquery>
+					</cfif>
+					<cfset ArrayAppend(local.resultColumnValues, "Updated")>
+				<cfelse>
+					<cfquery name="local.insertContactQuery" result="local.insertContactResult">
+						INSERT INTO
+							contactDetails (
+								title,
+								firstname,
+								lastname,
+								gender,
+								dob,
+								contactpicture,
+								address,
+								street,
+								district,
+								state,
+								country,
+								pincode,
+								email,
+								phone,
+								createdBy
+							)
+						VALUES (
+							<cfqueryparam value = "#local.excelUploadDataQuery.title#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#local.excelUploadDataQuery.firstname#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#local.excelUploadDataQuery.lastname#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#local.excelUploadDataQuery.gender#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#local.excelUploadDataQuery.dob#" cfsqltype = "cf_sql_date">,
+							<cfqueryparam value = "demo-contact-image.png" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#local.excelUploadDataQuery.address#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#local.excelUploadDataQuery.street#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#local.excelUploadDataQuery.district#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#local.excelUploadDataQuery.state#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#local.excelUploadDataQuery.country#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#local.excelUploadDataQuery.pincode#" cfsqltype = "cf_sql_char">,
+							<cfqueryparam value = "#local.excelUploadDataQuery.email#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#local.excelUploadDataQuery.phone#" cfsqltype = "cf_sql_varchar">,
+							<cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
+						);
+					</cfquery>
+
+					<cfquery name="local.addRolesQuery">
+						INSERT INTO
+							contactRoles (
+								contactId,
+								roleId
+							)
+						VALUES
+						<cfloop list="#local.excelUploadDataQuery.roles#" index="local.i" item="local.roleName">
+							(
+								<cfqueryparam value="#local.insertContactResult.GENERATEDKEY#" cfsqltype="cf_sql_integer">,
+								<cfqueryparam value="#local.roleNameToId[local.roleName]#" cfsqltype="cf_sql_integer">
+							)
+							<cfif local.i LT listLen(local.excelUploadDataQuery.roles)>,</cfif>
+						</cfloop>
+					</cfquery>
+					<cfset ArrayAppend(local.resultColumnValues, "Added")>
+				</cfif>
+			</cfif>
+		</cfloop>
+		<cfset QueryAddColumn(local.resultExcelQuery, "Result", local.resultColumnValues)>
+		<cfspreadsheet action="write" filename="../assets/spreadsheets/#local.response.fileName#" query="local.resultExcelQuery" sheetname="contacts" overwrite=true>
 		<cfreturn local.response>
 	</cffunction>
 

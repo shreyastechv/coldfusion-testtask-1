@@ -325,17 +325,16 @@ $("#contactUpload").submit(function(event) {
 		contentType: false,
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
-			console.log(responseJSON);
-			//downloadURI(`./assets/spreadsheets/${responseJSON.fileName}`, `${fileName}`);
+			downloadURI(`./assets/spreadsheets/${responseJSON.fileName}`, `${responseJSON.fileName}`);
 			if (responseJSON.statusCode === 200) {
 				contactUploadMsgSection.css("color", "green");
-				loadHomePageData();
 				contactUploadMsgSection.text("Contacts Uploaded Successfully. Check the downloaded file for more details.");
 			}
 			else {
 				contactUploadMsgSection.css("color", "red");
 				contactUploadMsgSection.text("There were some errors. Check the downloaded file for more details.");
 			}
+			loadHomePageData();
 		}
 	});
 });
