@@ -585,7 +585,7 @@
 				<cfquery name="local.checkEmailQuery">
 					SELECT
 						cd.contactid,
-						ISNULL(STRING_AGG(CONVERT(VARCHAR(36), cr.roleId), ','), '') AS roleIds
+						ISNULL(STRING_AGG(CONVERT(VARCHAR(36), cr.roleId), ','), '') AS previousRoleIds
 					FROM
 						contactDetails cd LEFT JOIN contactRoles cr ON cd.contactid = cr.contactId
 					WHERE
@@ -601,9 +601,9 @@
 				<cfloop query="local.roleDetailsQuery">
 					<cfset local.roleNameToId[local.roleDetailsQuery.roleName] = local.roleDetailsQuery.roleId>
 				</cfloop>
-				<cfset local.roleIds = "">
+				<cfset local.currentRoleIds = "">
 				<cfloop list="#local.excelUploadDataQuery.roles#" item="local.roleName">
-					<cfset local.roleIds = ListAppend(local.roleIds, local.roleNameToId[local.roleName])>
+					<cfset local.currentRoleIds = ListAppend(local.currentRoleIds, local.roleNameToId[local.roleName])>
 				</cfloop>
 
 				<cfif QueryRecordCount(local.checkEmailQuery)>
@@ -623,11 +623,11 @@
 						contactPincode = local.excelUploadDataQuery.pincode,
 						contactEmail = local.excelUploadDataQuery.email,
 						contactPhone = local.excelUploadDataQuery.phone,
-						roleIdsToInsert = ListFilter(local.roleIds, function(roleId) {
-							return NOT ListFind(checkEmailQuery.roleIds, roleId)
+						roleIdsToInsert = ListFilter(local.currentRoleIds, function(roleId) {
+							return NOT ListFind(checkEmailQuery.previousRoleIds, roleId)
 						}),
-						roleIdsToDelete = ListFilter(local.checkEmailQuery.roleIds, function(roleId) {
-							return NOT ListFind(roleIds, roleId)
+						roleIdsToDelete = ListFilter(local.checkEmailQuery.previousRoleIds, function(roleId) {
+							return NOT ListFind(currentRoleIds, roleId)
 						})
 					)>
 					<cfset ArrayAppend(local.resultColumnValues, "Updated")>
@@ -648,7 +648,7 @@
 						contactPincode = local.excelUploadDataQuery.pincode,
 						contactEmail = local.excelUploadDataQuery.email,
 						contactPhone = local.excelUploadDataQuery.phone,
-						roleIdsToInsert = local.roleIds,
+						roleIdsToInsert = local.currentRoleIds,
 						roleIdsToDelete = ""
 					)>
 					<cfset ArrayAppend(local.resultColumnValues, "Added")>
