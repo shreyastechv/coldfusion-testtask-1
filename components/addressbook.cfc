@@ -604,7 +604,7 @@
 				</cfloop>
 				<cfset local.roleIds = "">
 				<cfloop list="#local.excelUploadDataQuery.roles#" item="local.roleName">
-					<cfset ListAppend(local.roleIds, local.roleNameToId[local.roleName])>
+					<cfset local.roleIds = ListAppend(local.roleIds, local.roleNameToId[local.roleName])>
 				</cfloop>
 
 				<cfif QueryRecordCount(local.checkEmailQuery)>
