@@ -335,6 +335,7 @@ $("#contactUpload").submit(function(event) {
 				contactUploadMsgSection.text("There were some errors. Check the downloaded file for more details.");
 			}
 			loadHomePageData();
+			thisForm.reset();
 		}
 	});
 });
