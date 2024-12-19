@@ -564,9 +564,96 @@
 		<cfargument name="uploadExcel" type="string" required="true">
 		<cfset local.response = StructNew()>
 		<cfset local.response["statusCode"] = 200>
-		<cfset local.response["fileName"] = "test.xlsx">
+		<cfset local.response["fileName"] = "#session.fullName#-contactsUploadResult-#DateTimeFormat(Now(), "yyyy-mm-dd-HH-nn-ss")#.xlsx">
 
-		<cfspreadsheet action="read" src="#arguments.uploadExcel#" query="session.testExcel" headerrow="1" excludeHeaderRow=true>
+		<cfspreadsheet action="read" src="#arguments.uploadExcel#" query="local.excelUploadDataQuery" headerrow="1" excludeHeaderRow=true>
+		<cfset local.resultExcelQuery = Duplicate(local.excelUploadDataQuery)>
+
+		<cfset local.resultColumnValues = []>
+		<cfloop query="local.excelUploadDataQuery">
+			<cfset local.missingColumnNames = []>
+			<cfloop list="#local.excelUploadDataQuery.columnList#" item="local.columnName">
+				<cfif local.excelUploadDataQuery[local.columnName].toString() == "">
+					<cfset ArrayAppend(local.missingColumnNames, local.columnName)>
+				</cfif>
+			</cfloop>
+			<cfif ArrayLen(local.missingColumnNames)>
+				<cfset local.response["statusCode"] = 422>
+				<cfset ArrayAppend(local.resultColumnValues, ArrayToList(local.missingColumnNames) & " Missing")>
+			<cfelse>
+				<cfquery name="local.checkEmailQuery">
+					SELECT
+						contactid
+					FROM
+						contactDetails
+					WHERE
+						email = <cfqueryparam value="#local.excelUploadDataQuery.email#" cfsqltype="cf_sql_varchar">
+						AND active = 1
+				</cfquery>
+
+				<cfquery name="local.getRoleDetailsQuery">
+					SELECT
+						roleId,
+						roleName
+					FROM
+						roleDetails
+				</cfquery>
+				<cfset local.roleNameToId = {}>
+				<cfloop query="local.getRoleDetailsQuery">
+					<cfset local.roleNameToId[local.getRoleDetailsQuery.roleName] = local.getRoleDetailsQuery.roleId>
+				</cfloop>
+				<cfset local.roleIds = "">
+				<cfloop list="#local.excelUploadDataQuery.roles#" item="local.roleName">
+					<cfset ListAppend(local.roleIds, local.roleNameToId[local.roleName])>
+				</cfloop>
+
+				<cfif QueryRecordCount(local.checkEmailQuery)>
+					<cfset modifyContacts(
+						contactId = local.checkEmailQuery.contactid,
+						contactTitle = local.excelUploadDataQuery.title,
+						contactFirstName = local.excelUploadDataQuery.firstname,
+						contactLastName = local.excelUploadDataQuery.lastname,
+						contactGender = local.excelUploadDataQuery.gender,
+						contactDOB = local.excelUploadDataQuery.dob,
+						contactImage = "",
+						contactAddress = local.excelUploadDataQuery.address,
+						contactStreet = local.excelUploadDataQuery.street,
+						contactDistrict = local.excelUploadDataQuery.district,
+						contactState = local.excelUploadDataQuery.state,
+						contactCountry = local.excelUploadDataQuery.country,
+						contactPincode = local.excelUploadDataQuery.pincode,
+						contactEmail = local.excelUploadDataQuery.email,
+						contactPhone = local.excelUploadDataQuery.phone,
+						roleIdsToInsert = local.roleIds,
+						roleIdsToDelete = local.roleIds
+					)>
+					<cfset ArrayAppend(local.resultColumnValues, "Updated")>
+				<cfelse>
+					<cfset modifyContacts(
+						contactId = "",
+						contactTitle = local.excelUploadDataQuery.title,
+						contactFirstName = local.excelUploadDataQuery.firstname,
+						contactLastName = local.excelUploadDataQuery.lastname,
+						contactGender = local.excelUploadDataQuery.gender,
+						contactDOB = local.excelUploadDataQuery.dob,
+						contactImage = "",
+						contactAddress = local.excelUploadDataQuery.address,
+						contactStreet = local.excelUploadDataQuery.street,
+						contactDistrict = local.excelUploadDataQuery.district,
+						contactState = local.excelUploadDataQuery.state,
+						contactCountry = local.excelUploadDataQuery.country,
+						contactPincode = local.excelUploadDataQuery.pincode,
+						contactEmail = local.excelUploadDataQuery.email,
+						contactPhone = local.excelUploadDataQuery.phone,
+						roleIdsToInsert = local.roleIds,
+						roleIdsToDelete = ""
+					)>
+					<cfset ArrayAppend(local.resultColumnValues, "Added")>
+				</cfif>
+			</cfif>
+		</cfloop>
+		<cfset QueryAddColumn(local.resultExcelQuery, "Result", local.resultColumnValues)>
+		<cfspreadsheet action="write" filename="../assets/spreadsheets/#local.response.fileName#" query="local.resultExcelQuery" sheetname="contacts" overwrite=true>
 		<cfreturn local.response>
 	</cffunction>
 
