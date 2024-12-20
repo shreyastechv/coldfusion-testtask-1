@@ -205,46 +205,46 @@
 		<cfset local.result = {}>
 
 		<cfquery name="local.getContactByIdQuery">
-		SELECT
-			cd.contactid,
-			cd.title,
-			cd.firstname,
-			cd.lastname,
-			cd.gender,
-			cd.dob,
-			cd.contactpicture,
-			cd.address,
-			cd.street,
-			cd.district,
-			cd.state,
-			cd.country,
-			cd.pincode,
-			cd.email,
-			cd.phone,
-			ISNULL(STRING_AGG(CONVERT(VARCHAR(36), cr.roleId), ','), '') AS roleIds,
-			ISNULL(STRING_AGG(rd.roleName, ','), '') AS roleNames
-		FROM
-			contactDetails cd
-			LEFT JOIN contactRoles cr ON cd.contactid = cr.contactId AND cr.active = 1
-			LEFT JOIN roleDetails rd ON cr.roleId = rd.roleId
-		WHERE
-			cd.contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_integer">
-		GROUP BY
-			cd.contactid,
-			cd.title,
-			cd.firstname,
-			cd.lastname,
-			cd.gender,
-			cd.dob,
-			cd.contactpicture,
-			cd.address,
-			cd.street,
-			cd.district,
-			cd.state,
-			cd.country,
-			cd.pincode,
-			cd.email,
-			cd.phone
+			SELECT
+				cd.contactid,
+				cd.title,
+				cd.firstname,
+				cd.lastname,
+				cd.gender,
+				cd.dob,
+				cd.contactpicture,
+				cd.address,
+				cd.street,
+				cd.district,
+				cd.state,
+				cd.country,
+				cd.pincode,
+				cd.email,
+				cd.phone,
+				ISNULL(STRING_AGG(CONVERT(VARCHAR(36), cr.roleId), ','), '') AS roleIds,
+				ISNULL(STRING_AGG(rd.roleName, ','), '') AS roleNames
+			FROM
+				contactDetails cd
+				LEFT JOIN contactRoles cr ON cd.contactid = cr.contactId AND cr.active = 1
+				LEFT JOIN roleDetails rd ON cr.roleId = rd.roleId
+			WHERE
+				cd.contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_integer">
+			GROUP BY
+				cd.contactid,
+				cd.title,
+				cd.firstname,
+				cd.lastname,
+				cd.gender,
+				cd.dob,
+				cd.contactpicture,
+				cd.address,
+				cd.street,
+				cd.district,
+				cd.state,
+				cd.country,
+				cd.pincode,
+				cd.email,
+				cd.phone
         </cfquery>
 		<cfloop query ="local.getContactByIdQuery">
 			<cfset local.result = {
