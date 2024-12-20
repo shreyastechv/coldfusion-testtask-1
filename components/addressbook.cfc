@@ -205,46 +205,46 @@
 		<cfset local.result = {}>
 
 		<cfquery name="local.getContactByIdQuery">
-		SELECT
-			cd.contactid,
-			cd.title,
-			cd.firstname,
-			cd.lastname,
-			cd.gender,
-			cd.dob,
-			cd.contactpicture,
-			cd.address,
-			cd.street,
-			cd.district,
-			cd.state,
-			cd.country,
-			cd.pincode,
-			cd.email,
-			cd.phone,
-			ISNULL(STRING_AGG(CONVERT(VARCHAR(36), cr.roleId), ','), '') AS roleIds,
-			ISNULL(STRING_AGG(rd.roleName, ','), '') AS roleNames
-		FROM
-			contactDetails cd
-			LEFT JOIN contactRoles cr ON cd.contactid = cr.contactId AND cr.active = 1
-			LEFT JOIN roleDetails rd ON cr.roleId = rd.roleId
-		WHERE
-			cd.contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_integer">
-		GROUP BY
-			cd.contactid,
-			cd.title,
-			cd.firstname,
-			cd.lastname,
-			cd.gender,
-			cd.dob,
-			cd.contactpicture,
-			cd.address,
-			cd.street,
-			cd.district,
-			cd.state,
-			cd.country,
-			cd.pincode,
-			cd.email,
-			cd.phone
+			SELECT
+				cd.contactid,
+				cd.title,
+				cd.firstname,
+				cd.lastname,
+				cd.gender,
+				cd.dob,
+				cd.contactpicture,
+				cd.address,
+				cd.street,
+				cd.district,
+				cd.state,
+				cd.country,
+				cd.pincode,
+				cd.email,
+				cd.phone,
+				ISNULL(STRING_AGG(CONVERT(VARCHAR(36), cr.roleId), ','), '') AS roleIds,
+				ISNULL(STRING_AGG(rd.roleName, ','), '') AS roleNames
+			FROM
+				contactDetails cd
+				LEFT JOIN contactRoles cr ON cd.contactid = cr.contactId AND cr.active = 1
+				LEFT JOIN roleDetails rd ON cr.roleId = rd.roleId
+			WHERE
+				cd.contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_integer">
+			GROUP BY
+				cd.contactid,
+				cd.title,
+				cd.firstname,
+				cd.lastname,
+				cd.gender,
+				cd.dob,
+				cd.contactpicture,
+				cd.address,
+				cd.street,
+				cd.district,
+				cd.state,
+				cd.country,
+				cd.pincode,
+				cd.email,
+				cd.phone
         </cfquery>
 		<cfloop query ="local.getContactByIdQuery">
 			<cfset local.result = {
@@ -544,6 +544,7 @@
 			</cfdocument>
 		<cfelseif arguments.file EQ "excel">
 			<cfset local.createFileQuery = getFullContacts()>
+			<cfset QueryDeleteColumn(local.createFileQuery, "contactpicture")>
 			<cfset local.fileName = local.fileName & ".xlsx">
 		    <cfspreadsheet action="write" filename="../assets/spreadsheets/#local.fileName#" query="local.createFileQuery" sheetname="contacts" overwrite=true>
 		<cfelseif arguments.file EQ "excelTemplate">
@@ -561,6 +562,23 @@
 		<cfreturn local.fileName>
 	</cffunction>
 
+	<cffunction name="isSubList">
+		<cfargument name="list1" type="string" required="true">
+		<cfargument name="list2" type="string" required="true">
+		<cfset local.foundDifference = false>
+
+		<cfif list1 neq "" AND list2 neq "">
+			<cfloop list="#list1#" index="item">
+				<cfif NOT ListFind(list2, item)>
+					<cfset local.foundDifference = true>
+					<cfbreak>
+				</cfif>
+			</cfloop>
+		</cfif>
+
+		<cfreturn local.foundDifference>
+	</cffunction>
+
 	<cffunction name="uploadExcel" returnType="struct" returnFormat="json" access="remote">
 		<cfargument name="uploadExcel" type="string" required="true">
 		<cfset local.response = StructNew()>
@@ -569,19 +587,49 @@
 
 		<cfspreadsheet action="read" src="#arguments.uploadExcel#" query="local.excelUploadDataQuery" headerrow="1" excludeHeaderRow=true>
 		<cfset local.resultExcelQuery = Duplicate(local.excelUploadDataQuery)>
+		<cfset local.roleDetailsQuery = getRoleDetails()>
+		<cfset local.roleNameToId = {}>
+		<cfloop query="local.roleDetailsQuery">
+			<cfset local.roleNameToId[local.roleDetailsQuery.roleName] = local.roleDetailsQuery.roleId>
+		</cfloop>
 
 		<cfset local.resultColumnValues = []>
 		<cfloop query="local.excelUploadDataQuery">
+			<cfset local.valid = true>
+			<cfset local.currentRoleIds = "">
+			<cfset local.resultColumnValue = "">
+
+			<!--- Get New rolenames and roleids --->
+			<cfloop list="#local.excelUploadDataQuery.roles#" item="local.roleName">
+				<cfif structKeyExists(local.roleNameToId, local.roleName)>
+					<cfset local.currentRoleIds = ListAppend(local.currentRoleIds, local.roleNameToId[local.roleName])>
+				</cfif>
+			</cfloop>
+
+			<!--- Missing data validation --->
 			<cfset local.missingColumnNames = []>
 			<cfloop list="#local.excelUploadDataQuery.columnList#" item="local.columnName">
 				<cfif local.excelUploadDataQuery[local.columnName].toString() == "">
 					<cfset ArrayAppend(local.missingColumnNames, local.columnName)>
 				</cfif>
 			</cfloop>
+
 			<cfif ArrayLen(local.missingColumnNames)>
-				<cfset local.response["statusCode"] = 422>
-				<cfset ArrayAppend(local.resultColumnValues, ArrayToList(local.missingColumnNames) & " Missing")>
-			<cfelse>
+				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, ArrayToList(local.missingColumnNames) & " Missing")>
+			</cfif>
+
+			<!--- Email validation --->
+			<cfif NOT isValid("email", local.excelUploadDataQuery.email)>
+				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Email not valid")>
+			</cfif>
+
+			<!--- Role Validation --->
+			<cfif isSubList(local.excelUploadDataQuery.roles, ValueList(local.roleDetailsQuery.roleName))>
+				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Roles are not valid")>
+			</cfif>
+
+			<cfif len(trim(local.resultColumnValue))>
+				<!--- Check Email Existence --->
 				<cfquery name="local.checkEmailQuery">
 					SELECT
 						cd.contactid,
@@ -590,23 +638,15 @@
 						contactDetails cd LEFT JOIN contactRoles cr ON cd.contactid = cr.contactId
 					WHERE
 						cd.email = <cfqueryparam value="#local.excelUploadDataQuery.email#" cfsqltype="cf_sql_varchar">
+						AND cd.createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
 						AND cd.active = 1
 						AND cr.active = 1
 					GROUP BY
 						cd.contactid
 				</cfquery>
 
-				<cfset local.roleDetailsQuery = getRoleDetails()>
-				<cfset local.roleNameToId = {}>
-				<cfloop query="local.roleDetailsQuery">
-					<cfset local.roleNameToId[local.roleDetailsQuery.roleName] = local.roleDetailsQuery.roleId>
-				</cfloop>
-				<cfset local.currentRoleIds = "">
-				<cfloop list="#local.excelUploadDataQuery.roles#" item="local.roleName">
-					<cfset local.currentRoleIds = ListAppend(local.currentRoleIds, local.roleNameToId[local.roleName])>
-				</cfloop>
-
 				<cfif QueryRecordCount(local.checkEmailQuery)>
+					<!--- Create Contact --->
 					<cfset modifyContacts(
 						contactId = local.checkEmailQuery.contactid,
 						contactTitle = local.excelUploadDataQuery.title,
@@ -632,6 +672,7 @@
 					)>
 					<cfset ArrayAppend(local.resultColumnValues, "Updated")>
 				<cfelse>
+					<!--- Edit Contact --->
 					<cfset modifyContacts(
 						contactId = "",
 						contactTitle = local.excelUploadDataQuery.title,
@@ -653,9 +694,30 @@
 					)>
 					<cfset ArrayAppend(local.resultColumnValues, "Added")>
 				</cfif>
+			<cfelse>
+				<cfset local.response["statusCode"] = 422>
+				<cfset ArrayAppend(local.resultColumnValues, local.resultColumnValue)>
 			</cfif>
+
 		</cfloop>
+		<cfif QueryKeyExists(local.resultExcelQuery, "Result")>
+			<cfset QueryDeleteColumn(local.resultExcelQuery, "Result")>
+		</cfif>
 		<cfset QueryAddColumn(local.resultExcelQuery, "Result", local.resultColumnValues)>
+
+		<!--- Query Sorting --->
+		<cfset local.sortedQuery = QuerySort(local.resultExcelQuery, function(obj1, obj2){
+			var check1 = FindNoCase("added", obj1.result) OR FindNoCase("updated", obj1.result);
+			var check2 = FindNoCase("added", obj2.result) OR FindNoCase("updated", obj2.result);
+
+			if (check1 AND NOT check2) {
+				return 1;
+			}
+			else if (check2 AND NOT check1) {
+				return -1;
+			}
+			return 0;
+		})>
 		<cfspreadsheet action="write" filename="../assets/spreadsheets/#local.response.fileName#" query="local.resultExcelQuery" sheetname="contacts" overwrite=true>
 		<cfreturn local.response>
 	</cffunction>

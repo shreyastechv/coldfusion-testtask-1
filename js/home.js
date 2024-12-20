@@ -325,7 +325,6 @@ $("#contactUpload").submit(function(event) {
 		contentType: false,
 		success: function(response) {
 			const responseJSON = JSON.parse(response);
-			downloadURI(`./assets/spreadsheets/${responseJSON.fileName}`, `${responseJSON.fileName}`);
 			if (responseJSON.statusCode === 200) {
 				contactUploadMsgSection.css("color", "green");
 				contactUploadMsgSection.text("Contacts Uploaded Successfully. Check the downloaded file for more details.");
@@ -334,6 +333,7 @@ $("#contactUpload").submit(function(event) {
 				contactUploadMsgSection.css("color", "red");
 				contactUploadMsgSection.text("There were some errors. Check the downloaded file for more details.");
 			}
+			downloadURI(`./assets/spreadsheets/${responseJSON.fileName}`, `${responseJSON.fileName}`);
 			loadHomePageData();
 			thisForm.reset();
 		}
