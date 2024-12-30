@@ -629,6 +629,9 @@
 			</cfif>
 
 			<cfif len(trim(local.resultColumnValue))>
+				<cfset local.response["statusCode"] = 422>
+				<cfset ArrayAppend(local.resultColumnValues, local.resultColumnValue)>
+			<cfelse>
 				<!--- Check Email Existence --->
 				<cfquery name="local.checkEmailQuery">
 					SELECT
@@ -694,9 +697,6 @@
 					)>
 					<cfset ArrayAppend(local.resultColumnValues, "Added")>
 				</cfif>
-			<cfelse>
-				<cfset local.response["statusCode"] = 422>
-				<cfset ArrayAppend(local.resultColumnValues, local.resultColumnValue)>
 			</cfif>
 
 		</cfloop>
