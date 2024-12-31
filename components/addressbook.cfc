@@ -628,6 +628,11 @@
 				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Title should be one in [Mr., Miss., Ms., or Mrs.]")>
 			</cfif>
 
+			<!--- Gender validation --->
+			<cfif NOT ArrayFind(["Male", "Female", "Others"], local.excelUploadDataQuery.gender)>
+				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Gender should be one in [Male, Female, Others]")>
+			</cfif>
+
 			<!--- Date of Birth validation --->
 			<cfif NOT isDate(local.excelUploadDataQuery.dob)>
 				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "DOB is not valid - It should be in format of yyyy-mm-dd")>
