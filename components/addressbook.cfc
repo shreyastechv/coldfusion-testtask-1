@@ -623,6 +623,13 @@
 				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Email not valid")>
 			</cfif>
 
+			<!--- Date of Birth validation --->
+			<cfif NOT isDate(local.excelUploadDataQuery.dob)>
+				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "DOB is not valid - It should be in format of yyyy-mm-dd")>
+			<cfelseif DateCompare(local.excelUploadDataQuery.dob, Now(), "d") NEQ -1>
+				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "DOB should not be in the future")>
+			</cfif>
+
 			<!--- Role Validation --->
 			<cfif isSubList(local.excelUploadDataQuery.roles, ValueList(local.roleDetailsQuery.roleName))>
 				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Roles are not valid")>
