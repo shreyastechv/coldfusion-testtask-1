@@ -635,6 +635,14 @@
 				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "DOB should not be in the future")>
 			</cfif>
 
+			<!--- Phone number validation --->
+			<cfset local.formattedPhone = trim(replace(local.excelUploadDataQuery.phone, "-", ""))>
+			<cfif NOT isNumeric(local.formattedPhone)>
+				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Phone number should contain only digits")>
+			<cfelseif len(local.formattedPhone) NEQ 10>
+				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Phone number length should be 10 characters")>
+			</cfif>
+
 			<!--- Role Validation --->
 			<cfif isSubList(local.excelUploadDataQuery.roles, ValueList(local.roleDetailsQuery.roleName))>
 				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Roles are not valid")>
