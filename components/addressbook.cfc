@@ -635,6 +635,14 @@
 				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "DOB should not be in the future")>
 			</cfif>
 
+			<!--- Pincode validation --->
+			<cfset local.formattedPincode = trim(replace(local.excelUploadDataQuery.pincode, "-", ""))>
+			<cfif NOT isNumeric(local.formattedPincode)>
+				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Pincode should contain only digits")>
+			<cfelseif len(local.formattedPincode) NEQ 6>
+				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Pincode length should be 6 characters")>
+			</cfif>
+
 			<!--- Phone number validation --->
 			<cfset local.formattedPhone = trim(replace(local.excelUploadDataQuery.phone, "-", ""))>
 			<cfif NOT isNumeric(local.formattedPhone)>
