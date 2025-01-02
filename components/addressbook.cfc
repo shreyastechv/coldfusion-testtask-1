@@ -674,7 +674,7 @@
 
 			<cfif len(trim(local.resultColumnValue))>
 				<cfset local.response["statusCode"] = 422>
-				<cfset ArrayAppend(local.resultColumnValues, local.resultColumnValue)>
+				<cfset ArrayAppend(local.resultColumnValues, ListChangeDelims(local.resultColumnValue, ", "))>
 			<cfelse>
 				<!--- Check Email Existence --->
 				<cfquery name="local.checkEmailQuery">
