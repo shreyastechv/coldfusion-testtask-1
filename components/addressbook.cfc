@@ -398,7 +398,7 @@
 							<cfloop list="#arguments.roleIdsToInsert#" index="local.i" item="local.roleId">
 								(
 									<cfqueryparam value="#local.insertContactsResult.GENERATEDKEY#" cfsqltype="cf_sql_integer">,
-									<cfqueryparam value="#local.roleId#" cfsqltype="cf_sql_integer">
+									<cfqueryparam value="#trim(local.roleId)#" cfsqltype="cf_sql_integer">
 								)
 								<cfif local.i LT listLen(arguments.roleIdsToInsert)>,</cfif>
 							</cfloop>
@@ -457,7 +457,7 @@
 							<cfloop list="#arguments.roleIdsToInsert#" index="local.i" item="local.roleId">
 								(
 									<cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_integer">,
-									<cfqueryparam value="#local.roleId#" cfsqltype="cf_sql_integer">
+									<cfqueryparam value="#trim(local.roleId)#" cfsqltype="cf_sql_integer">
 								)
 								<cfif local.i LT listLen(arguments.roleIdsToInsert)>,</cfif>
 							</cfloop>
@@ -586,8 +586,8 @@
 
 			<!--- Get New rolenames and roleids --->
 			<cfloop list="#local.excelUploadDataQuery.roles#" item="local.roleName">
-				<cfif structKeyExists(local.roleNameToId, local.roleName)>
-					<cfset local.currentRoleIds = ListAppend(local.currentRoleIds, local.roleNameToId[local.roleName])>
+				<cfif structKeyExists(local.roleNameToId, trim(local.roleName))>
+					<cfset local.currentRoleIds = ListAppend(local.currentRoleIds, local.roleNameToId[trim(local.roleName)])>
 				</cfif>
 			</cfloop>
 
