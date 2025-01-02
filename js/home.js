@@ -12,6 +12,7 @@ function logOut() {
 				}
 				else {
 					submitMsgSection.text(responseJSON.message);
+					alert("Sorry! Unable to logout.");
 				}
 			},
 			error: function (xhr, ajaxOptions, thrownError) {
