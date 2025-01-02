@@ -1,6 +1,5 @@
 function logOut() {
 	if (confirm("Confirm logout")) {
-		const submitMsgSection = $("#submitMsgSection");
 
 		$.ajax({
 			type: "POST",
@@ -11,11 +10,11 @@ function logOut() {
 					location.reload();
 				}
 				else {
-					submitMsgSection.text(responseJSON.message);
+					alert("Sorry! Unable to logout.");
 				}
 			},
-			error: function (xhr, ajaxOptions, thrownError) {
-				submitMsgSection.text("We encountered an error! Error details are: " + thrownError);
+			error: function () {
+				alert("Sorry! Unable to logout.");
 			}
 		});
 	}
@@ -180,11 +179,12 @@ $("#contactManagement").submit(function(event) {
         contactPincode: $("#editContactPincode").val(),
         contactEmail: $("#editContactEmail").val(),
         contactPhone: $("#editContactPhone").val(),
-		roleIdsToInsert: currentContactRoles.filter(element => !previousContactRoles.includes(element)).join(","),
-		roleIdsToDelete: previousContactRoles.filter(element => !currentContactRoles.includes(element)).join(",")
+		roleIdsToInsert: currentContactRoles.filter(element => !previousContactRoles.includes(trim(element))).join(","),
+		roleIdsToDelete: previousContactRoles.filter(element => !currentContactRoles.includes(trim(element))).join(",")
 	};
-	const contactData = new FormData();
 
+	// Convert object to formData
+	const contactData = new FormData();
 	Object.keys(contactDataObj).forEach(key => {
 		contactData.append(key, contactDataObj[key]);
 	});
@@ -258,6 +258,7 @@ function loadHomePageData() {
 }
 
 $(document).ready(function(){
+	// Set bday email schedule button state
 	$.ajax({
 		type: "POST",
 		url: "./components/addressbook.cfc?method=getTaskStatus",
@@ -297,6 +298,7 @@ function toggleBdayEmailSchedule() {
 	});
 }
 
+// Excel upload submit function
 $("#contactUpload").submit(function(event) {
 	event.preventDefault();
 	const thisForm = this;

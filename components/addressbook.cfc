@@ -398,7 +398,7 @@
 							<cfloop list="#arguments.roleIdsToInsert#" index="local.i" item="local.roleId">
 								(
 									<cfqueryparam value="#local.insertContactsResult.GENERATEDKEY#" cfsqltype="cf_sql_integer">,
-									<cfqueryparam value="#local.roleId#" cfsqltype="cf_sql_integer">
+									<cfqueryparam value="#trim(local.roleId)#" cfsqltype="cf_sql_integer">
 								)
 								<cfif local.i LT listLen(arguments.roleIdsToInsert)>,</cfif>
 							</cfloop>
@@ -457,7 +457,7 @@
 							<cfloop list="#arguments.roleIdsToInsert#" index="local.i" item="local.roleId">
 								(
 									<cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_integer">,
-									<cfqueryparam value="#local.roleId#" cfsqltype="cf_sql_integer">
+									<cfqueryparam value="#trim(local.roleId)#" cfsqltype="cf_sql_integer">
 								)
 								<cfif local.i LT listLen(arguments.roleIdsToInsert)>,</cfif>
 							</cfloop>
@@ -562,23 +562,6 @@
 		<cfreturn local.fileName>
 	</cffunction>
 
-	<cffunction name="isSubList">
-		<cfargument name="list1" type="string" required="true">
-		<cfargument name="list2" type="string" required="true">
-		<cfset local.foundDifference = false>
-
-		<cfif list1 neq "" AND list2 neq "">
-			<cfloop list="#list1#" index="item">
-				<cfif NOT ListFind(list2, item)>
-					<cfset local.foundDifference = true>
-					<cfbreak>
-				</cfif>
-			</cfloop>
-		</cfif>
-
-		<cfreturn local.foundDifference>
-	</cffunction>
-
 	<cffunction name="uploadExcel" returnType="struct" returnFormat="json" access="remote">
 		<cfargument name="uploadExcel" type="string" required="true">
 		<cfset local.response = StructNew()>
@@ -603,8 +586,8 @@
 
 			<!--- Get New rolenames and roleids --->
 			<cfloop list="#local.excelUploadDataQuery.roles#" item="local.roleName">
-				<cfif structKeyExists(local.roleNameToId, local.roleName)>
-					<cfset local.currentRoleIds = ListAppend(local.currentRoleIds, local.roleNameToId[local.roleName])>
+				<cfif structKeyExists(local.roleNameToId, trim(local.roleName))>
+					<cfset local.currentRoleIds = ListAppend(local.currentRoleIds, local.roleNameToId[trim(local.roleName)])>
 				</cfif>
 			</cfloop>
 
@@ -615,19 +598,23 @@
 					<cfset ArrayAppend(local.missingColumnNames, local.columnName)>
 				</cfif>
 			</cfloop>
-
 			<cfif ArrayLen(local.missingColumnNames)>
 				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, ArrayToList(local.missingColumnNames) & " Missing")>
-			</cfif>
-
-			<!--- Email validation --->
-			<cfif len(local.excelUploadDataQuery.email) AND NOT isValid("email", local.excelUploadDataQuery.email)>
-				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Email not valid")>
 			</cfif>
 
 			<!--- Title validation --->
 			<cfif len(local.excelUploadDataQuery.title) AND NOT ArrayFind(["Mr.", "Miss.", "Ms.", "Mrs."], local.excelUploadDataQuery.title)>
 				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Title should be one in [Mr., Miss., Ms., or Mrs.]")>
+			</cfif>
+
+			<!--- FirstName validation --->
+			<cfif len(local.excelUploadDataQuery.firstname) AND NOT REFind("^[a-zA-Z ]+$", local.excelUploadDataQuery.firstname)>
+				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Firstname should only contain letters and spaces")>
+			</cfif>
+
+			<!--- LastName validation --->
+			<cfif len(local.excelUploadDataQuery.lastname) AND NOT REFind("^[a-zA-Z ]+$", local.excelUploadDataQuery.lastname)>
+				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Lastname should only contain letters and spaces")>
 			</cfif>
 
 			<!--- Gender validation --->
@@ -654,6 +641,11 @@
 				</cfif>
 			</cfif>
 
+			<!--- Email validation --->
+			<cfif len(local.excelUploadDataQuery.email) AND NOT isValid("email", local.excelUploadDataQuery.email)>
+				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Email not valid")>
+			</cfif>
+
 			<!--- Phone number validation --->
 			<cfif len(local.excelUploadDataQuery.phone)>
 				<cfset local.formattedPhone = trim(replace(local.excelUploadDataQuery.phone, "-", ""))>
@@ -665,13 +657,24 @@
 			</cfif>
 
 			<!--- Role Validation --->
-			<cfif len(local.excelUploadDataQuery.roles) AND isSubList(local.excelUploadDataQuery.roles, ValueList(local.roleDetailsQuery.roleName))>
-				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Roles are not valid")>
+			<cfset local.userGivenRoleNameList = local.excelUploadDataQuery.roles>
+			<cfset local.validRoleNameList = ValueList(local.roleDetailsQuery.roleName)>
+			<cfset local.foundDifference = false>
+			<cfif local.userGivenRoleNameList neq "" AND local.validRoleNameList neq "">
+				<cfloop list="#local.userGivenRoleNameList#" index="item">
+					<cfif NOT ListFind(local.validRoleNameList, trim(item))>
+						<cfset local.foundDifference = true>
+						<cfbreak>
+					</cfif>
+				</cfloop>
+			</cfif>
+			<cfif len(local.excelUploadDataQuery.roles) AND local.foundDifference>
+				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Roles are not valid - Valid rolenames are " & local.validRoleNameList)>
 			</cfif>
 
 			<cfif len(trim(local.resultColumnValue))>
 				<cfset local.response["statusCode"] = 422>
-				<cfset ArrayAppend(local.resultColumnValues, local.resultColumnValue)>
+				<cfset ArrayAppend(local.resultColumnValues, ListChangeDelims(local.resultColumnValue, ", "))>
 			<cfelse>
 				<!--- Check Email Existence --->
 				<cfquery name="local.checkEmailQuery">
