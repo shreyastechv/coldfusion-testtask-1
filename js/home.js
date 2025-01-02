@@ -183,8 +183,9 @@ $("#contactManagement").submit(function(event) {
 		roleIdsToInsert: currentContactRoles.filter(element => !previousContactRoles.includes(trim(element))).join(","),
 		roleIdsToDelete: previousContactRoles.filter(element => !currentContactRoles.includes(trim(element))).join(",")
 	};
-	const contactData = new FormData();
 
+	// Convert object to formData
+	const contactData = new FormData();
 	Object.keys(contactDataObj).forEach(key => {
 		contactData.append(key, contactDataObj[key]);
 	});
@@ -258,6 +259,7 @@ function loadHomePageData() {
 }
 
 $(document).ready(function(){
+	// Set bday email schedule button state
 	$.ajax({
 		type: "POST",
 		url: "./components/addressbook.cfc?method=getTaskStatus",
@@ -297,6 +299,7 @@ function toggleBdayEmailSchedule() {
 	});
 }
 
+// Excel upload submit function
 $("#contactUpload").submit(function(event) {
 	event.preventDefault();
 	const thisForm = this;
