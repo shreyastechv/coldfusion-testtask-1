@@ -562,23 +562,6 @@
 		<cfreturn local.fileName>
 	</cffunction>
 
-	<cffunction name="isSubList">
-		<cfargument name="list1" type="string" required="true">
-		<cfargument name="list2" type="string" required="true">
-		<cfset local.foundDifference = false>
-
-		<cfif list1 neq "" AND list2 neq "">
-			<cfloop list="#list1#" index="item">
-				<cfif NOT ListFind(list2, item)>
-					<cfset local.foundDifference = true>
-					<cfbreak>
-				</cfif>
-			</cfloop>
-		</cfif>
-
-		<cfreturn local.foundDifference>
-	</cffunction>
-
 	<cffunction name="uploadExcel" returnType="struct" returnFormat="json" access="remote">
 		<cfargument name="uploadExcel" type="string" required="true">
 		<cfset local.response = StructNew()>
@@ -615,7 +598,6 @@
 					<cfset ArrayAppend(local.missingColumnNames, local.columnName)>
 				</cfif>
 			</cfloop>
-
 			<cfif ArrayLen(local.missingColumnNames)>
 				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, ArrayToList(local.missingColumnNames) & " Missing")>
 			</cfif>
@@ -675,8 +657,19 @@
 			</cfif>
 
 			<!--- Role Validation --->
-			<cfif len(local.excelUploadDataQuery.roles) AND isSubList(local.excelUploadDataQuery.roles, ValueList(local.roleDetailsQuery.roleName))>
-				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Roles are not valid")>
+			<cfset local.userGivenRoleNameList = local.excelUploadDataQuery.roles>
+			<cfset local.validRoleNameList = ValueList(local.roleDetailsQuery.roleName)>
+			<cfset local.foundDifference = false>
+			<cfif local.userGivenRoleNameList neq "" AND local.validRoleNameList neq "">
+				<cfloop list="#local.userGivenRoleNameList#" index="item">
+					<cfif NOT ListFind(local.validRoleNameList, trim(item))>
+						<cfset local.foundDifference = true>
+						<cfbreak>
+					</cfif>
+				</cfloop>
+			</cfif>
+			<cfif len(local.excelUploadDataQuery.roles) AND local.foundDifference>
+				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Roles are not valid - Valid rolenames are " & local.validRoleNameList)>
 			</cfif>
 
 			<cfif len(trim(local.resultColumnValue))>
