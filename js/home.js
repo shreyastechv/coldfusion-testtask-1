@@ -1,6 +1,5 @@
 function logOut() {
 	if (confirm("Confirm logout")) {
-		const submitMsgSection = $("#submitMsgSection");
 
 		$.ajax({
 			type: "POST",
@@ -11,12 +10,11 @@ function logOut() {
 					location.reload();
 				}
 				else {
-					submitMsgSection.text(responseJSON.message);
 					alert("Sorry! Unable to logout.");
 				}
 			},
-			error: function (xhr, ajaxOptions, thrownError) {
-				submitMsgSection.text("We encountered an error! Error details are: " + thrownError);
+			error: function () {
+				alert("Sorry! Unable to logout.");
 			}
 		});
 	}
