@@ -588,6 +588,8 @@
 		<cfspreadsheet action="read" src="#arguments.uploadExcel#" query="local.excelUploadDataQuery" headerrow="1" excludeHeaderRow=true>
 		<cfset local.resultExcelQuery = Duplicate(local.excelUploadDataQuery)>
 		<cfset local.roleDetailsQuery = getRoleDetails()>
+
+		<!--- Mapping roleid to rolename --->
 		<cfset local.roleNameToId = {}>
 		<cfloop query="local.roleDetailsQuery">
 			<cfset local.roleNameToId[local.roleDetailsQuery.roleName] = local.roleDetailsQuery.roleId>
@@ -619,16 +621,58 @@
 			</cfif>
 
 			<!--- Email validation --->
-			<cfif NOT isValid("email", local.excelUploadDataQuery.email)>
+			<cfif len(local.excelUploadDataQuery.email) AND NOT isValid("email", local.excelUploadDataQuery.email)>
 				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Email not valid")>
 			</cfif>
 
+			<!--- Title validation --->
+			<cfif len(local.excelUploadDataQuery.title) AND NOT ArrayFind(["Mr.", "Miss.", "Ms.", "Mrs."], local.excelUploadDataQuery.title)>
+				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Title should be one in [Mr., Miss., Ms., or Mrs.]")>
+			</cfif>
+
+			<!--- Gender validation --->
+			<cfif len(local.excelUploadDataQuery.gender) AND NOT ArrayFind(["Male", "Female", "Others"], local.excelUploadDataQuery.gender)>
+				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Gender should be one in [Male, Female, Others]")>
+			</cfif>
+
+			<!--- Date of Birth validation --->
+			<cfif len(local.excelUploadDataQuery.dob)>
+				<cfif NOT isDate(local.excelUploadDataQuery.dob)>
+					<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "DOB is not valid - It should be in format of yyyy-mm-dd")>
+				<cfelseif DateCompare(local.excelUploadDataQuery.dob, Now(), "d") NEQ -1>
+					<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "DOB should not be in the future")>
+				</cfif>
+			</cfif>
+
+			<!--- Pincode validation --->
+			<cfif len(local.excelUploadDataQuery.pincode)>
+				<cfset local.formattedPincode = trim(replace(local.excelUploadDataQuery.pincode, "-", ""))>
+				<cfif NOT isNumeric(local.formattedPincode)>
+					<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Pincode should contain only digits")>
+				<cfelseif len(local.formattedPincode) NEQ 6>
+					<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Pincode length should be 6 characters")>
+				</cfif>
+			</cfif>
+
+			<!--- Phone number validation --->
+			<cfif len(local.excelUploadDataQuery.phone)>
+				<cfset local.formattedPhone = trim(replace(local.excelUploadDataQuery.phone, "-", ""))>
+				<cfif NOT isNumeric(local.formattedPhone)>
+					<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Phone number should contain only digits")>
+				<cfelseif len(local.formattedPhone) NEQ 10>
+					<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Phone number length should be 10 characters")>
+				</cfif>
+			</cfif>
+
 			<!--- Role Validation --->
-			<cfif isSubList(local.excelUploadDataQuery.roles, ValueList(local.roleDetailsQuery.roleName))>
+			<cfif len(local.excelUploadDataQuery.roles) AND isSubList(local.excelUploadDataQuery.roles, ValueList(local.roleDetailsQuery.roleName))>
 				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Roles are not valid")>
 			</cfif>
 
 			<cfif len(trim(local.resultColumnValue))>
+				<cfset local.response["statusCode"] = 422>
+				<cfset ArrayAppend(local.resultColumnValues, local.resultColumnValue)>
+			<cfelse>
 				<!--- Check Email Existence --->
 				<cfquery name="local.checkEmailQuery">
 					SELECT
@@ -694,9 +738,6 @@
 					)>
 					<cfset ArrayAppend(local.resultColumnValues, "Added")>
 				</cfif>
-			<cfelse>
-				<cfset local.response["statusCode"] = 422>
-				<cfset ArrayAppend(local.resultColumnValues, local.resultColumnValue)>
 			</cfif>
 
 		</cfloop>
