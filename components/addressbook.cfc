@@ -620,11 +620,6 @@
 				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, ArrayToList(local.missingColumnNames) & " Missing")>
 			</cfif>
 
-			<!--- Email validation --->
-			<cfif len(local.excelUploadDataQuery.email) AND NOT isValid("email", local.excelUploadDataQuery.email)>
-				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Email not valid")>
-			</cfif>
-
 			<!--- Title validation --->
 			<cfif len(local.excelUploadDataQuery.title) AND NOT ArrayFind(["Mr.", "Miss.", "Ms.", "Mrs."], local.excelUploadDataQuery.title)>
 				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Title should be one in [Mr., Miss., Ms., or Mrs.]")>
@@ -652,6 +647,11 @@
 				<cfelseif len(local.formattedPincode) NEQ 6>
 					<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Pincode length should be 6 characters")>
 				</cfif>
+			</cfif>
+
+			<!--- Email validation --->
+			<cfif len(local.excelUploadDataQuery.email) AND NOT isValid("email", local.excelUploadDataQuery.email)>
+				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Email not valid")>
 			</cfif>
 
 			<!--- Phone number validation --->
