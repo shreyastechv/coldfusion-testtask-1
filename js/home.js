@@ -180,8 +180,8 @@ $("#contactManagement").submit(function(event) {
         contactPincode: $("#editContactPincode").val(),
         contactEmail: $("#editContactEmail").val(),
         contactPhone: $("#editContactPhone").val(),
-		roleIdsToInsert: currentContactRoles.filter(element => !previousContactRoles.includes(element)).join(","),
-		roleIdsToDelete: previousContactRoles.filter(element => !currentContactRoles.includes(element)).join(",")
+		roleIdsToInsert: currentContactRoles.filter(element => !previousContactRoles.includes(trim(element))).join(","),
+		roleIdsToDelete: previousContactRoles.filter(element => !currentContactRoles.includes(trim(element))).join(",")
 	};
 	const contactData = new FormData();
 
