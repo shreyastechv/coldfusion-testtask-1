@@ -625,6 +625,16 @@
 				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Title should be one in [Mr., Miss., Ms., or Mrs.]")>
 			</cfif>
 
+			<!--- FirstName validation --->
+			<cfif len(local.excelUploadDataQuery.firstname) AND NOT REFind("^[a-zA-Z ]+$", local.excelUploadDataQuery.firstname)>
+				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Firstname should only contain letters and spaces")>
+			</cfif>
+
+			<!--- LastName validation --->
+			<cfif len(local.excelUploadDataQuery.lastname) AND NOT REFind("^[a-zA-Z ]+$", local.excelUploadDataQuery.lastname)>
+				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Lastname should only contain letters and spaces")>
+			</cfif>
+
 			<!--- Gender validation --->
 			<cfif len(local.excelUploadDataQuery.gender) AND NOT ArrayFind(["Male", "Female", "Others"], local.excelUploadDataQuery.gender)>
 				<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Gender should be one in [Male, Female, Others]")>
