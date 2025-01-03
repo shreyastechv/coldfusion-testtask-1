@@ -288,6 +288,14 @@
 			<cfquery name="local.deleteContactQuery">
             	BEGIN TRANSACTION;
 
+				-- Get Contact Picture Filename
+				SELECT
+					contactpicture
+				FROM
+					contactDetails
+				WHERE
+					contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
+
 				-- Delete from contactRoles
 				UPDATE
 					contactRoles
@@ -309,6 +317,9 @@
 				COMMIT;
             </cfquery>
 
+			<cfif local.deleteContactQuery.contactpicture NEQ "demo-contact-image.png">
+				<cffile action="delete" file="#expandPath('../assets/contactImages/' & local.deleteContactQuery.contactpicture)#">
+			</cfif>
             <cfset local.response["statusCode"] = 200>
         <cfelse>
             <cfset local.response["statusCode"] = 401>
