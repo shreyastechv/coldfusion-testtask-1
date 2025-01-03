@@ -48,7 +48,7 @@
 					<div class="col-lg-3 col-md-4 col-12 sidebar bg-transparent mb-2">
 						<div class="bg-white d-flex flex-column align-items-center px-3 py-5 gap-2">
 							<cfif StructKeyExists(session, "profilePicture")>
-								<img class="userProfileIcon rounded-4" src="#session.profilePicture#" alt="User Profile Icon">
+								<img class="userProfileIcon rounded-4" src="./assets/profilePictures/#session.profilePicture#" alt="User Profile Icon">
 							<cfelse>
 								<img class="userProfileIcon rounded-4" src="./assets/images/user-profileicon.png" alt="User Profile Icon">
 							</cfif>

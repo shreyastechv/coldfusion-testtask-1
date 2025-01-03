@@ -77,7 +77,7 @@
             <cfset session.isLoggedIn = true>
             <cfset session.userId = local.getUserDetails.userId>
             <cfset session.fullName = local.getUserDetails.fullname>
-            <cfset session.profilePicture = "./assets/profilePictures/" & local.getUserDetails.profilepicture>
+            <cfset session.profilePicture = local.getUserDetails.profilepicture>
         </cfif>
 
         <cfreturn local.response>
@@ -86,35 +86,44 @@
 	<cffunction name="googleSSOLogin" returnType="void" access="public">
 		<cfquery name="local.checkEmailQuery">
 			SELECT
-				userid
+				userid,
+				profilepicture
 			FROM
 				users
 			WHERE
 				email = <cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">
 		</cfquery>
 		<cfif local.checkEmailQuery.RecordCount EQ 0>
+			<cfset local.profilePictureFileName = "#createUUID()#.png">
+			<cfhttp
+				method="get"
+				url="#session.googleData.other.picture#"
+				path="#expandPath('./assets/profilePictures')#"
+				file="#local.profilePictureFileName#"
+			/>
 			<cfquery name="insertUserDataQuery" result="local.insertUserDataResult">
 				INSERT INTO
 					users (
 						fullname,
 						email,
 						username,
-						profilePicture
+						profilepicture
 					)
 				VALUES (
 					<cfqueryparam value = "#session.googleData.name#" cfsqltype = "cf_sql_varchar">,
 					<cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">,
 					<cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">,
-					<cfqueryparam value = "#session.googleData.other.picture#" cfsqltype = "cf_sql_varchar">
+					<cfqueryparam value = "#local.profilePictureFileName#" cfsqltype = "cf_sql_varchar">
 				);
 			</cfquery>
 			<cfset session.userId = local.insertUserDataResult.GENERATEDKEY>
 		<cfelse>
 			<cfset session.userId = local.checkEmailQuery.userid>
+			<cfset local.profilePictureFileName = local.checkEmailQuery.profilepicture>
 		</cfif>
 		<cfset session.isLoggedIn = true>
 		<cfset session.fullName = session.googleData.name>
-		<cfset session.profilePicture = session.googleData.other.picture>
+		<cfset session.profilePicture = local.profilePictureFileName>
 	</cffunction>
 
     <cffunction name="logOut" returnType="struct" returnFormat="json" access="remote">
