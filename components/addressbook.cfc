@@ -633,7 +633,7 @@
 
 			<!--- Pincode validation --->
 			<cfif len(local.excelUploadDataQuery.pincode)>
-				<cfset local.formattedPincode = trim(replace(local.excelUploadDataQuery.pincode, "-", ""))>
+				<cfset local.formattedPincode = trim(local.excelUploadDataQuery.pincode)>
 				<cfif NOT isNumeric(local.formattedPincode)>
 					<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Pincode should contain only digits")>
 				<cfelseif len(local.formattedPincode) NEQ 6>
