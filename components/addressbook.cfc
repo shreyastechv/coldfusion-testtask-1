@@ -588,11 +588,11 @@
 		<cfset local.response["statusCode"] = 200>
 		<cfset local.response["fileName"] = "#session.fullName#-contactsUploadResult-#DateTimeFormat(Now(), "yyyy-mm-dd-HH-nn-ss")#.xlsx">
 
+		<!--- Read excel data --->
 		<cfspreadsheet action="read" src="#arguments.uploadExcel#" query="local.excelUploadDataQuery" headerrow="1" excludeHeaderRow=true>
-		<cfset local.resultExcelQuery = Duplicate(local.excelUploadDataQuery)>
-		<cfset local.roleDetailsQuery = getRoleDetails()>
 
 		<!--- Mapping roleid to rolename --->
+		<cfset local.roleDetailsQuery = getRoleDetails()>
 		<cfset local.roleNameToId = {}>
 		<cfloop query="local.roleDetailsQuery">
 			<cfset local.roleNameToId[local.roleDetailsQuery.roleName] = local.roleDetailsQuery.roleId>
@@ -776,13 +776,13 @@
 			</cfif>
 
 		</cfloop>
-		<cfif QueryKeyExists(local.resultExcelQuery, "Result")>
-			<cfset QueryDeleteColumn(local.resultExcelQuery, "Result")>
+		<cfif QueryKeyExists(local.excelUploadDataQuery, "Result")>
+			<cfset QueryDeleteColumn(local.excelUploadDataQuery, "Result")>
 		</cfif>
-		<cfset QueryAddColumn(local.resultExcelQuery, "Result", local.resultColumnValues)>
+		<cfset QueryAddColumn(local.excelUploadDataQuery, "Result", local.resultColumnValues)>
 
 		<!--- Query Sorting --->
-		<cfset local.sortedQuery = QuerySort(local.resultExcelQuery, function(obj1, obj2){
+		<cfset local.sortedQuery = QuerySort(local.excelUploadDataQuery, function(obj1, obj2){
 			var check1 = FindNoCase("added", obj1.result) OR FindNoCase("updated", obj1.result);
 			var check2 = FindNoCase("added", obj2.result) OR FindNoCase("updated", obj2.result);
 
@@ -794,7 +794,7 @@
 			}
 			return 0;
 		})>
-		<cfspreadsheet action="write" filename="../assets/spreadsheets/#local.response.fileName#" query="local.resultExcelQuery" sheetname="contacts" overwrite=true>
+		<cfspreadsheet action="write" filename="../assets/spreadsheets/#local.response.fileName#" query="local.excelUploadDataQuery" sheetname="contacts" overwrite=true>
 		<cfreturn local.response>
 	</cffunction>
 
