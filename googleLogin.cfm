@@ -1,8 +1,9 @@
 <cfif NOT StructKeyExists(session, "isLoggedIn")>
+	<cfset local.environment = createObject( "java", "java.lang.System" )>
 	<cfoauth
 		type="Google"
-		clientid="#application.googleClientId#"
-		secretkey="#application.googleSecretKey#"
+		clientid="#local.environment.getenv('ADDRESSBOOK_GOOGLE_CLIENT_ID')#"
+		secretkey="#local.environment.getenv('ADDRESSBOOK_GOOGLE_SECRET_KEY')#"
 		scope="email"
 		result="session.googleData"
 	>
