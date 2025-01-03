@@ -21,10 +21,6 @@
                     <i class="fa-solid fa-user"></i>
                     Sign Up
                 </a>
-                <a class="text-white text-decoration-none" href="/">
-                    <i class="fa-solid fa-right-to-bracket"></i>
-                    Login
-                </a>
             </nav>
         </header>
 
