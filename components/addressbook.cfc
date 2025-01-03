@@ -598,6 +598,30 @@
 			<cfset local.roleNameToId[local.roleDetailsQuery.roleName] = local.roleDetailsQuery.roleId>
 		</cfloop>
 
+		<!--- Mapping email to contactId & roleIds --->
+		<cfquery name="local.mapEmailQuery">
+			SELECT
+				cd.contactid,
+				cd.email,
+				ISNULL(STRING_AGG(CONVERT(VARCHAR(36), cr.roleId), ','), '') AS previousRoleIds
+			FROM
+				contactDetails cd LEFT JOIN contactRoles cr ON cd.contactid = cr.contactId
+			WHERE
+				cd.createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
+				AND cd.active = 1
+				AND cr.active = 1
+			GROUP BY
+				cd.contactid,
+				cd.email
+		</cfquery>
+		<cfset local.emailToRoleIdList = {}>
+		<cfset local.emailToContactId = {}>
+		<cfloop query="local.roleDetailsQuery">
+			<cfset local.emailToRoleIdList[local.mapEmailQuery.email] = local.mapEmailQuery.previousRoleIds>
+			<cfset local.emailToContactId[local.mapEmailQuery.email] = local.mapEmailQuery.contactid>
+		</cfloop>
+
+		<!--- Start Excel Data Upload --->
 		<cfset local.resultColumnValues = []>
 		<cfloop query="local.excelUploadDataQuery">
 			<cfset local.valid = true>
@@ -697,25 +721,13 @@
 				<cfset ArrayAppend(local.resultColumnValues, ListChangeDelims(local.resultColumnValue, ", "))>
 			<cfelse>
 				<!--- Check Email Existence --->
-				<cfquery name="local.checkEmailQuery">
-					SELECT
-						cd.contactid,
-						ISNULL(STRING_AGG(CONVERT(VARCHAR(36), cr.roleId), ','), '') AS previousRoleIds
-					FROM
-						contactDetails cd LEFT JOIN contactRoles cr ON cd.contactid = cr.contactId
-					WHERE
-						cd.email = <cfqueryparam value="#local.excelUploadDataQuery.email#" cfsqltype="cf_sql_varchar">
-						AND cd.createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
-						AND cd.active = 1
-						AND cr.active = 1
-					GROUP BY
-						cd.contactid
-				</cfquery>
+				<cfif StructKeyExists(local.emailToContactId, local.excelUploadDataQuery.email)>
+					<!--- Get previousily selected roleIds --->
+					<cfset local.previousRoleIds = local.emailToRoleIdList[local.excelUploadDataQuery.email]>
 
-				<cfif QueryRecordCount(local.checkEmailQuery)>
-					<!--- Create Contact --->
+					<!--- Edit Contact --->
 					<cfset modifyContacts(
-						contactId = local.checkEmailQuery.contactid,
+						contactId = local.emailToContactId[local.excelUploadDataQuery.email],
 						contactTitle = local.excelUploadDataQuery.title,
 						contactFirstName = local.excelUploadDataQuery.firstname,
 						contactLastName = local.excelUploadDataQuery.lastname,
@@ -731,15 +743,15 @@
 						contactEmail = local.excelUploadDataQuery.email,
 						contactPhone = local.excelUploadDataQuery.phone,
 						roleIdsToInsert = ListFilter(local.currentRoleIds, function(roleId) {
-							return NOT ListFind(checkEmailQuery.previousRoleIds, roleId)
+							return NOT ListFind(local.previousRoleIds, roleId)
 						}),
-						roleIdsToDelete = ListFilter(local.checkEmailQuery.previousRoleIds, function(roleId) {
+						roleIdsToDelete = ListFilter(local.previousRoleIds, function(roleId) {
 							return NOT ListFind(currentRoleIds, roleId)
 						})
 					)>
 					<cfset ArrayAppend(local.resultColumnValues, "Updated")>
 				<cfelse>
-					<!--- Edit Contact --->
+					<!--- Create Contact --->
 					<cfset modifyContacts(
 						contactId = "",
 						contactTitle = local.excelUploadDataQuery.title,
