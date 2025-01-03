@@ -10,11 +10,11 @@ function logOut() {
 					location.reload();
 				}
 				else {
-					alert("Sorry! Unable to logout.");
+					alert(responseJSON.message);
 				}
 			},
 			error: function () {
-				alert("Sorry! Unable to logout.");
+				alert("Sorry, Unable to logout!");
 			}
 		});
 	}
