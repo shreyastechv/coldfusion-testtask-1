@@ -179,8 +179,8 @@ $("#contactManagement").submit(function(event) {
         contactPincode: $("#editContactPincode").val(),
         contactEmail: $("#editContactEmail").val(),
         contactPhone: $("#editContactPhone").val(),
-		roleIdsToInsert: currentContactRoles.filter(element => !previousContactRoles.includes(trim(element))).join(","),
-		roleIdsToDelete: previousContactRoles.filter(element => !currentContactRoles.includes(trim(element))).join(",")
+		roleIdsToInsert: currentContactRoles.filter(element => !previousContactRoles.includes(element.trim())).join(","),
+		roleIdsToDelete: previousContactRoles.filter(element => !currentContactRoles.includes(element.trim())).join(",")
 	};
 
 	// Convert object to formData
