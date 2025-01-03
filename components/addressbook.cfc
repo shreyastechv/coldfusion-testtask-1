@@ -77,7 +77,7 @@
             <cfset session.isLoggedIn = true>
             <cfset session.userId = local.getUserDetails.userId>
             <cfset session.fullName = local.getUserDetails.fullname>
-            <cfset session.profilePicture = "./assets/profilePictures/" & local.getUserDetails.profilepicture>
+            <cfset session.profilePicture = local.getUserDetails.profilepicture>
         </cfif>
 
         <cfreturn local.response>
@@ -86,35 +86,44 @@
 	<cffunction name="googleSSOLogin" returnType="void" access="public">
 		<cfquery name="local.checkEmailQuery">
 			SELECT
-				userid
+				userid,
+				profilepicture
 			FROM
 				users
 			WHERE
 				email = <cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">
 		</cfquery>
 		<cfif local.checkEmailQuery.RecordCount EQ 0>
+			<cfset local.profilePictureFileName = "#createUUID()#.png">
+			<cfhttp
+				method="get"
+				url="#session.googleData.other.picture#"
+				path="#expandPath('./assets/profilePictures')#"
+				file="#local.profilePictureFileName#"
+			/>
 			<cfquery name="insertUserDataQuery" result="local.insertUserDataResult">
 				INSERT INTO
 					users (
 						fullname,
 						email,
 						username,
-						profilePicture
+						profilepicture
 					)
 				VALUES (
 					<cfqueryparam value = "#session.googleData.name#" cfsqltype = "cf_sql_varchar">,
 					<cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">,
 					<cfqueryparam value = "#session.googleData.other.email#" cfsqltype = "cf_sql_varchar">,
-					<cfqueryparam value = "#session.googleData.other.picture#" cfsqltype = "cf_sql_varchar">
+					<cfqueryparam value = "#local.profilePictureFileName#" cfsqltype = "cf_sql_varchar">
 				);
 			</cfquery>
 			<cfset session.userId = local.insertUserDataResult.GENERATEDKEY>
 		<cfelse>
 			<cfset session.userId = local.checkEmailQuery.userid>
+			<cfset local.profilePictureFileName = local.checkEmailQuery.profilepicture>
 		</cfif>
 		<cfset session.isLoggedIn = true>
 		<cfset session.fullName = session.googleData.name>
-		<cfset session.profilePicture = session.googleData.other.picture>
+		<cfset session.profilePicture = local.profilePictureFileName>
 	</cffunction>
 
     <cffunction name="logOut" returnType="struct" returnFormat="json" access="remote">
@@ -279,6 +288,14 @@
 			<cfquery name="local.deleteContactQuery">
             	BEGIN TRANSACTION;
 
+				-- Get Contact Picture Filename
+				SELECT
+					contactpicture
+				FROM
+					contactDetails
+				WHERE
+					contactid = <cfqueryparam value = "#arguments.contactId#" cfsqltype = "cf_sql_varchar">
+
 				-- Delete from contactRoles
 				UPDATE
 					contactRoles
@@ -300,6 +317,9 @@
 				COMMIT;
             </cfquery>
 
+			<cfif local.deleteContactQuery.contactpicture NEQ "demo-contact-image.png">
+				<cffile action="delete" file="#expandPath('../assets/contactImages/' & local.deleteContactQuery.contactpicture)#">
+			</cfif>
             <cfset local.response["statusCode"] = 200>
         <cfelse>
             <cfset local.response["statusCode"] = 401>
@@ -568,16 +588,40 @@
 		<cfset local.response["statusCode"] = 200>
 		<cfset local.response["fileName"] = "#session.fullName#-contactsUploadResult-#DateTimeFormat(Now(), "yyyy-mm-dd-HH-nn-ss")#.xlsx">
 
+		<!--- Read excel data --->
 		<cfspreadsheet action="read" src="#arguments.uploadExcel#" query="local.excelUploadDataQuery" headerrow="1" excludeHeaderRow=true>
-		<cfset local.resultExcelQuery = Duplicate(local.excelUploadDataQuery)>
-		<cfset local.roleDetailsQuery = getRoleDetails()>
 
 		<!--- Mapping roleid to rolename --->
+		<cfset local.roleDetailsQuery = getRoleDetails()>
 		<cfset local.roleNameToId = {}>
 		<cfloop query="local.roleDetailsQuery">
 			<cfset local.roleNameToId[local.roleDetailsQuery.roleName] = local.roleDetailsQuery.roleId>
 		</cfloop>
 
+		<!--- Mapping email to contactId & roleIds --->
+		<cfquery name="local.mapEmailQuery">
+			SELECT
+				cd.contactid,
+				cd.email,
+				ISNULL(STRING_AGG(CONVERT(VARCHAR(36), cr.roleId), ','), '') AS previousRoleIds
+			FROM
+				contactDetails cd LEFT JOIN contactRoles cr ON cd.contactid = cr.contactId
+			WHERE
+				cd.createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
+				AND cd.active = 1
+				AND cr.active = 1
+			GROUP BY
+				cd.contactid,
+				cd.email
+		</cfquery>
+		<cfset local.emailToRoleIdList = {}>
+		<cfset local.emailToContactId = {}>
+		<cfloop query="local.roleDetailsQuery">
+			<cfset local.emailToRoleIdList[local.mapEmailQuery.email] = local.mapEmailQuery.previousRoleIds>
+			<cfset local.emailToContactId[local.mapEmailQuery.email] = local.mapEmailQuery.contactid>
+		</cfloop>
+
+		<!--- Start Excel Data Upload --->
 		<cfset local.resultColumnValues = []>
 		<cfloop query="local.excelUploadDataQuery">
 			<cfset local.valid = true>
@@ -633,7 +677,7 @@
 
 			<!--- Pincode validation --->
 			<cfif len(local.excelUploadDataQuery.pincode)>
-				<cfset local.formattedPincode = trim(replace(local.excelUploadDataQuery.pincode, "-", ""))>
+				<cfset local.formattedPincode = trim(local.excelUploadDataQuery.pincode)>
 				<cfif NOT isNumeric(local.formattedPincode)>
 					<cfset local.resultColumnValue = ListAppend(local.resultColumnValue, "Pincode should contain only digits")>
 				<cfelseif len(local.formattedPincode) NEQ 6>
@@ -677,25 +721,13 @@
 				<cfset ArrayAppend(local.resultColumnValues, ListChangeDelims(local.resultColumnValue, ", "))>
 			<cfelse>
 				<!--- Check Email Existence --->
-				<cfquery name="local.checkEmailQuery">
-					SELECT
-						cd.contactid,
-						ISNULL(STRING_AGG(CONVERT(VARCHAR(36), cr.roleId), ','), '') AS previousRoleIds
-					FROM
-						contactDetails cd LEFT JOIN contactRoles cr ON cd.contactid = cr.contactId
-					WHERE
-						cd.email = <cfqueryparam value="#local.excelUploadDataQuery.email#" cfsqltype="cf_sql_varchar">
-						AND cd.createdBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
-						AND cd.active = 1
-						AND cr.active = 1
-					GROUP BY
-						cd.contactid
-				</cfquery>
+				<cfif StructKeyExists(local.emailToContactId, local.excelUploadDataQuery.email)>
+					<!--- Get previousily selected roleIds --->
+					<cfset local.previousRoleIds = local.emailToRoleIdList[local.excelUploadDataQuery.email]>
 
-				<cfif QueryRecordCount(local.checkEmailQuery)>
-					<!--- Create Contact --->
+					<!--- Edit Contact --->
 					<cfset modifyContacts(
-						contactId = local.checkEmailQuery.contactid,
+						contactId = local.emailToContactId[local.excelUploadDataQuery.email],
 						contactTitle = local.excelUploadDataQuery.title,
 						contactFirstName = local.excelUploadDataQuery.firstname,
 						contactLastName = local.excelUploadDataQuery.lastname,
@@ -711,15 +743,15 @@
 						contactEmail = local.excelUploadDataQuery.email,
 						contactPhone = local.excelUploadDataQuery.phone,
 						roleIdsToInsert = ListFilter(local.currentRoleIds, function(roleId) {
-							return NOT ListFind(checkEmailQuery.previousRoleIds, roleId)
+							return NOT ListFind(local.previousRoleIds, roleId)
 						}),
-						roleIdsToDelete = ListFilter(local.checkEmailQuery.previousRoleIds, function(roleId) {
+						roleIdsToDelete = ListFilter(local.previousRoleIds, function(roleId) {
 							return NOT ListFind(currentRoleIds, roleId)
 						})
 					)>
 					<cfset ArrayAppend(local.resultColumnValues, "Updated")>
 				<cfelse>
-					<!--- Edit Contact --->
+					<!--- Create Contact --->
 					<cfset modifyContacts(
 						contactId = "",
 						contactTitle = local.excelUploadDataQuery.title,
@@ -744,13 +776,13 @@
 			</cfif>
 
 		</cfloop>
-		<cfif QueryKeyExists(local.resultExcelQuery, "Result")>
-			<cfset QueryDeleteColumn(local.resultExcelQuery, "Result")>
+		<cfif QueryKeyExists(local.excelUploadDataQuery, "Result")>
+			<cfset QueryDeleteColumn(local.excelUploadDataQuery, "Result")>
 		</cfif>
-		<cfset QueryAddColumn(local.resultExcelQuery, "Result", local.resultColumnValues)>
+		<cfset QueryAddColumn(local.excelUploadDataQuery, "Result", local.resultColumnValues)>
 
 		<!--- Query Sorting --->
-		<cfset local.sortedQuery = QuerySort(local.resultExcelQuery, function(obj1, obj2){
+		<cfset local.sortedQuery = QuerySort(local.excelUploadDataQuery, function(obj1, obj2){
 			var check1 = FindNoCase("added", obj1.result) OR FindNoCase("updated", obj1.result);
 			var check2 = FindNoCase("added", obj2.result) OR FindNoCase("updated", obj2.result);
 
@@ -762,7 +794,7 @@
 			}
 			return 0;
 		})>
-		<cfspreadsheet action="write" filename="../assets/spreadsheets/#local.response.fileName#" query="local.resultExcelQuery" sheetname="contacts" overwrite=true>
+		<cfspreadsheet action="write" filename="../assets/spreadsheets/#local.response.fileName#" query="local.excelUploadDataQuery" sheetname="contacts" overwrite=true>
 		<cfreturn local.response>
 	</cffunction>
 

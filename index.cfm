@@ -21,10 +21,6 @@
                     <i class="fa-solid fa-user"></i>
                     Sign Up
                 </a>
-                <a class="text-white text-decoration-none" href="/">
-                    <i class="fa-solid fa-right-to-bracket"></i>
-                    Login
-                </a>
             </nav>
         </header>
 
@@ -45,7 +41,7 @@
                             <div class="mb-3">
                                 <input type="password" class="inputBox" id="password" name="password" placeholder="Password">
                             </div>
-                            <button type="submit" id="loginBtn" name="loginBtn" class="btn text-primary border-primary w-100 rounded-pill" disabled>LOGIN</button>
+                            <button data-bs-toggle="tooltip" data-bs-placement="right" title="Enter your username" type="submit" id="loginBtn" name="loginBtn" class="btn text-primary border-primary w-100 rounded-pill pe-auto" disabled>LOGIN</button>
                             <div class="text-center my-3">Or Sign In Using</div>
                             <div class="d-flex justify-content-center gap-3">
                                 <button type="button" class="btn btn-primary rounded-circle">

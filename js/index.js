@@ -4,13 +4,15 @@ function toggleBtnState() {
 
 	if (username.trim() == "") {
 		loginBtn.prop("disabled", true);
+		loginBtn.attr("data-bs-original-title", "Enter your username");
 	}
 	else {
 		loginBtn.prop("disabled", false);
+		loginBtn.attr("data-bs-original-title", "");
 	}
 }
 
-$("#username").change(toggleBtnState);
+$("#username").keyup(toggleBtnState);
 
 $("#loginForm").submit(function(event) {
 	event.preventDefault();
@@ -33,8 +35,13 @@ $("#loginForm").submit(function(event) {
 				submitMsgSection.text(responseJSON.message);
 			}
 		},
-		error: function (xhr, ajaxOptions, thrownError) {
-			submitMsgSection.text("We encountered an error! Error details are: " + thrownError);
+		error: function() {
+			submitMsgSection.text("We encountered an error!");
 		}
 	});
+});
+
+$(document).ready(function(){
+	// Enable custom tooltip styling using bootstrap
+	$('[data-bs-toggle="tooltip"]').tooltip();
 });

@@ -10,11 +10,11 @@ function logOut() {
 					location.reload();
 				}
 				else {
-					alert("Sorry! Unable to logout.");
+					alert(responseJSON.message);
 				}
 			},
 			error: function () {
-				alert("Sorry! Unable to logout.");
+				alert("Sorry, Unable to logout!");
 			}
 		});
 	}
@@ -179,8 +179,8 @@ $("#contactManagement").submit(function(event) {
         contactPincode: $("#editContactPincode").val(),
         contactEmail: $("#editContactEmail").val(),
         contactPhone: $("#editContactPhone").val(),
-		roleIdsToInsert: currentContactRoles.filter(element => !previousContactRoles.includes(trim(element))).join(","),
-		roleIdsToDelete: previousContactRoles.filter(element => !currentContactRoles.includes(trim(element))).join(",")
+		roleIdsToInsert: currentContactRoles.filter(element => !previousContactRoles.includes(element.trim())).join(","),
+		roleIdsToDelete: previousContactRoles.filter(element => !currentContactRoles.includes(element.trim())).join(",")
 	};
 
 	// Convert object to formData
@@ -212,8 +212,8 @@ $("#contactManagement").submit(function(event) {
 			}
 			contactManagementMsgSection.text(responseJSON.message);
 		},
-		error: function (xhr, ajaxOptions, thrownError) {
-			contactManagementMsgSection.text("We encountered an error! Error details are: " + thrownError);
+		error: function () {
+			contactManagementMsgSection.text("We encountered an error!");
 		}
 	});
 });
