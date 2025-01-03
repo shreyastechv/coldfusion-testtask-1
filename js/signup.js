@@ -132,9 +132,9 @@ $("#signupForm").submit(function(event) {
 					submitMsgSection.text(responseJSON.message);
 				}
 			},
-			error: function (xhr, ajaxOptions, thrownError) {
+			error: function() {
 				submitMsgSection.css("color", "red");
-				submitMsgSection.text("We encountered an error! Error details are: " + thrownError);
+				submitMsgSection.text("We encountered an error!");
 			}
 		});
 	}

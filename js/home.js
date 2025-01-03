@@ -212,8 +212,8 @@ $("#contactManagement").submit(function(event) {
 			}
 			contactManagementMsgSection.text(responseJSON.message);
 		},
-		error: function (xhr, ajaxOptions, thrownError) {
-			contactManagementMsgSection.text("We encountered an error! Error details are: " + thrownError);
+		error: function () {
+			contactManagementMsgSection.text("We encountered an error!");
 		}
 	});
 });
